@@ -67,11 +67,11 @@
 
 	<build>
 		<plugins>
-			<plugin>
+		 	<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-		<!-- 	<plugin>
+		<!--  	<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
 				<version>0.14.0</version>
@@ -84,14 +84,20 @@
 				</executions>
 				<configuration>
 					<schemaLanguage>WSDL</schemaLanguage>
-					<generatePackage>uy.com.pepeganga.consuming_ws_store.wsdl</generatePackage>
+					<generatePackage>uy.com.pepeganga.consuming_ws_store.wsdl.categories</generatePackage>
 					<schemas>
 						<schema>
-							<url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>
+							<url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>							
+						</schema>
+					</schemas>
+					<generatePackage>uy.com.pepeganga.consuming_ws_store.wsdl.families</generatePackage>
+					<schemas>
+						<schema>							
+							<url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
 						</schema>
 					</schemas>
 				</configuration>
-			</plugin> -->
+			</plugin>  -->
 		</plugins>
 	</build>
 

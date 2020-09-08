@@ -5,18 +5,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uy.com.pepeganga.consuming_ws_store.services.CategoryService;
-import uy.com.pepeganga.consuming_ws_store.wsdl.categories.CargaZafrasExecuteResponse;
+import uy.com.pepeganga.consuming_ws_store.services.FamilyService;
+import uy.com.pepeganga.consuming_ws_store.wsdl.families.CargaFamiliasExecuteResponse;
 
 @RestController
 @RequestMapping("/api")
-public class ClientCategoryController {
+public class ClientFamilyController {
 
 	@Autowired
-	CategoryService category;
+	FamilyService family;
 	
-	@GetMapping("/categories")
-	public CargaZafrasExecuteResponse getCategories() {
-		return category.getCategories();
+	@GetMapping("/families")
+	public CargaFamiliasExecuteResponse getFamilies() {
+		return family.getFamilies();
 	}
 }
