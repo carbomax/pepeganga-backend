@@ -11,6 +11,8 @@
     <modules>
         <module>eureka-service</module>
         <module>user-service</module>
+		<module>zuul-service</module>
+		<module>consuming-webservice-store</module>
     </modules>
 
 
