@@ -1,5 +1,7 @@
 package uy.com.pepeganga.consumingwsstore.controllers;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,5 +20,10 @@ public class ClientFamilyController {
 	@GetMapping("/families")
 	public CargaFamiliasExecuteResponse getFamilies() {
 		return family.getFamilies();
+	}
+	
+	@GetMapping("/familiesandsubfamilies")
+	public Map<String, String> getAllFamiliesSubFamilies() {
+		return family.getFamiliesSubFamilies();
 	}
 }

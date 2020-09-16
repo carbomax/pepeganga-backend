@@ -9,8 +9,11 @@
     <packaging>pom</packaging>
     <version>1.0</version>
     <modules>
-        <module>eureka-service</module>
+        <module>eureka-service</module>                
         <module>user-service</module>
+        <module>zuul-service</module>
+        <module>consuming-webservice-store</module>
+        <module>products-service</module>
     </modules>
 
 

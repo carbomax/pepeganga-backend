@@ -7,6 +7,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
+import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.models.ItemModelResponse;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosExecuteResponse;
@@ -19,6 +20,10 @@ public class ItemService extends WebServiceGatewaySupport{
 	
 	public List<ItemModelResponse> getItemsTemporally(){
 		return p.getList();
+	}
+	
+	public List<ItemGrid> getItemsGridTemporally(){
+		return p.getGridList();
 	}
 
 	public List<ItemModelResponse> getItems() {
