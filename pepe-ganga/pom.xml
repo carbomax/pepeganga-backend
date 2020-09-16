@@ -15,6 +15,4 @@
         <module>consuming-webservice-store</module>
         <module>products-service</module>
     </modules>
-
-
 </project>
