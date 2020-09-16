@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 
+import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.models.ItemModelResponse;
 
 @EnableDiscoveryClient
@@ -19,9 +20,14 @@ import uy.com.pepeganga.consumingwsstore.models.ItemModelResponse;
 public class ConsumingWebserviceStoreApplication {
 
 	private List<ItemModelResponse> list;
+	private List<ItemGrid> gridList;
 	
 	public List<ItemModelResponse> getList() {
 		return list;
+	}
+	
+	public List<ItemGrid> getGridList() {
+		return gridList;
 	}
 
 	public static void main(String[] args) {
@@ -67,6 +73,21 @@ public class ConsumingWebserviceStoreApplication {
 	    			item.setCategoriasMap(mapa);
 	    			this.list.add(item);
 	    		}
+	    		 
+	    		 /*the Grid List*/
+	    		 this.gridList = new ArrayList<ItemGrid>();
+	    		 ItemGrid gridItem = new ItemGrid();
+	    		 
+	    		 for (int i = 0; i < 15; i++) {
+	    			 gridItem.setSku(generateRandomString(5));
+	    			 gridItem.setPriceUSD(Math.random());
+	    			 gridItem.setPriceUYU(Math.random());
+	    			 gridItem.setName(generateRandomString(5));
+	    			 gridItem.setImage("http://201.217.140.35/sisvend/fotos/HC0828.jpg");
+	    			 gridItem.setCategories(mapa);
+		    		 this.gridList.add(gridItem);
+		    		}	    		
 	        };	
 	 }
-}
+
+	}

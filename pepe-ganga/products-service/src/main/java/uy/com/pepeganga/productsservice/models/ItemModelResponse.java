@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.models;
+package uy.com.pepeganga.productsservice.models;
 
 import java.util.List;
 import java.util.Map;
