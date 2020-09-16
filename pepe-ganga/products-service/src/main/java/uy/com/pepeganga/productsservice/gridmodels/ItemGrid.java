@@ -5,15 +5,18 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+import uy.com.pepeganga.productsservice.models.ItemModelResponse;
+
+
+
 public class ItemGrid {
 	
-	@JsonProperty()
 	private String image;
 	private String name;
 	private String sku;
 	private double priceUYU;
 	private double priceUSD;
+	
 	private Map<String, String> categories;
 	
 	public double getPriceUYU() {
