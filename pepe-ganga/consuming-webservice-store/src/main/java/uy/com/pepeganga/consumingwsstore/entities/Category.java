@@ -1,4 +1,4 @@
-package uy.com.pepeganga.productsservice.entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
 import java.io.Serializable;
 
@@ -9,21 +9,19 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "brand")
-public class Brand implements Serializable {
-	
+@Table(name = "category")
+public class Category implements Serializable{
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 8579951759996328352L;
+	private static final long serialVersionUID = -7824810085308111080L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private short id;
 	
 	private String description;
-	
-	private String marcaInUse;
 
 	public short getId() {
 		return id;
@@ -39,14 +37,6 @@ public class Brand implements Serializable {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public String getMarcaInUse() {
-		return marcaInUse;
-	}
-
-	public void setMarcaInUse(String marcaInUse) {
-		this.marcaInUse = marcaInUse;
 	}
 
 	@Override
@@ -65,10 +55,11 @@ public class Brand implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Brand other = (Brand) obj;
+		Category other = (Category) obj;
 		if (id != other.id)
 			return false;
 		return true;
 	}
+	
 	
 }
