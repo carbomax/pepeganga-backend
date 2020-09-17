@@ -1,4 +1,4 @@
-package uy.com.pepeganga.productsservice.entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
 import java.io.Serializable;
 import java.util.List;
