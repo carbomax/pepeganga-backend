@@ -15,6 +15,7 @@ import uy.com.pepeganga.consumingwsstore.wsdl.items.ConsSDTArticulosWebParcialAr
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebParcial;
 
 public class ItemService extends WebServiceGatewaySupport{
+	
 	@Autowired
 	ConsumingWebserviceStoreApplication p;
 	

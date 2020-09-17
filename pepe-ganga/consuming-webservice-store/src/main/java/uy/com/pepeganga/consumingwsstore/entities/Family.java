@@ -29,8 +29,8 @@ public class Family implements Serializable {
 	private String description;	
 
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name = "subFamily_PK")	
-	List<SubFamily> subfamilies;
+	@JoinColumn(name = "family_id")	
+	private List<SubFamily> subfamilies;
 	
 	public Short getId() {
 		return id;

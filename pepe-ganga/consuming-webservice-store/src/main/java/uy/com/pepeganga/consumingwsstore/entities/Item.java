@@ -12,11 +12,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+
+
 @Entity
 @Table(name = "item")
-public class Item implements Serializable{
+public class Item implements Serializable {
 
-	
 	/**
 	 * 
 	 */
@@ -25,63 +26,63 @@ public class Item implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String sku;
-	  
+
 	private String artDescripCatalogo;
-   
-	private String artMedida;  
-    
+
+	private String artMedida;
+
 	private String artEspecificaciones;
-	
+
 	private String cantidadPorCaja;
-   
+
 	private double precioPesos;
-  
+
 	private double precioDolares;
- 
+
 	private String futuro;
- 
+
 	private String nuevo;
-  
+
 	private String oferta;
-	
+
 	private long stockActual;
-  
+
 	private short artCantUnidades;
- 
+
 	private double artPreUniPesos;
 
 	private double artPreUniDolares;
-   
+
 	private String artMostrarEnWeb;
-  
+
 	private String artVendibleMercadoLibre;
-    
+
 	private String artCodPro;
- 
+
 	private String artNombreML;
-   
+
 	private String artDescripML;
-    
+
 	private String medidaEmpaque;
-    
+
 	private String capacidad;
-   
+
 	private String talle;
 
 	@ManyToOne
 	@JoinColumn(name = "family_id")
 	private Family family;
-   
+
 	@ManyToOne
 	@JoinColumn(name = "brand_id")
 	private Brand brand;
-	
+
 	@OneToMany
-	@JoinColumn(name = "category_id")
+	@JoinColumn(name = "item_id")
 	private List<Category> categories;
-	
+
 	@OneToMany
-	@JoinColumn(name = "image_id")
+	@JoinColumn(name = "item_id")
 	private List<Image> image;
 
 	public String getSku() {
@@ -315,6 +316,6 @@ public class Item implements Serializable{
 		} else if (!sku.equals(other.sku))
 			return false;
 		return true;
-	}	
-	
+	}
+
 }

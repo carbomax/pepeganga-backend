@@ -6,6 +6,8 @@ import java.util.Map;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import uy.com.pepeganga.productsservice.entities.Item;
 import uy.com.pepeganga.productsservice.gridmodels.ItemGrid;
 import uy.com.pepeganga.productsservice.models.CategoryModelResponse;
 import uy.com.pepeganga.productsservice.models.ItemModelResponse;
@@ -15,7 +17,7 @@ import uy.com.pepeganga.productsservice.models.ItemModelResponse;
 public interface IStoreServiceClient {
 
 	@GetMapping("/api/itemstemporally")
-	public List<ItemModelResponse> getItemsTemporally();
+	public List<Item> getItemsTemporally();
 	
 	@GetMapping("/api/itemsgridtemporally")
 	public List<ItemGrid> getItemsGridTemporally();

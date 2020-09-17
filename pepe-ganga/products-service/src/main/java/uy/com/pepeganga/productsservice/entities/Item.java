@@ -3,27 +3,12 @@ package uy.com.pepeganga.productsservice.entities;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
-@Entity
-@Table(name = "item")
 public class Item implements Serializable{
 
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 4827789912637220902L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String sku;
 	  
 	private String artDescripCatalogo;
@@ -68,20 +53,13 @@ public class Item implements Serializable{
    
 	private String talle;
 
-	@ManyToOne
-	@JoinColumn(name = "family_id")
 	private Family family;
    
-	@ManyToOne
-	@JoinColumn(name = "brand_id")
 	private Brand brand;
 	
-	@OneToMany
-	@JoinColumn(name = "category_id")
 	private List<Category> categories;
 	
-	@OneToMany
-	@JoinColumn(name = "image_id")
+
 	private List<Image> image;
 
 	public String getSku() {
@@ -291,30 +269,4 @@ public class Item implements Serializable{
 	public void setImage(List<Image> image) {
 		this.image = image;
 	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((sku == null) ? 0 : sku.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Item other = (Item) obj;
-		if (sku == null) {
-			if (other.sku != null)
-				return false;
-		} else if (!sku.equals(other.sku))
-			return false;
-		return true;
-	}	
-	
 }

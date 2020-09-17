@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uy.com.pepeganga.consumingwsstore.services.CategoryService;
 import uy.com.pepeganga.consumingwsstore.models.CategoryModelResponse;
+import uy.com.pepeganga.consumingwsstore.services.CategoryService;
 
 
 @RestController
@@ -20,6 +20,8 @@ public class ClientCategoryController {
 	
 	@GetMapping("/categories")
 	public List<CategoryModelResponse> getCategories() {
+		
+		
 		return category.getCategories();
 	}
 }

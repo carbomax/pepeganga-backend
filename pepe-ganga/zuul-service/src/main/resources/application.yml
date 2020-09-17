@@ -22,7 +22,10 @@ zuul:
   routes:
     user:
       service-id: user-service
-      path: /pepeganga/users/**        
+      path: /pepeganga/users/**   
+    products:
+        service-id: products-service
+        path: /pepeganga/products/**      
         
 
 hystrix:
