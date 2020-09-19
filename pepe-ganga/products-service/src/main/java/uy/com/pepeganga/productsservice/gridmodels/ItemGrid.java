@@ -1,60 +1,76 @@
 package uy.com.pepeganga.productsservice.gridmodels;
 
-import java.util.Map;
+import java.io.Serializable;
+import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import uy.com.pepeganga.productsservice.entities.Category;
+import uy.com.pepeganga.productsservice.entities.Image;
 
-import uy.com.pepeganga.productsservice.models.ItemModelResponse;
+public class ItemGrid implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-
-public class ItemGrid {
-	
-	private String image;
 	private String name;
+
 	private String sku;
+
 	private double priceUYU;
+
 	private double priceUSD;
-	
-	private Map<String, String> categories;
-	
+
+	private List<Category> categories;
+
+	private List<Image> images;
+
 	public double getPriceUYU() {
 		return priceUYU;
 	}
+
 	public void setPriceUYU(double priceUYU) {
 		this.priceUYU = priceUYU;
 	}
+
 	public double getPriceUSD() {
 		return priceUSD;
 	}
+
 	public void setPriceUSD(double priceUSD) {
 		this.priceUSD = priceUSD;
 	}
-		
-	public Map<String, String> getCategories() {
+
+	public List<Category> getCategories() {
 		return categories;
-	}	
-	public void setCategories(Map<String, String> categories) {
+	}
+
+	public void setCategories(List<Category> categories) {
 		this.categories = categories;
-	}	
-	public String getImage() {
-		return image;
 	}
-	public void setImage(String image) {
-		this.image = image;
-	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getSku() {
 		return sku;
 	}
+
 	public void setSku(String sku) {
 		this.sku = sku;
 	}
-		
+
+	public List<Image> getImages() {
+		return images;
+	}
+
+	public void setImages(List<Image> images) {
+		this.images = images;
+	}
+
 }
