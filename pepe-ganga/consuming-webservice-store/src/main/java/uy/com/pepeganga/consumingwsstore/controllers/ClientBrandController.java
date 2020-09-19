@@ -5,18 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uy.com.pepeganga.consumingwsstore.services.TrademarkService;
-import uy.com.pepeganga.consumingwsstore.wsdl.marcas.CargaMarcasExecuteResponse;
+import uy.com.pepeganga.consumingwsstore.services.BrandRequestService;
 
 @RestController
 @RequestMapping("/api")
-public class ClientTrademarkController {
+public class ClientBrandController {
 
 	@Autowired
-	TrademarkService trademarks;
+	BrandRequestService brands;
 	
-	@GetMapping("/trademarks")
-	public CargaMarcasExecuteResponse getTrademarks() {
-		return trademarks.getTrademarks();
+	@GetMapping("/store/brands")
+	public void getTrademarks() {
+		brands.storeBrand();
 	}
 }

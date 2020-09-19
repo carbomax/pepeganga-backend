@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import uy.com.pepeganga.consumingwsstore.services.ItemService;
+import uy.com.pepeganga.consumingwsstore.services.ItemRequestService;
 
 
 @Configuration
@@ -20,8 +20,8 @@ public class ItemConfiguration {
 	  }
 
 	  @Bean	
-	  public ItemService itemClient() {
-		  ItemService client = new ItemService();
+	  public ItemRequestService itemClient() {
+		  ItemRequestService client = new ItemRequestService();
 		  client.setDefaultUri("http://201.217.140.35/agile15");
 	    client.setMarshaller(this.marshaller());
 	    client.setUnmarshaller(this.marshaller());

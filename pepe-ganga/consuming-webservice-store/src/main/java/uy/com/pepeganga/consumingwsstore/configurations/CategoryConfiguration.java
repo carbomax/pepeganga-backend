@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import uy.com.pepeganga.consumingwsstore.services.CategoryService;
+import uy.com.pepeganga.consumingwsstore.services.CategoryRequestService;
 
 @Configuration
 public class CategoryConfiguration {
@@ -19,8 +19,8 @@ public class CategoryConfiguration {
 	  }
 
 	  @Bean	
-	  public CategoryService categoryClient() {
-		  CategoryService client = new CategoryService();
+	  public CategoryRequestService categoryClient() {
+		  CategoryRequestService client = new CategoryRequestService();
 		  client.setDefaultUri("http://201.217.140.35/agile");
 	    client.setMarshaller(this.marshaller());
 	    client.setUnmarshaller(this.marshaller());

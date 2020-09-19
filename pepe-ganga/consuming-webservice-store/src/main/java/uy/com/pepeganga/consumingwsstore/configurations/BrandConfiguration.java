@@ -4,12 +4,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import uy.com.pepeganga.consumingwsstore.services.TrademarkService;
+import uy.com.pepeganga.consumingwsstore.services.BrandRequestService;
 
 @Configuration
-public class TrademarkConfiguration {
+public class BrandConfiguration {
 
-	@Bean(name = "marshallerTrademark")
+	@Bean(name = "marshallerBrand")
 	  public Jaxb2Marshaller marshaller() {
 	    Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
 	    // this package must match the package in the <generatePackage> specified in
@@ -19,8 +19,8 @@ public class TrademarkConfiguration {
 	  }
 
 	  @Bean	
-	  public TrademarkService trademarkClient() {
-		  TrademarkService client = new TrademarkService();
+	  public BrandRequestService brandClient() {
+		  BrandRequestService client = new BrandRequestService();
 		  client.setDefaultUri("http://201.217.140.35/agile");
 	    client.setMarshaller(this.marshaller());
 	    client.setUnmarshaller(this.marshaller());
