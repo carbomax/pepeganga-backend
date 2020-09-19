@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -22,10 +21,11 @@ public class Family implements Serializable {
 	 */
 	private static final long serialVersionUID = 8039538839590766050L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Id	
+	@Column(name="id")
 	private Short id;
 	
+	@Column(name="description")
 	private String description;	
 
 	@OneToMany(cascade=CascadeType.ALL)
@@ -36,7 +36,7 @@ public class Family implements Serializable {
 		return id;
 	}
 
-	public void setId(Short id) {
+	public void setId(short id) {
 		this.id = id;
 	}
 

@@ -1,15 +1,11 @@
 package uy.com.pepeganga.consumingwsstore.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
-import uy.com.pepeganga.consumingwsstore.models.ItemModelResponse;
-import uy.com.pepeganga.consumingwsstore.services.ItemService;
+import uy.com.pepeganga.consumingwsstore.services.ItemRequestService;
 
 
 @RestController
@@ -17,20 +13,16 @@ import uy.com.pepeganga.consumingwsstore.services.ItemService;
 public class ClientItemController {
 
 	@Autowired
-	ItemService items;
+	ItemRequestService items;
 	
-	@GetMapping("/items")
-	public List<ItemModelResponse> getItems() {
-		return items.getItems();
+	@GetMapping("/store/items")
+	public void storeItems() {
+		items.storeItems();
 	}
 	
-	@GetMapping("/itemsgridtemporally")
-	public List<ItemGrid> getItemsGridTemporally() {
-		return items.getItemsGridTemporally();
+	@GetMapping("/storeItemsTemporally")
+	public void storeItemsTemporally() {
+		items.storeItemsTemporally();
 	}
 	
-	@GetMapping("/itemstemporally")
-	public List<ItemModelResponse> getItemsTemporally() {
-		return items.getItemsTemporally();
-	}
 }

@@ -2,9 +2,8 @@ package uy.com.pepeganga.consumingwsstore.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,15 +16,17 @@ public class Brand implements Serializable {
 	 */
 	private static final long serialVersionUID = 8579951759996328352L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private short id;
+	@Id	
+	@Column(name="id")
+	private Short id;
 	
+	@Column(name="description")
 	private String description;
 	
+	@Column(name="marcaInUse")
 	private String marcaInUse;
 
-	public short getId() {
+	public Short getId() {
 		return id;
 	}
 

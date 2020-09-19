@@ -2,9 +2,6 @@ package uy.com.pepeganga.consumingwsstore.entities;
 
 import java.io.Serializable;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public class SubFamilyPK implements Serializable {
 	
 	/**
@@ -13,13 +10,8 @@ public class SubFamilyPK implements Serializable {
 	private static final long serialVersionUID = 9182501762196831861L;
 	
 	private Short id;
-	private String description;
-		
-	public SubFamilyPK(Short id, String description) {
-		super();
-		this.id = id;
-		this.description = description;
-	}
+	private String description;		
+	
 
 	public Short getId() {
 		return id;

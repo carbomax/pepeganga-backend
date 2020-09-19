@@ -2,6 +2,7 @@ package uy.com.pepeganga.consumingwsstore.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,18 +19,20 @@ public class Image implements Serializable {
 	private static final long serialVersionUID = 3852172277868398823L;	
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int id;
-	
-	public int getId() {
-		return id;
-	}
-	
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name="id")
+	private Integer id=0;
+		
+	@Column(name="photo", nullable = false)
 	private String photo;
 	
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public int getId() {
+		return id;
 	}
 
 	public String getPhoto() {

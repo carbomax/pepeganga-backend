@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import uy.com.pepeganga.consumingwsstore.services.FamilyService;
+import uy.com.pepeganga.consumingwsstore.services.FamilyRequestService;
 
 @Configuration
 public class FamilyConfiguration {
@@ -19,8 +19,8 @@ public class FamilyConfiguration {
 	  }
 
 	  @Bean	
-	  public FamilyService familyClient() {
-		  FamilyService client = new FamilyService();
+	  public FamilyRequestService familyClient() {
+		  FamilyRequestService client = new FamilyRequestService();
 		  client.setDefaultUri("http://201.217.140.35/agile");
 	    client.setMarshaller(this.marshaller());
 	    client.setUnmarshaller(this.marshaller());
