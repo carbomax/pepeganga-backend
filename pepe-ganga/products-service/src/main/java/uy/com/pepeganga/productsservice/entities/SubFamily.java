@@ -2,32 +2,42 @@ package uy.com.pepeganga.productsservice.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
 
+@Entity
+@IdClass(SubFamilyPK.class)
+@Table(name = "subfamily")
 public class SubFamily implements Serializable {
-
+	
 	private static final long serialVersionUID = 3578114223188114511L;
 
-	private SubFamilyPK subFamilyPK;
+	@Id
+	@Column(name="id")
+	private Short id;
+	
+	@Id
+	@Column(name="description")
+	private String description;	
 
-	public SubFamily(Short id, String description) {
-		super();
-		this.subFamilyPK = new SubFamilyPK(id, description);
-	}
 
 	public Short getId() {
-		return this.subFamilyPK.getId();
+		return this.id;
 	}
 
 	public void setId(Short id) {
-		this.subFamilyPK.setId(id);
+		this.id = id;
 	}
 
 	public String getDescription() {
-		return this.subFamilyPK.getDescription();
+		return this.description;
 	}
 
 	public void setDescription(String description) {
-		this.subFamilyPK.setDescription(description);
+		this.description = description;
 	}
 
 }

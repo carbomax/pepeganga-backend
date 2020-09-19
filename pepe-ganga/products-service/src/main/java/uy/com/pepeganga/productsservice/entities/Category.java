@@ -2,7 +2,13 @@ package uy.com.pepeganga.productsservice.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name = "category")
 public class Category implements Serializable{
 
 	/**
@@ -10,12 +16,14 @@ public class Category implements Serializable{
 	 */
 	private static final long serialVersionUID = -7824810085308111080L;
 
-
-	private short id;
+	@Id	
+	@Column(name="id")
+	private Short id;
 	
+	@Column(name="description")
 	private String description;
 
-	public short getId() {
+	public Short getId() {
 		return id;
 	}
 
@@ -29,6 +37,29 @@ public class Category implements Serializable{
 
 	public void setDescription(String description) {
 		this.description = description;
-	}	
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Category other = (Category) obj;
+		if (id != other.id)
+			return false;
+		return true;
+	}
+	
 	
 }
