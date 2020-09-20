@@ -20,10 +20,13 @@ public class ItemGrid implements Serializable {
 	private double priceUYU;
 
 	private double priceUSD;
+	
+	private long currentStock;
 
 	private List<Category> categories;
 
 	private List<Image> images;
+	
 
 	public double getPriceUYU() {
 		return priceUYU;
@@ -73,4 +76,13 @@ public class ItemGrid implements Serializable {
 		this.images = images;
 	}
 
+	public long getCurrentStock() {
+		return currentStock;
+	}
+
+	public void setCurrentStock(long currentStock) {
+		this.currentStock = currentStock;
+	}
+
+	
 }
