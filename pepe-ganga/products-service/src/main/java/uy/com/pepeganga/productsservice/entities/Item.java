@@ -3,63 +3,106 @@ package uy.com.pepeganga.productsservice.entities;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
-public class Item implements Serializable{
 
 
+@Entity
+@Table(name = "item")
+public class Item implements Serializable {
+
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 4827789912637220902L;
 
+	@Id	
+	@Column(name="sku")
 	private String sku;
-	  
+
+	@Column(name="artDescripCatalogo")
 	private String artDescripCatalogo;
-   
-	private String artMedida;  
-    
+
+	@Column(name="artMedida")
+	private String artMedida;
+
+	@Column(name="artEspecificaciones")
 	private String artEspecificaciones;
-	
+
+	@Column(name="cantidadPorCaja")
 	private String cantidadPorCaja;
-   
+
+	@Column(name="precioPesos")
 	private double precioPesos;
-  
+
+	@Column(name="precioDolares")
 	private double precioDolares;
- 
+
+	@Column(name="futuro")
 	private String futuro;
- 
+
+	@Column(name="nuevo")
 	private String nuevo;
-  
+
+	@Column(name="oferta")
 	private String oferta;
-	
+
+	@Column(name="stockActual")
 	private long stockActual;
-  
+
+	@Column(name="artCantUnidades")
 	private short artCantUnidades;
- 
+
+	@Column(name="artPreUniPesos")
 	private double artPreUniPesos;
 
+	@Column(name="artPreUniDolares")
 	private double artPreUniDolares;
-   
+
+	@Column(name="artMostrarEnWeb")
 	private String artMostrarEnWeb;
-  
+
+	@Column(name="artVendibleMercadoLibre")
 	private String artVendibleMercadoLibre;
-    
+
+	@Column(name="artCodPro")
 	private String artCodPro;
- 
+
+	@Column(name="artNombreML")
 	private String artNombreML;
-   
+
+	@Column(name="artDescripML")
 	private String artDescripML;
-    
+
+	@Column(name="medidaEmpaque")
 	private String medidaEmpaque;
-    
+
+	@Column(name="capacidad")
 	private String capacidad;
-   
+
+	@Column(name="talle")
 	private String talle;
 
+	@ManyToOne
+	@JoinColumn(name = "family_id")
 	private Family family;
-   
-	private Brand brand;
-	
-	private List<Category> categories;
-	
 
+	@ManyToOne
+	@JoinColumn(name = "brand_id")
+	private Brand brand;
+
+	@OneToMany
+	@JoinColumn(name = "item_id")
+	private List<Category> categories;
+
+	@OneToMany
+	@JoinColumn(name = "item_id")
 	private List<Image> image;
 
 	public String getSku() {
@@ -269,4 +312,30 @@ public class Item implements Serializable{
 	public void setImage(List<Image> image) {
 		this.image = image;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((sku == null) ? 0 : sku.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Item other = (Item) obj;
+		if (sku == null) {
+			if (other.sku != null)
+				return false;
+		} else if (!sku.equals(other.sku))
+			return false;
+		return true;
+	}
+
 }

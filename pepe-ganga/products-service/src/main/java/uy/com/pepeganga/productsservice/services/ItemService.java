@@ -1,21 +1,10 @@
 package uy.com.pepeganga.productsservice.services;
 
-import java.util.List;
+import org.springframework.data.domain.Pageable;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import uy.com.pepeganga.productsservice.gridmodels.PageItemGrid;
 
-import uy.com.pepeganga.productsservice.clients.IStoreServiceClient;
-import uy.com.pepeganga.productsservice.gridmodels.ItemGrid;
-
-@Service
-public class ItemService {
-
-	@Autowired
-	IStoreServiceClient client;
+public interface ItemService {
 	
-	public List<ItemGrid> getItemsListGrid()
-	{
-		return client.getItemsGridTemporally();
-	}
+	PageItemGrid getItemsByFiltersAndPaginator(String sku, String nameProduct, Short categoryId, double minPrice, double maxPrice, Pageable pageable);
 }

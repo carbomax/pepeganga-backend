@@ -7,9 +7,9 @@ spring:
     
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    username: admin
-    password: 123456789.*dhl  
-    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
+    username: ###
+    password: ###
+    url: ####
   jpa:
     hibernate:
       ddl-auto: update
