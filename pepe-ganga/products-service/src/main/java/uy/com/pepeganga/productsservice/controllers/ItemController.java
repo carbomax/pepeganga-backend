@@ -16,7 +16,7 @@ import uy.com.pepeganga.productsservice.services.ItemService;
 @RequestMapping("/api")
 public class ItemController {
 
-	final ItemService itemService;
+	private final ItemService itemService;
 
 	public ItemController(ItemService itemService) {
 		this.itemService = itemService;

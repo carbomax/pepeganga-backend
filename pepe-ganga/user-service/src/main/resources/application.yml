@@ -9,9 +9,9 @@ spring:
     name: user-service   
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    username: ####
-    password: #####
-    url: #####
+    username: admin
+    password: 123456789.*dhl  
+    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
       ddl-auto: update

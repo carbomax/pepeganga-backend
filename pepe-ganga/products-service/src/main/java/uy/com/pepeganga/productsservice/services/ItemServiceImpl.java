@@ -1,32 +1,33 @@
 package uy.com.pepeganga.productsservice.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import uy.com.pepeganga.productsservice.entities.Item;
+import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.productsservice.gridmodels.ItemGrid;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemGrid;
 import uy.com.pepeganga.productsservice.repository.ProductsRepository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class ItemServiceImpl implements ItemService {
 
-	@Autowired
-	ProductsRepository productsRepository;
+	private final ProductsRepository productsRepository;
 
-	public Page<Item> findAll(String sku, String nameProduct, Short categoryId, double minPrice,
-			double maxPrice, Pageable pageable) {
+	public ItemServiceImpl(ProductsRepository productsRepository) {
+		this.productsRepository = productsRepository;
+	}
+
+	private Page<Item> findAll(String sku, String nameProduct, Short categoryId, double minPrice,
+							   double maxPrice, Pageable pageable) {
 		return productsRepository.findAll((Root<Item> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			if (minPrice != -1 && maxPrice != -1) {

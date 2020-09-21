@@ -1,10 +1,10 @@
 package uy.com.pepeganga.productsservice.gridmodels;
 
+import uy.com.pepeganga.business.common.entities.Category;
+import uy.com.pepeganga.business.common.entities.Image;
+
 import java.io.Serializable;
 import java.util.List;
-
-import uy.com.pepeganga.productsservice.entities.Category;
-import uy.com.pepeganga.productsservice.entities.Image;
 
 public class ItemGrid implements Serializable {
 
