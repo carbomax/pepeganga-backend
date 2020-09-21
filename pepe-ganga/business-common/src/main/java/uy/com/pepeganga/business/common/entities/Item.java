@@ -1,16 +1,8 @@
-package uy.com.pepeganga.productsservice.entities;
+package uy.com.pepeganga.business.common.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 
 
 @Entity

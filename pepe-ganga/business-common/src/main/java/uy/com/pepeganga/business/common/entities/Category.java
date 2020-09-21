@@ -1,20 +1,15 @@
-package uy.com.pepeganga.productsservice.entities;
-
-import java.io.Serializable;
+package uy.com.pepeganga.business.common.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "category")
 public class Category implements Serializable{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7824810085308111080L;
 
 	@Id	
 	@Column(name="id")
