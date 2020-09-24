@@ -1,5 +1,8 @@
 server:
   port: ${PORT:0}
+  error:
+    include-message: always
+    include-binding-errors: always
   
 spring:
   application:

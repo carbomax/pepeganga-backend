@@ -1,6 +1,7 @@
 package uy.com.pepeganga.productsservice.gridmodels;
 
 import uy.com.pepeganga.business.common.entities.Category;
+import uy.com.pepeganga.business.common.entities.Family;
 import uy.com.pepeganga.business.common.entities.Image;
 
 import java.io.Serializable;
@@ -26,7 +27,16 @@ public class ItemGrid implements Serializable {
 	private List<Category> categories;
 
 	private List<Image> images;
-	
+
+	private Family family;
+
+	public Family getFamily() {
+		return family;
+	}
+
+	public void setFamily(Family family) {
+		this.family = family;
+	}
 
 	public double getPriceUYU() {
 		return priceUYU;

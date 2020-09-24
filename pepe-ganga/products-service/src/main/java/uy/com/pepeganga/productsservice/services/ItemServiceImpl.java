@@ -26,7 +26,7 @@ public class ItemServiceImpl implements ItemService {
 		this.productsRepository = productsRepository;
 	}
 
-	private Page<Item> findAll(String sku, String nameProduct, Short categoryId, double minPrice,
+	private Page<Item> findAll(String sku, String nameProduct, Short categoryId, Short familyId, double minPrice,
 							   double maxPrice, Pageable pageable) {
 		return productsRepository.findAll((Root<Item> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
@@ -42,14 +42,19 @@ public class ItemServiceImpl implements ItemService {
 			if (categoryId != -1) {
 				predicates.add(cb.equal(root.join("categories").get("id").as(Short.class),categoryId));
 			}
+
+			if(familyId != -1){
+				predicates.add(cb.equal(root.get("family").get("id").as(Short.class), familyId));
+			}
+
 			return query.where(predicates.toArray(new Predicate[predicates.size()])).getRestriction();
 		}, pageable);
 
 	}
 
-	public PageItemGrid getItemsByFiltersAndPaginator(String sku, String nameProduct, Short categoryId,
-			double minPrice, double maxPrice, Pageable pageable) {
-		Page<Item> result = this.findAll(sku.trim(), nameProduct.trim(), categoryId, minPrice,
+	public PageItemGrid getItemsByFiltersAndPaginator(String sku, String nameProduct, Short categoryId, Short familyId,
+			double minPrice,  double maxPrice, Pageable pageable) {
+		Page<Item> result = this.findAll(sku.trim(), nameProduct.trim(), categoryId,  familyId, minPrice,
 				maxPrice, pageable);
 
 		List<ItemGrid> itemsGrid = new ArrayList<>();
@@ -62,9 +67,18 @@ public class ItemServiceImpl implements ItemService {
 			itemGrid.setPriceUYU(p.getPrecioPesos());
 			itemGrid.setSku(p.getSku());
 			itemGrid.setCurrentStock(p.getStockActual());
+			itemGrid.setFamily(p.getFamily());
 			itemsGrid.add(itemGrid);
 		});
-		return new PageItemGrid(itemsGrid, result.getTotalPages(), result.getTotalElements(), result.isLast(),
-				result.isFirst(), result.getSort(), result.getTotalElements());
+		PageItemGrid pageItemGrid = new PageItemGrid();
+		pageItemGrid.setFirst(result.isFirst());
+		pageItemGrid.setItemsGrid(itemsGrid);
+		pageItemGrid.setLast(result.isLast());
+		pageItemGrid.setNumberOfElements(result.getNumberOfElements());
+		pageItemGrid.setSort(result.getSort());
+		pageItemGrid.setTotalElements(result.getTotalElements());
+		pageItemGrid.setTotalPages(result.getTotalPages());
+		pageItemGrid.setTotalProducts(productsRepository.count());
+		return pageItemGrid;
 	}
 }

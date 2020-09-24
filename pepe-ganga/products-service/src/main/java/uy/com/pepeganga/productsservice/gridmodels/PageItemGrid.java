@@ -20,18 +20,14 @@ public class PageItemGrid {
 	
 	private long numberOfElements;
 
+	private long totalProducts;
 
-	
-	public PageItemGrid(List<ItemGrid> itemsGrid, int totalPages, long totalElements, boolean last, boolean first,
-			Sort sort, long numberOfElements) {
-		super();
-		this.itemsGrid = itemsGrid;
-		this.totalPages = totalPages;
-		this.totalElements = totalElements;
-		this.last = last;
-		this.first = first;
-		this.sort = sort;
-		this.numberOfElements = numberOfElements;
+	public long getTotalProducts() {
+		return totalProducts;
+	}
+
+	public void setTotalProducts(long totalProducts) {
+		this.totalProducts = totalProducts;
 	}
 
 	public List<ItemGrid> getItemsGrid() {
