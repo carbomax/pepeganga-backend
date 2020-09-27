@@ -1,13 +1,14 @@
 package uy.com.pepeganga.userservice.entities;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "address")
-public class Address {
+public class Address implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	private String street;
@@ -16,8 +17,8 @@ public class Address {
 	
 	private String city;
 	
-	@ManyToOne()
-	private Profile profile;
+	@ManyToOne
+	private  Profile profile;
 
 	public Integer getId() {
 		return id;

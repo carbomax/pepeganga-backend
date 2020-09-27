@@ -1,5 +1,7 @@
 package uy.com.pepeganga.productsservice.services;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,11 +20,13 @@ public class MarketplaceServiceImpl implements MarketplaceService {
     }
 
     @Override
+    @Cacheable("marketplaces")
     public List<Marketplace> getMarketplaces() {
         return (List<Marketplace>) marketplaceRepository.findAll();
     }
 
     @Override
+    @CacheEvict(value = "marketplaces", allEntries = true)
     public Marketplace createMarketplace(Marketplace marketplace) {
         if (!marketplaceRepository.existsByName(marketplace.getName())) {
             return marketplaceRepository.save(marketplace);
@@ -31,6 +35,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
     }
 
     @Override
+    @CacheEvict(value = "marketplaces", allEntries = true)
     public Marketplace updateMarketplace(Marketplace marketplace, Short id) {
         if (!marketplaceRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Marketplace not updated with id %s", id));
@@ -43,6 +48,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
 
     @Override
+    @CacheEvict(value = "marketplaces", allEntries = true)
     public void deleteMarketplace(Short id) {
         if (!marketplaceRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Marketplace not deleted with id %s, it not exist", id));

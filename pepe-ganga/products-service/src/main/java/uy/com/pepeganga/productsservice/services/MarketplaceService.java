@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface MarketplaceService {
 
+
     List<Marketplace> getMarketplaces();
 
     Marketplace createMarketplace(Marketplace marketplace);
