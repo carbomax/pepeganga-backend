@@ -2,6 +2,7 @@ package uy.com.pepeganga.productsservice.services;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,7 @@ public class ItemServiceImpl implements ItemService {
 
 	}
 
+	@Cacheable("products-storage")
 	public PageItemGrid getItemsByFiltersAndPaginator(String sku, String nameProduct, Short categoryId, Short familyId,
 			double minPrice,  double maxPrice, Pageable pageable) {
 		Page<Item> result = this.findAll(sku.trim(), nameProduct.trim(), categoryId,  familyId, minPrice,

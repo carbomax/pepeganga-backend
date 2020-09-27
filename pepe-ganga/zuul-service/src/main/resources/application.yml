@@ -22,7 +22,7 @@ zuul:
   routes:
     user:
       service-id: user-service
-      path: /pepeganga/users/**   
+      path: /pepeganga/user/**
     products:
         service-id: products-service
         path: /pepeganga/products/**      
@@ -34,7 +34,7 @@ hystrix:
         execution:
           isolation: 
             thread:
-              timeoutInMilliseconds: 20000
+              timeoutInMilliseconds: 350000
 ribbon:
-   ConnectTimeout: 3000
-   ReadTimeout: 10000        
+   ConnectTimeout: 100000
+   ReadTimeout: 150000

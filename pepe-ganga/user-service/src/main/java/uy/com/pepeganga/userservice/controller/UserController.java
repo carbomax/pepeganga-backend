@@ -4,18 +4,14 @@ import java.util.List;
 
 import javax.websocket.server.PathParam;
 
+import com.netflix.ribbon.proxy.annotation.Http;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import uy.com.pepeganga.userservice.entities.Profile;
 import uy.com.pepeganga.userservice.entities.User;
 import uy.com.pepeganga.userservice.service.IUserService;
 
@@ -38,16 +34,21 @@ public class UserController {
 		return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
 	}
 	
-	@PostMapping("/users")
-	public ResponseEntity<User> saveUser(@RequestBody User user){
-		return new ResponseEntity<>(userService.saveUser(user), HttpStatus.CREATED);
+	@PostMapping("/users/save-user-profile")
+	public ResponseEntity<Profile> saveUser(@RequestBody Profile profile){
+		return new ResponseEntity<>(userService.saveUserProfile(profile), HttpStatus.CREATED);
 	}
-	
-	@GetMapping("/users/{page}/{size}")
-	public Page<User> getUsersPage(@PathVariable int page, @PathVariable int size){			
-		return userService.getUsersPage(new User(), page, size);
+
+	@PutMapping("/users/update-user-profile/{profileId}/{userId}")
+	public ResponseEntity<Profile> updateUserWithProfile(@RequestBody Profile profile, @PathVariable  Integer profileId, @PathVariable Integer userId){
+		return new ResponseEntity<>(userService.updateUserProfile(profile, profileId, userId), HttpStatus.OK);
 	}
-	
+
+	@DeleteMapping("/users/{id}")
+	public ResponseEntity<Void> updateUserWithProfile( @PathVariable Integer id){
+		userService.deleteUser(id);
+		return new ResponseEntity<>( HttpStatus.NO_CONTENT);
+	}
 	
 	
 }
