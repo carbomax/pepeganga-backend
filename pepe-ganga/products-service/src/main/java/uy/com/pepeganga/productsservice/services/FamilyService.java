@@ -1,15 +1,10 @@
 package uy.com.pepeganga.productsservice.services;
 
-import java.util.Map;
+import uy.com.pepeganga.business.common.entities.Family;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
-@Service
-public class FamilyService {
+public interface FamilyService {
 
-	
-	public Map<String, String> getAllFamiliesSubFamilies(){
-		
-		return null;
-	}
+    List<Family> getFamilies();
 }

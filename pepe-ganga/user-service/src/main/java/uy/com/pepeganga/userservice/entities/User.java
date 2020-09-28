@@ -1,38 +1,48 @@
 package uy.com.pepeganga.userservice.entities;
 
+import uy.com.pepeganga.business.common.entities.Marketplace;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name ="users")
-public class User {
+public class User implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
-	private String username;
-	
-	private String password;
-	
+
+	@Column(unique = true)
 	private String email;
 
-	@ManyToOne
-	private Profile profile;
-	
+	private String password;
+
+	private Boolean enabled;
+
+	@Column(name = "create_at")
+	@Temporal(TemporalType.DATE)
+	private Date createAt;
+
+	@PrePersist
+	public void prePersist(){
+		this.createAt = new Date();
+	}
+
+    @ManyToMany(fetch = FetchType.LAZY)
+	private  List<Role> roles;
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<Marketplace>  marketplaces;
+
 	public Integer getId() {
 		return id;
 	}
 
 	public void setId(Integer id) {
 		this.id = id;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
 	}
 
 	public String getPassword() {
@@ -43,14 +53,44 @@ public class User {
 		this.password = password;
 	}
 
-	
-
 	public String getEmail() {
 		return email;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Date getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
+
+	public List<Marketplace> getMarketplaces() {
+		return marketplaces;
+	}
+
+	public void setMarketplaces(List<Marketplace> marketplaces) {
+		this.marketplaces = marketplaces;
 	}
 
 	@Override
