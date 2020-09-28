@@ -4,9 +4,9 @@ server:
 spring:
   application:
     name: products-service   
-  datasource:
+  datasource:   
     username: ####
-    password: #### 
+    password: ####
     url: ###
   jpa:
     hibernate:
