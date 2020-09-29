@@ -1,24 +1,20 @@
-package uy.com.pepeganga.userservice.entities;
+package uy.com.pepeganga.business.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "address")
-public class Address implements Serializable {
+@Table(name = "role")
+public class Role implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
-	private String street;
-	
-	private String number;
-	
-	private String city;
-	
-	@ManyToOne
-	private  Profile profile;
+
+	@Column(unique = true)
+	private String name;
+
+	private String description;
 
 	public Integer getId() {
 		return id;
@@ -28,36 +24,20 @@ public class Address implements Serializable {
 		this.id = id;
 	}
 
-	public String getStreet() {
-		return street;
+	public String getName() {
+		return name;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getNumber() {
-		return number;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public Profile getProfile() {
-		return profile;
-	}
-
-	public void setProfile(Profile profile) {
-		this.profile = profile;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override
@@ -76,7 +56,7 @@ public class Address implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Address other = (Address) obj;
+		Role other = (Role) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

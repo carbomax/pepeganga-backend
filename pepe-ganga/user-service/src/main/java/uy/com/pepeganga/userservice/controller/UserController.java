@@ -2,17 +2,13 @@ package uy.com.pepeganga.userservice.controller;
 
 import java.util.List;
 
-import javax.websocket.server.PathParam;
-
-import com.netflix.ribbon.proxy.annotation.Http;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import uy.com.pepeganga.userservice.entities.Profile;
-import uy.com.pepeganga.userservice.entities.User;
+import uy.com.pepeganga.business.common.entities.Profile;
+import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.userservice.service.IUserService;
 
 
