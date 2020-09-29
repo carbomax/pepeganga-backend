@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.entities.Category;
+import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.repositories.ICategoryRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.categories.CargaZafrasExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.categories.CargaZafrasExecuteResponse;

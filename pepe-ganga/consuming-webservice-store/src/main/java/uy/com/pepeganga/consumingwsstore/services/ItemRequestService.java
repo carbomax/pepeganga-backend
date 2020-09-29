@@ -8,8 +8,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.entities.Image;
-import uy.com.pepeganga.consumingwsstore.entities.Item;
+import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.repositories.IImageRepository;
 import uy.com.pepeganga.consumingwsstore.repositories.IItemRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosExecute;
