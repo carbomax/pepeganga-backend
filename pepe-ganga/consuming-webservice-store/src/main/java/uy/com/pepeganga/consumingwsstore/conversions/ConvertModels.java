@@ -5,13 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
-import uy.com.pepeganga.consumingwsstore.entities.Brand;
-import uy.com.pepeganga.consumingwsstore.entities.Category;
-import uy.com.pepeganga.consumingwsstore.entities.Family;
-import uy.com.pepeganga.consumingwsstore.entities.Image;
-import uy.com.pepeganga.consumingwsstore.entities.Item;
-import uy.com.pepeganga.consumingwsstore.entities.SubFamily;
+import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtLineasSubFliasSdtLineaSubFlias;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtSubFliasSdtSubFlia;
