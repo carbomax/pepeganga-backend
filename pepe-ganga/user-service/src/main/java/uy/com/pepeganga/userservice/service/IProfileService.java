@@ -1,6 +1,6 @@
 package uy.com.pepeganga.userservice.service;
 
-import uy.com.pepeganga.userservice.entities.Profile;
+import uy.com.pepeganga.business.common.entities.Profile;
 
 import java.util.List;
 

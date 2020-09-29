@@ -1,6 +1,4 @@
-package uy.com.pepeganga.userservice.entities;
-
-import uy.com.pepeganga.business.common.entities.Marketplace;
+package uy.com.pepeganga.business.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
