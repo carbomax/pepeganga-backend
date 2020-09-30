@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uy.com.pepeganga.userservice.entities.Role;
+import uy.com.pepeganga.business.common.entities.Role;
 import uy.com.pepeganga.userservice.service.IRoleService;
 
 import java.util.List;

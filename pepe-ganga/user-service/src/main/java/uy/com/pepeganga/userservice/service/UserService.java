@@ -6,13 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pepeganga.userservice.entities.Profile;
-import uy.com.pepeganga.userservice.entities.User;
-import uy.com.pepeganga.userservice.models.UserFaker;
+import uy.com.pepeganga.business.common.entities.Profile;
+import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.userservice.repository.ProfileRepository;
 import uy.com.pepeganga.userservice.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,17 +23,11 @@ public class UserService implements IUserService {
     private final ProfileRepository profileRepository;
 
 
-    private List<UserFaker> users = new ArrayList<>();
-
     public UserService(UserRepository userRepository, ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
     }
 
-    @Override
-    public List<UserFaker> getUsersFakers() {
-        return this.users;
-    }
 
     @Override
     public List<User> getAllUsers() {

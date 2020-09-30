@@ -1,16 +1,13 @@
 package uy.com.pepeganga.userservice.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
+import uy.com.pepeganga.business.common.entities.Profile;
+import uy.com.pepeganga.business.common.entities.User;
 
-import uy.com.pepeganga.userservice.entities.Profile;
-import uy.com.pepeganga.userservice.entities.User;
-import uy.com.pepeganga.userservice.models.UserFaker;
+import java.util.List;
 
 public interface IUserService {
 
-	List<UserFaker> getUsersFakers();
 	
 	List<User> getAllUsers();
 	

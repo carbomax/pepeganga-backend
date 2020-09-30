@@ -89,8 +89,8 @@ public class Item implements Serializable {
 	@JoinColumn(name = "brand_id")
 	private Brand brand;
 
-	@ManyToMany
-	@JoinColumn(name = "item_id")
+
+	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Category> categories;
 
 	@OneToMany
