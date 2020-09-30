@@ -89,7 +89,7 @@ public class Item implements Serializable {
 	@JoinColumn(name = "brand_id")
 	private Brand brand;
 
-	@OneToMany
+	@ManyToMany
 	@JoinColumn(name = "item_id")
 	private List<Category> categories;
 
