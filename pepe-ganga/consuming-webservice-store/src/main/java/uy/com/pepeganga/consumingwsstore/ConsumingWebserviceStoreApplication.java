@@ -1,22 +1,23 @@
 package uy.com.pepeganga.consumingwsstore;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.Bean;
+
+import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.context.annotation.Bean;
-
-import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.entities.Category;
-import uy.com.pepeganga.consumingwsstore.entities.Image;
-import uy.com.pepeganga.consumingwsstore.entities.Item;
-
 @EnableDiscoveryClient
 @SpringBootApplication
+@EntityScan({"uy.com.pepeganga.business.common.entities"})
 public class ConsumingWebserviceStoreApplication {
 
 	private List<Item> list;	

@@ -1,4 +1,4 @@
-package uy.com.pepeganga.userservice.entities;
+package uy.com.pepeganga.business.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

@@ -8,8 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.entities.Family;
-import uy.com.pepeganga.consumingwsstore.entities.SubFamily;
+import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.repositories.IFamilyRepository;
 import uy.com.pepeganga.consumingwsstore.repositories.ISubFamilyRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.CargaFamiliasExecute;
