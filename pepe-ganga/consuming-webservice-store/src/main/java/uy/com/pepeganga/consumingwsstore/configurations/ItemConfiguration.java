@@ -22,7 +22,7 @@ public class ItemConfiguration {
 	  @Bean	
 	  public ItemRequestService itemClient() {
 		  ItemRequestService client = new ItemRequestService();
-		  client.setDefaultUri("http://201.217.140.35/agile15");
+		  client.setDefaultUri("http://201.217.140.35/agile");
 	    client.setMarshaller(this.marshaller());
 	    client.setUnmarshaller(this.marshaller());
 	    return client;

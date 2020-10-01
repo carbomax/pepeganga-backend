@@ -18,7 +18,7 @@ public class Item implements Serializable {
 	@Column(name="sku")
 	private String sku;
 
-	@Column(name="artDescripCatalogo")
+	@Column(name="artDescripCatalogo", columnDefinition = "TEXT")
 	private String artDescripCatalogo;
 
 	@Column(name="artMedida")
@@ -35,6 +35,9 @@ public class Item implements Serializable {
 
 	@Column(name="precioDolares")
 	private double precioDolares;
+	
+	@Column(name = "images", columnDefinition = "blob", length = 10000)
+	private byte[] images;
 
 	@Column(name="futuro")
 	private String futuro;
@@ -69,7 +72,7 @@ public class Item implements Serializable {
 	@Column(name="artNombreML")
 	private String artNombreML;
 
-	@Column(name="artDescripML")
+	@Column(name="artDescripML", columnDefinition = "TEXT")
 	private String artDescripML;
 
 	@Column(name="medidaEmpaque")
@@ -92,10 +95,6 @@ public class Item implements Serializable {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Category> categories;
-
-	@OneToMany
-	@JoinColumn(name = "item_id")
-	private List<Image> image;
 
 	public String getSku() {
 		return sku;
@@ -255,6 +254,14 @@ public class Item implements Serializable {
 
 	public void setMedidaEmpaque(String medidaEmpaque) {
 		this.medidaEmpaque = medidaEmpaque;
+	}	
+
+	public byte[] getImages() {
+		return images;
+	}
+
+	public void setImages(byte[] images) {
+		this.images = images;
 	}
 
 	public String getCapacidad() {
@@ -297,14 +304,7 @@ public class Item implements Serializable {
 		this.categories = categories;
 	}
 
-	public List<Image> getImage() {
-		return image;
-	}
-
-	public void setImage(List<Image> image) {
-		this.image = image;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -7,8 +7,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import uy.com.pepeganga.business.common.entities.Family;
+import uy.com.pepeganga.business.common.entities.SubFamily;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.repositories.IFamilyRepository;
 import uy.com.pepeganga.consumingwsstore.repositories.ISubFamilyRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.CargaFamiliasExecute;
@@ -28,14 +29,20 @@ public class FamilyRequestService extends WebServiceGatewaySupport{
 		 CargaFamiliasExecuteResponse response = (CargaFamiliasExecuteResponse) getWebServiceTemplate()
 		        .marshalSendAndReceive("http://201.217.140.35/agile/acargafamilias.aspx", request);
 		 
-		 List<Family> familyList = ConvertModels.convetToFamilyEntityList(response.getSdtlineassubfamilias().getSdtLineasSubFliasSdtLineaSubFlias());
+		 List<Family> familyList = ConvertModels.convetToFamilyEntityList(response.getSdtlineassubflias().getSdtLineasSubFliasSdtLineaSubFlias());
 		 return familyList;
 	}
 	 
 	 /*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
 		public void storeFamilies() {
-			List<Family> familyList = getFamilies();			
-			familyClient.saveAll(familyList);		
+			boolean perfect = true;
+			List<Family> familyList = getFamilies();
+			
+			for (Family family : familyList) {			
+				if(familyClient.save(family) == null)
+					perfect = false;			
+			}		
+			// Logear si todo fue almacenado correctamente	
 		}
 	 	
 	 

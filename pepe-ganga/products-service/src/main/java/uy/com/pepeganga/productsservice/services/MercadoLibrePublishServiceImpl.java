@@ -5,22 +5,22 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import uy.com.pepeganga.business.common.utils.UtilsClass.MarketplaceType;
-import uy.com.pepeganga.business.common.utils.UtilsClass.States;
+import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
+import uy.com.pepeganga.business.common.utils.enums.UtilsClass.States;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.repository.MercadoLibrePublishRepository;
 
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService  {
-
+	/*
 	@Autowired
 	MercadoLibrePublishRepository mlPublishRepo;
 	
-	public MarketplaceDetails getDetailsMarketplaces(String idUser) {	
-		
+	public MarketplaceDetails getDetailsMarketplaces(Integer idUser) {	
+	
 		MarketplaceDetails marketplaces = new MarketplaceDetails();
 		
-		List<String> states = mlPublishRepo.findAllStatesByUser(idUser);
+		List<String> states = mlPublishRepo.findAllStatesByIdUser(idUser);
 		int nopublish = 0;
 		int publish = 0;
 		int pause = 0;
@@ -43,5 +43,5 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		marketplaces.setProdWithoutPublish(nopublish);
 		marketplaces.setProdTotal(total);
 		return marketplaces;
-	}
+	}*/
 }

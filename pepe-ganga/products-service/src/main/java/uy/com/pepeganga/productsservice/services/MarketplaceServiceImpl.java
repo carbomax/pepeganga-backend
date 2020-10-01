@@ -1,18 +1,24 @@
 package uy.com.pepeganga.productsservice.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.Marketplace;
+import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.repository.MarketplaceRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class MarketplaceServiceImpl implements MarketplaceService {
 
+	@Autowired
+	MercadoLibrePublishService mercadoLibreService;
+	
     private final MarketplaceRepository marketplaceRepository;
 
     public MarketplaceServiceImpl(MarketplaceRepository marketplaceRepository) {
@@ -55,4 +61,10 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         } else marketplaceRepository.deleteById(id);
 
     }
+ /*   
+    public List<MarketplaceDetails> getListDetailMarketplacesByUser(Integer idUser){
+    	List<MarketplaceDetails> marketplacesDetailList = new ArrayList<MarketplaceDetails>();
+    	marketplacesDetailList.add(mercadoLibreService.getDetailsMarketplaces(idUser));
+    	return marketplacesDetailList;
+    }*/
 }
