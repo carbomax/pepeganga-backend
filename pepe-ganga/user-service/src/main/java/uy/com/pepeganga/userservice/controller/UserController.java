@@ -46,5 +46,8 @@ public class UserController {
 		return new ResponseEntity<>( HttpStatus.NO_CONTENT);
 	}
 	
-	
+	@GetMapping("/users/find-by-email")
+	public ResponseEntity<User> findUserByEmail(@RequestParam String email){
+			return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
+	}
 }
