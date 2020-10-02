@@ -25,10 +25,14 @@ zuul:
       path: /pepeganga/user/**
     products:
         service-id: products-service
-        path: /pepeganga/products/**      
+        path: /pepeganga/products/**
+    oauth:
+        service-id: oauth-service
+        path: /pepeganga/security/**
+        sensitive-headers: Cookie,Set-Cookie
     consuming:
         service-id: consuming-store-service
-        path: /pepeganga/consuming/**     
+        path: /pepeganga/consuming/**
 
 hystrix:
    command:

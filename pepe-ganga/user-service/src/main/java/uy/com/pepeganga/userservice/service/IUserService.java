@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface IUserService {
 
-	
+	User findByEmail(String email);
+
 	List<User> getAllUsers();
 	
 	Profile saveUserProfile(Profile profile);
