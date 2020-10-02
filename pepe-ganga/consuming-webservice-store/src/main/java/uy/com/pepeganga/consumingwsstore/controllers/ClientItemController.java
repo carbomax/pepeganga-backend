@@ -20,9 +20,9 @@ public class ClientItemController {
 		items.storeItems();
 	}
 	
-	@GetMapping("/storeItemsTemporally")
-	public void storeItemsTemporally() {
-		items.storeItemsTemporally();
+	@GetMapping("/store/deleteitems")
+	public void deleteItem() {
+		items.deleteItem();
 	}
 	
 }

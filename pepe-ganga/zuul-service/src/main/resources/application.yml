@@ -31,6 +31,9 @@ zuul:
         path: /pepeganga/security/**
         sensitive-headers: Cookie,Set-Cookie
 
+    consuming:
+        service-id: consuming-store-service
+        path: /pepeganga/consuming/**
 
 hystrix:
    command:
@@ -38,9 +41,7 @@ hystrix:
         execution:
           isolation: 
             thread:
-              timeoutInMilliseconds: 55000
-
-
+              timeoutInMilliseconds: 350000
 ribbon:
    ConnectTimeout: 100000
    ReadTimeout: 150000

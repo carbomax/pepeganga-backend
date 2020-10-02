@@ -9,10 +9,10 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtLineasSubFliasSdtLineaSubFlias;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtSubFliasSdtSubFlia;
-import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebParcialArticulo;
+import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPaginaArticulo;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtArtFotosSdtArtFoto;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtCategoriasSdtCategoria;
-import uy.com.pepeganga.consumingwsstore.wsdl.marcas.SDTMarcasSDTMarca;
+import uy.com.pepeganga.consumingwsstore.wsdl.marcas.SdtMarcasSdtMarca;
 
 public class ConvertModels {
 
@@ -35,12 +35,11 @@ public class ConvertModels {
 	private static ItemGrid itemGridResp;
 	
 	
-	public static Item convetToItemEntity(SDTArticulosWebParcialArticulo artResp) {
-		itemResp = null;		
+	public static Item convetToItemEntity(SDTArticulosWebPaginaArticulo artResp) {
+		itemResp = new Item();		
 		
 		if (!isNull(artResp))			
-		 {
-			itemResp = new Item();
+		 {				
 			itemResp.setSku(artResp.getId());
 			itemResp.setArtDescripCatalogo(artResp.getArtDescripCatalogo());
 			itemResp.setArtMedida(artResp.getArtMedida());
@@ -64,27 +63,46 @@ public class ConvertModels {
 			itemResp.setCapacidad(artResp.getCapacidad());
 			itemResp.setTalle(artResp.getTalle());			
 			
-			itemResp.setFamily(createFamilyInstance(artResp.getFamiliaId()));			
-			itemResp.setBrand(createBrandInstance(artResp.getMarcaId()));
+			if(artResp.getFamiliaId() != 0 )
+				itemResp.setFamily(createFamilyInstance(artResp.getFamiliaId()));	
+			if(artResp.getMarcaId() != 0)
+				itemResp.setBrand(createBrandInstance(artResp.getMarcaId()));			
 			
-			for (SdtCategoriasSdtCategoria variable : artResp.getSdtCategorias().getSdtCategoriasSdtCategoria())
-				if(variable != null)
-					itemResp.getCategories().add(convetToCategoryEntity(variable));	
-			
-			for (SdtArtFotosSdtArtFoto variable : artResp.getSdtArtFotos().getSdtArtFotosSdtArtFoto())
-				itemResp.getImage().add(createImageInstanceWithoutId(variable.getFoto()));
-			
+			if(artResp.getSdtCategorias() != null)
+			{
+				List<Category> categoryTempList = new ArrayList<Category>();
+				for (SdtCategoriasSdtCategoria variable : artResp.getSdtCategorias().getSdtCategoriasSdtCategoria()) {
+					if(variable != null)				
+						categoryTempList.add(convetToCategoryEntityItem(variable));
+				}		
+				itemResp.setCategories(categoryTempList);
+			}
+				
+			if(artResp.getSdtArtFotos() != null)
+			{
+				int count = 1;
+				String photo = "";
+				for (SdtArtFotosSdtArtFoto variable : artResp.getSdtArtFotos().getSdtArtFotosSdtArtFoto()) {
+					if(variable != null)
+					{
+						photo += String.valueOf(count) + "$" + variable.getFoto() + "%";
+						count++;
+					}
+				}
+				byte[] byteArrray = photo.getBytes();
+				itemResp.setImages(byteArrray);
+			}
 		}
 		return itemResp;
 	}
 
-	public static List<Item> convetToItemEntityList(List<SDTArticulosWebParcialArticulo> artList)
+	public static List<Item> convetToItemEntityList(List<SDTArticulosWebPaginaArticulo> artList)
 	{
 		List<Item> itemList = new ArrayList<Item>();
 		
 		if(!artList.isEmpty())
 		{
-			for (SDTArticulosWebParcialArticulo variable : artList) {
+			for (SDTArticulosWebPaginaArticulo variable : artList) {
 				if(variable != null)
 					itemList.add(convetToItemEntity(variable));
 			}
@@ -92,12 +110,11 @@ public class ConvertModels {
 		return itemList;
 	}
 	
-	public static ItemGrid convetToItemGrid(SDTArticulosWebParcialArticulo artResp) {
-		itemGridResp = null;		
+	public static ItemGrid convetToItemGrid(SDTArticulosWebPaginaArticulo artResp) {
+		itemGridResp = new ItemGrid();		
 		
 		if (!isNull(artResp))			
-		 {
-			itemGridResp = new ItemGrid();
+		 {			
 			itemGridResp.setSku(artResp.getId());
 			itemGridResp.setPriceUYU(artResp.getPrecioPesos());
 			itemGridResp.setPriceUSD(artResp.getPrecioDolares());			
@@ -111,13 +128,13 @@ public class ConvertModels {
 		return itemGridResp;
 	}
 	
-	public static List<ItemGrid> convetToItemGridList(List<SDTArticulosWebParcialArticulo> artList)
+	public static List<ItemGrid> convetToItemGridList(List<SDTArticulosWebPaginaArticulo> artList)
 	{
 		List<ItemGrid> itemGridList = new ArrayList<ItemGrid>();
 		
 		if(!artList.isEmpty())
 		{
-			for (SDTArticulosWebParcialArticulo variable : artList)
+			for (SDTArticulosWebPaginaArticulo variable : artList)
 				itemGridList.add(convetToItemGrid(variable));
 		}
 		return itemGridList;
@@ -125,24 +142,22 @@ public class ConvertModels {
 		
 	public static Category convetToCategoryEntity(uy.com.pepeganga.consumingwsstore.wsdl.categories.SdtCategoriasSdtCategoria category) {
 		
-		categoryResp = null;		
+		categoryResp = new Category();		
 		
 		if (!isNull(category))			
-		 {
-			categoryResp = new Category();
+		 {			
 			categoryResp.setId(category.getCategoriaId());
 			categoryResp.setDescription(category.getCategoriaDescrip());
 		 }
 		 return categoryResp;
 	}
 	
-	public static Category convetToCategoryEntity(SdtCategoriasSdtCategoria category) {
+	public static Category convetToCategoryEntityItem(SdtCategoriasSdtCategoria category) {
 		
-		categoryResp = null;		
+		categoryResp = new Category();		
 		
 		if (!isNull(category))			
-		 {
-			categoryResp = new Category();
+		 {			
 			categoryResp.setId(category.getCategoriaId());
 			categoryResp.setDescription(category.getCategoriaDescrip());
 		 }
@@ -164,11 +179,10 @@ public class ConvertModels {
 	
 	public static Family convetToFamilyEntity(SdtLineasSubFliasSdtLineaSubFlias family) {
 		
-		familyResp = null;		
+		familyResp = new Family();		
 		
 		if (!isNull(family))			
-		 {
-			familyResp = new Family();
+		 {			
 			familyResp.setId(family.getLinId());
 			familyResp.setDescription(family.getLinDsc());
 			if(family.getSdtSubFlias() != null)
@@ -192,11 +206,10 @@ public class ConvertModels {
 	
 	public static SubFamily convetToSubFamilyEntity(SdtSubFliasSdtSubFlia subfamily) {
 		
-		subfamilyResp = null;		
+		subfamilyResp = new SubFamily();		
 		
 		if (!isNull(subfamily))			
-		 {
-			subfamilyResp = new SubFamily();
+		 {		
 			subfamilyResp.setId(subfamily.getSubFliaId());
 			subfamilyResp.setDescription(subfamily.getSubFliaDsc());
 		 }
@@ -216,13 +229,12 @@ public class ConvertModels {
 		return familyList;
 	}
 	
-	public static Brand convertToBrandEntity(SDTMarcasSDTMarca brand) {
+	public static Brand convertToBrandEntity(SdtMarcasSdtMarca brand) {
 	
-		brandResp = null;		
+		brandResp = new Brand();		
 		
 		if (!isNull(brand))			
-		 {
-			brandResp = new Brand();
+		 {			
 			brandResp.setId(brand.getMarcaId());
 			brandResp.setDescription(brand.getMarcaDescrip());
 			brandResp.setMarcaInUse(brand.getMarcaEnUso());
@@ -230,13 +242,13 @@ public class ConvertModels {
 		 return brandResp;
 	}
 	
-	public static List<Brand> convetToBrandEntityList(List<SDTMarcasSDTMarca> brandList){
+	public static List<Brand> convetToBrandEntityList(List<SdtMarcasSdtMarca> brandList){
 		
 		List<Brand> responseList = new ArrayList<Brand>();
 		
 		if(!brandList.isEmpty())
 		{
-			for (SDTMarcasSDTMarca variable : brandList)
+			for (SdtMarcasSdtMarca variable : brandList)
 				if(variable != null)
 					responseList.add(convertToBrandEntity(variable));
 		}
@@ -257,9 +269,4 @@ public class ConvertModels {
 		return brand;
 	}
 	
-	public final static Image createImageInstanceWithoutId(String photo) {
-		Image image = new Image();
-		image.setPhoto(photo);
-		return image;
-	}
 }

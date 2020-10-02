@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.consumingwsstore.repositories.ICategoryRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.categories.CargaZafrasExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.categories.CargaZafrasExecuteResponse;
@@ -30,7 +30,13 @@ public class CategoryRequestService extends WebServiceGatewaySupport {
 	 
 	 /*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
 		public void storeCategories() {
-			List<Category> categoryList = getCategories();		
-			categoryClient.saveAll(categoryList);		
+			boolean perfect = true;
+			List<Category> categoryList = getCategories();
+			
+			for (Category category : categoryList) {			
+				if(categoryClient.save(category) == null)
+					perfect = false;			
+			}		
+			// Logear si todo fue almacenado correctamente
 		}
 }

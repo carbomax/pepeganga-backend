@@ -2,7 +2,7 @@ package uy.com.pepeganga.productsservice.gridmodels;
 
 import uy.com.pepeganga.business.common.entities.Category;
 import uy.com.pepeganga.business.common.entities.Family;
-import uy.com.pepeganga.business.common.entities.Image;
+import uy.com.pepeganga.business.common.models.Image;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,22 +1,24 @@
 package uy.com.pepeganga.productsservice.services;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import uy.com.pepeganga.business.common.entities.Item;
-import uy.com.pepeganga.productsservice.gridmodels.ItemGrid;
-import uy.com.pepeganga.productsservice.gridmodels.PageItemGrid;
-import uy.com.pepeganga.productsservice.repository.ProductsRepository;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import uy.com.pepeganga.business.common.entities.Item;
+import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
+import uy.com.pepeganga.productsservice.gridmodels.ItemGrid;
+import uy.com.pepeganga.productsservice.gridmodels.PageItemGrid;
+import uy.com.pepeganga.productsservice.repository.ProductsRepository;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -62,8 +64,8 @@ public class ItemServiceImpl implements ItemService {
 		List<ItemGrid> itemsGrid = new ArrayList<>();
 		result.getContent().forEach(p -> {
 			ItemGrid itemGrid = new ItemGrid();
-			itemGrid.setCategories(p.getCategories());
-			itemGrid.setImages(p.getImage());
+			itemGrid.setCategories(p.getCategories());			
+			itemGrid.setImages(ConversionClass.separateImages(p.getImages()));
 			itemGrid.setName(p.getArtDescripCatalogo());
 			itemGrid.setPriceUSD(p.getPrecioDolares());
 			itemGrid.setPriceUYU(p.getPrecioPesos());
