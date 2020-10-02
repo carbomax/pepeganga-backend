@@ -61,10 +61,10 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         } else marketplaceRepository.deleteById(id);
 
     }
- /*   
+   
     public List<MarketplaceDetails> getListDetailMarketplacesByUser(Integer idUser){
-    	List<MarketplaceDetails> marketplacesDetailList = new ArrayList<MarketplaceDetails>();
+    	List<MarketplaceDetails> marketplacesDetailList = new ArrayList<>();
     	marketplacesDetailList.add(mercadoLibreService.getDetailsMarketplaces(idUser));
     	return marketplacesDetailList;
-    }*/
+    }
 }
