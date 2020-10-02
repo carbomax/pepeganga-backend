@@ -25,8 +25,12 @@ zuul:
       path: /pepeganga/user/**
     products:
         service-id: products-service
-        path: /pepeganga/products/**      
-        
+        path: /pepeganga/products/**
+    oauth:
+        service-id: oauth-service
+        path: /pepeganga/security/**
+        sensitive-headers: Cookie,Set-Cookie
+
 
 hystrix:
    command:
@@ -34,7 +38,9 @@ hystrix:
         execution:
           isolation: 
             thread:
-              timeoutInMilliseconds: 350000
+              timeoutInMilliseconds: 55000
+
+
 ribbon:
    ConnectTimeout: 100000
    ReadTimeout: 150000
