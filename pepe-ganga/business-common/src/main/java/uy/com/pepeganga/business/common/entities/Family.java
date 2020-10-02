@@ -21,7 +21,7 @@ public class Family implements Serializable {
 	@Column(name="description")
 	private String description;	
 
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name = "family_id")	
 	private List<SubFamily> subfamilies;
 	
