@@ -80,17 +80,15 @@ public class ConvertModels {
 				
 			if(artResp.getSdtArtFotos() != null)
 			{
-				int count = 1;
+				
 				StringBuilder photo = new StringBuilder();
 				for (SdtArtFotosSdtArtFoto variable : artResp.getSdtArtFotos().getSdtArtFotosSdtArtFoto()) {
 					if(variable != null)
 					{
-						photo.append(count).append("¿¿").append(variable.getFoto()).append("%%");
-						count++;
+						photo.append(variable.getFoto().trim()).append(" ");
 					}
 				}
-				byte[] byteArray = photo.toString().getBytes();
-				itemResp.setImages(byteArray);
+				itemResp.setImages(photo.toString().getBytes());
 			}
 		}
 		return itemResp;

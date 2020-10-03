@@ -12,6 +12,6 @@ public class CacheConfig {
 
     @Bean
     public CacheManager cacheManager(){
-        return new ConcurrentMapCacheManager("products-storage", "marketplaces");
+        return new ConcurrentMapCacheManager("storage", "marketplaces");
     }
 }
