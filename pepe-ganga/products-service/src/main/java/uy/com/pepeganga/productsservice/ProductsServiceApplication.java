@@ -19,9 +19,9 @@ public class ProductsServiceApplication {
 		SpringApplication.run(ProductsServiceApplication.class, args);
 	}
 
-	@Scheduled(fixedRate = 3600, initialDelay = 5000)
-	@CacheEvict(value = "products-storage", allEntries = true)
+	@Scheduled(fixedRate = 36000, initialDelay = 5000)
+	@CacheEvict(value = "storage", allEntries = true)
 	public void clear(){
-		System.out.println("Borrando cache");
+		System.out.println("deleting temporal cache");
 	}
 }
