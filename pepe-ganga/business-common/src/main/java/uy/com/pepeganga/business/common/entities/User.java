@@ -27,6 +27,7 @@ public class User implements Serializable {
 	@PrePersist
 	public void prePersist(){
 		this.createAt = new Date();
+		this.enabled = false;
 	}
 
     @ManyToMany(fetch = FetchType.LAZY)
