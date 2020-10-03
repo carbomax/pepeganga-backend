@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 
 @Repository
-public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibrePublications, Short> { 
-	/*
-	@Query("select ml.states from mercadolibrepublications ml where ml.user_id = ?1")
-	List<String> findAllStatesByIdUser(Integer idUser);
-*/
+public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibrePublications, Object> { 
+	
+	@Query(value = "select ml.states from mercadolibrepublications ml where ml.user_id = ?1", nativeQuery = true)
+	List<String> findAllStatesByIdUser(int user_id);
+
 }

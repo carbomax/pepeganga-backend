@@ -48,9 +48,9 @@ public class MarketplaceController {
         marketplaceService.deleteMarketplace(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-    /*
+    
     @GetMapping("/marketplaces-details/{idUser}")
-    public ResponseEntity<List<MarketplaceDetails>>getDetailsMarketplaces(@RequestParam Integer idUser){
+    public ResponseEntity<List<MarketplaceDetails>>getDetailsMarketplaces(@PathVariable("idUser") Integer idUser){
     	return new ResponseEntity<>(marketplaceService.getListDetailMarketplacesByUser(idUser), HttpStatus.OK);
-    }*/
+    }
 }
