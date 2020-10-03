@@ -11,6 +11,8 @@ import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.userservice.service.IUserService;
 
+import javax.ws.rs.PathParam;
+
 
 @RestController
 @RequestMapping("/api")
@@ -49,5 +51,10 @@ public class UserController {
 	@GetMapping("/users/find-by-email")
 	public ResponseEntity<User> findUserByEmail(@RequestParam String email){
 			return new ResponseEntity<>(userService.findByEmail(email), HttpStatus.OK);
+	}
+
+	@PutMapping("/users/enable-or-disable/{id}")
+	public ResponseEntity<User> findUserByEmail(@PathVariable Integer id, @RequestParam boolean enable){
+		return new ResponseEntity<>(userService.enableOrDisable(id, enable), HttpStatus.OK);
 	}
 }

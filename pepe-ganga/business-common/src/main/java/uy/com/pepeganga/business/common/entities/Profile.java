@@ -19,6 +19,14 @@ public class Profile implements Serializable {
 
 	private String image;
 
+	private String rut;
+
+	private String address;
+
+	private String store;
+
+	private String businessName;
+
 	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private User user;
@@ -61,6 +69,38 @@ public class Profile implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getRut() {
+		return rut;
+	}
+
+	public void setRut(String rut) {
+		this.rut = rut;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getStore() {
+		return store;
+	}
+
+	public void setStore(String store) {
+		this.store = store;
+	}
+
+	public String getBusinessName() {
+		return businessName;
+	}
+
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
 	}
 
 	@Override
