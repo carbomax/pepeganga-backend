@@ -69,14 +69,11 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 	/*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
 	public void storeItems() {		
 		
-		List<Item> itemList = getItems();			
-		
-		for ( Item item : itemList) {		
-				if(item != null && "S".equalsIgnoreCase(item.getArtVendibleMercadoLibre().trim())) {
-					itemClient.save(item);
-					logger.info("Item added successfully {}", item.getSku());
-				}							
-		}
+		List<Item> itemList = getItems();	
+		itemList.removeIf(item -> item == null || !"S".equalsIgnoreCase(item.getArtVendibleMercadoLibre().trim()));
+		itemClient.saveAll(itemList);
+		logger.info("Items saved successfully: {}", itemList.size());
+					
 		
 	}	
 	
