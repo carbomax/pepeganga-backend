@@ -14,14 +14,14 @@ public class ConversionClass {
 
         List<Image> images = new ArrayList<>();
         String imageS = new String(image);
-        String[] imageList = imageS.split("%%");
-        for (String item : imageList) {
-            Image ima = new Image();
-            String[] parts = item.split("¿¿");
-            ima.setId(Integer.decode(parts[0]));
-            ima.setPhotos(parts[1]);
-            images.add(ima);
-        }
+        String[] imageList = imageS.split(" ");
+        
+        for (int i = 0; i < imageList.length; i++) {
+			Image img = new Image();
+			img.setId(i + 1);
+			img.setPhotos(imageList[i]);
+			images.add(img);
+		}
         return images;
     }
 

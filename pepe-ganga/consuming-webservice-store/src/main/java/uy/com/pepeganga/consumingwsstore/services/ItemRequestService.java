@@ -3,6 +3,8 @@ package uy.com.pepeganga.consumingwsstore.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
@@ -16,6 +18,11 @@ import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPagina;
 
 
 public class ItemRequestService extends WebServiceGatewaySupport{
+	
+	
+	
+	private static final Logger logger = LoggerFactory.getLogger(ItemRequestService.class);
+
 	
 	@Autowired
 	ConsumingWebserviceStoreApplication p;
@@ -62,17 +69,12 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 	/*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
 	public void storeItems() {		
 		
-		boolean perfect = true;
-		List<Item> itemList = getItems();			
+		List<Item> itemList = getItems();	
+		itemList.removeIf(item -> item == null || !"S".equalsIgnoreCase(item.getArtVendibleMercadoLibre().trim()));
+		itemClient.saveAll(itemList);
+		logger.info("Items saved successfully: {}", itemList.size());
+					
 		
-			for (Item item : itemList) {
-				try {
-					if(itemClient.save(item) == null)
-						perfect = false;
-				}
-				catch(Exception e) { continue;}
-			}		
-			// Logear el resultado de almacenar		
 	}	
 	
 }
