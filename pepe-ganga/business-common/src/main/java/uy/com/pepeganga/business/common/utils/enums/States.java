@@ -1,14 +1,14 @@
 package uy.com.pepeganga.business.common.utils.enums;
 
 public enum States {
-	 PUBLISHED("Publicado", 1),
-	    NOPUBLISHED("No Publicado", 2),
-	    PAUSED("Pausado", 3);
+	 PUBLISHED("Publicado", (short) 1),
+	    NOPUBLISHED("No Publicado", (short) 2),
+	    PAUSED("Pausado", (short) 3);
 
 		private final String value;
-	    private final int id;
+	    private final short id;
 		
-		States(String value, int id) {
+		States(String value, short id) {
 			this.value = value;
 	        this.id = id;
 		}	
@@ -17,7 +17,7 @@ public enum States {
 		        return value;
 		    }
 
-		    public int getId() {
+		    public short getId() {
 		        return id;
 		    }
 }

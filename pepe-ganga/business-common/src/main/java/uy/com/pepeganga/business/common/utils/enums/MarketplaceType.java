@@ -2,14 +2,14 @@ package uy.com.pepeganga.business.common.utils.enums;
 
 public enum MarketplaceType {
 
-   MERCADOLIBRE("Mercado Libre", 1),
-    AMAZON("Amazon", 2);
+   MERCADOLIBRE("Mercado Libre", (short) 1),
+    AMAZON("Amazon", (short) 2);
     
 
     private final String value;
-    private final int id;
+    private final short id;
 
-    MarketplaceType(String value, int id) {
+    MarketplaceType(String value, short id) {
         this.value = value;
         this.id = id;
     }
@@ -18,7 +18,7 @@ public enum MarketplaceType {
         return value;
     }
 
-    public int getId() {
+    public short getId() {
         return id;
     }
 }

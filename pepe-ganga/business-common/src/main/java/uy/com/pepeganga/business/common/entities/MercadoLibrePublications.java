@@ -38,17 +38,15 @@ public class MercadoLibrePublications implements Serializable {
 	private String description;
 		
 	@Column(name="states")
-	private String states;
+	private short states;
 	
 	@Column(name="price")
 	private double price;
-	
-	@Column(name="sendsEnabled")
-	private boolean sendsEnabled;
+
 	
 	@Column(name="images", columnDefinition = "blob", length = 10000)
-	private String images;
-	
+	private byte[] images;
+		
 	public Item getItem() {
 		return item;
 	}
@@ -67,10 +65,10 @@ public class MercadoLibrePublications implements Serializable {
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}
-	public String getStates() {
+	public short getStates() {
 		return states;
 	}
-	public void setStates(String states) {
+	public void setStates(short states) {
 		this.states = states;
 	}
 	public double getPrice() {
@@ -79,16 +77,11 @@ public class MercadoLibrePublications implements Serializable {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	public boolean isSendsEnabled() {
-		return sendsEnabled;
-	}
-	public void setSendsEnabled(boolean sendsEnabled) {
-		this.sendsEnabled = sendsEnabled;
-	}
-	public String getImages() {
+	
+	public byte[] getImages() {
 		return images;
 	}
-	public void setImages(String images) {
+	public void setImages(byte[] images) {
 		this.images = images;
 	}
 	public User getUser() {
