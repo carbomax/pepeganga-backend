@@ -2,7 +2,7 @@ package uy.com.pepeganga.business.common.utils.enums;
 
 public enum MarketplaceType {
 
-   MERCADOLIBRE("Mercado Libre", (short) 1),
+   MERCADOLIBRE("Mercado Libre UY", (short) 1),
     AMAZON("Amazon", (short) 2);
     
 

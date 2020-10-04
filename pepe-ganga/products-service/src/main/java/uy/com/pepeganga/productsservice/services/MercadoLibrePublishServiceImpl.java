@@ -17,6 +17,7 @@ import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.repository.MercadoLibrePublishRepository;
 import uy.com.pepeganga.productsservice.repository.ProductsRepository;
+import uy.com.pepeganga.productsservice.repository.UserRepository;
 
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService  {
@@ -26,6 +27,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	
 	@Autowired
 	ProductsRepository productsRepository;
+	
+	@Autowired
+	ItemService itemService;
+	
+	@Autowired
+	UserRepository userRepo;
 	
 	private Item item;
 	private MeliPublicationsPK pk;
@@ -61,12 +68,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	}
 
 	//Method to store the products to publish by user
-	public SelectedProducResponse storeProductToPublish(Integer idUser, MarketplaceType marketplace, List<String> products)
+	public SelectedProducResponse storeProductToPublish(Integer idUser, Short marketplace, List<String> products)
 	{			
-		user = new User();
-		user.setId(idUser);		
+		user = userRepo.findById(idUser).get();		
+		if(marketplace == MarketplaceType.MERCADOLIBRE.getId())
+			itemService = new ItemServiceImpl(productsRepository);		
 		
-		ItemService itemService = new ItemServiceImpl(productsRepository);		
 		SelectedProducResponse select = new SelectedProducResponse();
 		List<String> prodExists = new ArrayList<>();
 		List<MercadoLibrePublications> prodToStore = new ArrayList<>();
@@ -89,8 +96,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				if(product.isPresent())
 				{
 					mlp = new MercadoLibrePublications();
-					mlp.setItem(item);
-					mlp.setUser(user);
+					mlp.setItem((Item)product.get());
+					mlp.setUser((User)user);
 					mlp.setProductName(product.get().getArtDescripCatalogo());
 					mlp.setDescription(product.get().getArtDescripML());
 					mlp.setPrice(product.get().getPrecioPesos());
@@ -110,7 +117,10 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}		
 		
 		if(!prodToStore.isEmpty())
-			mlPublishRepo.saveAll(prodToStore);		
+			for (MercadoLibrePublications mercadoLibrePublications : prodToStore) {
+				mlPublishRepo.save(mercadoLibrePublications);	
+			}
+				
 		
 		return select;
 	}

@@ -24,7 +24,6 @@ public class MeliPublicationsPK implements Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -54,6 +53,7 @@ public class MeliPublicationsPK implements Serializable {
 			return false;
 		return true;
 	}
+	
 	
 	
 }

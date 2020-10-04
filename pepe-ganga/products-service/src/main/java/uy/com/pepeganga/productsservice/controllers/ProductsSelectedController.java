@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.services.MercadoLibrePublishService;
 
@@ -22,8 +21,8 @@ public class ProductsSelectedController {
 	MercadoLibrePublishService mlp_services;
 	
 	@GetMapping("/select-myproducts")
-	public ResponseEntity<SelectedProducResponse> storeMyProducts(@RequestParam Integer idUser, @RequestParam MarketplaceType marketplace,
-			@RequestParam List<String> product) {		
-		return new ResponseEntity<>(mlp_services.storeProductToPublish(idUser, marketplace, product), HttpStatus.CREATED);
-	}
+	public ResponseEntity<SelectedProducResponse> storeMyProducts(@RequestParam Integer idUser, @RequestParam Short marketplace,
+			@RequestParam List<String> products) {		
+		return new ResponseEntity<>(mlp_services.storeProductToPublish(idUser, marketplace, products), HttpStatus.CREATED);
+	}	
 }
