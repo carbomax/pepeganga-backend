@@ -1,7 +1,5 @@
 package uy.com.pepeganga.userservice.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -77,6 +75,7 @@ public class UserService implements IUserService {
             profileToUpdatedDb.get().setRut(profile.getRut());
             profileToUpdatedDb.get().setStore(profile.getStore());
             profileToUpdatedDb.get().setAddress(profile.getAddress());
+            profileToUpdatedDb.get().setMargins(profile.getMargins());
             profileToUpdatedDb.get().setUser(userUpdated);
             return profileRepository.save(profileToUpdatedDb.get());
         } else {
