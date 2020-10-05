@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import uy.com.pepeganga.business.common.entities.Item;
-import uy.com.pepeganga.business.common.entities.MeliPublicationsPK;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
