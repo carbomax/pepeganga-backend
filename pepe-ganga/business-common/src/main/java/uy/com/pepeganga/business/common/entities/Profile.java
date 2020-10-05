@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Table(name = "profile")
@@ -26,6 +27,10 @@ public class Profile implements Serializable {
 	private String store;
 
 	private String businessName;
+
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "profile_id")
+	private List<Margin> margins;
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -101,6 +106,14 @@ public class Profile implements Serializable {
 
 	public void setBusinessName(String businessName) {
 		this.businessName = businessName;
+	}
+
+	public List<Margin> getMargins() {
+		return margins;
+	}
+
+	public void setMargins(List<Margin> margins) {
+		this.margins = margins;
 	}
 
 	@Override
