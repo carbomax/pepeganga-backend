@@ -11,10 +11,16 @@ spring:
     username: admin
     password: 123456789.*dhl  
     url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
-
   jpa:
     hibernate:
       ddl-auto: update
+
+
+
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
 
 logging:
   level:
@@ -29,6 +35,3 @@ eureka:
     service-url:
         defaultZone: http://localhost:8761/eureka
         
-ribbon:
-  ConnectTimeout: 3000   
-  ReadTimeout: 10000   
