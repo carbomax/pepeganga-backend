@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -11,7 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@IdClass(MeliPublicationsPK.class)
+//@IdClass(MeliPublicationsPK.class)
 @Table(name = "mercadolibrepublications")
 public class MercadoLibrePublications implements Serializable {
 	
@@ -20,15 +23,16 @@ public class MercadoLibrePublications implements Serializable {
 	 */
 	private static final long serialVersionUID = -5478498777102510035L;	
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)	
+	private Integer id;
 	
-	@Id
-	@ManyToOne	
-	@JoinColumn(name="item_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="item_id", nullable = false)
 	private Item item;
-		
-	@Id
-	@ManyToOne
-	@JoinColumn(name="user_id")
+			
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="user_id", nullable = false)
 	private User user;
 	
 	@Column(name="productName")
@@ -47,6 +51,13 @@ public class MercadoLibrePublications implements Serializable {
 	@Column(name="images", columnDefinition = "blob", length = 10000)
 	private byte[] images;
 		
+	
+	public Integer getId() {
+		return id;
+	}
+	public void setId(Integer id) {
+		this.id = id;
+	}
 	public Item getItem() {
 		return item;
 	}

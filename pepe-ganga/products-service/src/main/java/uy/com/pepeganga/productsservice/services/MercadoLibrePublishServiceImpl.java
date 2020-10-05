@@ -11,6 +11,7 @@ import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.business.common.entities.MeliPublicationsPK;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.User;
+import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
@@ -35,7 +36,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	UserRepository userRepo;
 	
 	private Item item;
-	private MeliPublicationsPK pk;
+	private MercadoLibrePublications meliPublication;
 	private MercadoLibrePublications mlp;
 	User user;
 	
@@ -69,8 +70,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	//Method to store the products to publish by user
 	public SelectedProducResponse storeProductToPublish(Integer idUser, Short marketplace, List<String> products)
-	{			
-		user = userRepo.findById(idUser).get();		
+	{				
+		user = new User();
+		user.setId(idUser);
 		if(marketplace == MarketplaceType.MERCADOLIBRE.getId())
 			itemService = new ItemServiceImpl(productsRepository);		
 		
@@ -82,11 +84,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			item = new Item();
 			item.setSku(sku);
 			
-			pk = new MeliPublicationsPK();
-			pk.setItem(item);
-			pk.setUser(user);	
+			meliPublication = new MercadoLibrePublications();
+			meliPublication.setUser(user);
+			meliPublication.setItem(item);
+			Integer countItem = mlPublishRepo.cantProductSelectedByUser(idUser, sku);
 			
-			if(mlPublishRepo.existsById(pk)) 
+			if(countItem > 0) 
 			{
 				prodExists.add(sku);		
 			}
@@ -109,11 +112,14 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}		
 		
 		if(!prodExists.isEmpty()) {
-			select.setExists(true);
 			select.setExistingProducts(prodExists);
+			if(products.size() == prodExists.size())			
+				select.setCodeResult(ActionResult.BAD);
+			else
+				select.setCodeResult(ActionResult.PARTIAL);	
 		}
 		else {
-			select.setExists(false);
+			select.setCodeResult(ActionResult.DONE);
 		}		
 		
 		if(!prodToStore.isEmpty())

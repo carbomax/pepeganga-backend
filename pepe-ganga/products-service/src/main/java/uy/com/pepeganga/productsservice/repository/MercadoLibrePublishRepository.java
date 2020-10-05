@@ -15,5 +15,8 @@ public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibr
 	List<Short> findAllStatesByIdUser(int user_id);
 
 	@Query(value = "select ml.item_id from mercadolibrepublications ml where ml.user_id = ?1 and ml.item_id = ?2", nativeQuery = true)
-	List<String> findAllProductSelectedByUser(int user_id, String item_id);
+	String findProductSelectedByUser(int user_id, String item_id);
+
+	@Query(value = "select COUNT(ml.item_id) from mercadolibrepublications ml where ml.user_id = ?1 and ml.item_id = ?2", nativeQuery = true)
+	Integer cantProductSelectedByUser(int user_id, String item_id);
 }

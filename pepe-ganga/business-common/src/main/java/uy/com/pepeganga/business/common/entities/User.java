@@ -1,9 +1,20 @@
 package uy.com.pepeganga.business.common.entities;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name ="users")
@@ -13,11 +24,13 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Column(unique = true)
+	@Column(name = "email")
 	private String email;
 
+	@Column(name = "password")
 	private String password;
 
+	@Column(name = "enabled")
 	private Boolean enabled;
 
 	@Column(name = "create_at")
