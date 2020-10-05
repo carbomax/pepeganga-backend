@@ -9,7 +9,7 @@ public interface MercadoLibrePublishService {
 	
 	MarketplaceDetails getDetailsMarketplaces(Integer idUser);
 	
-	SelectedProducResponse storeProductToPublish(Integer idUser, Short marketplace, List<String> product);
+	SelectedProducResponse storeProductToPublish(Integer idProfile, Short marketplace, List<String> product);
 		
 	
 	

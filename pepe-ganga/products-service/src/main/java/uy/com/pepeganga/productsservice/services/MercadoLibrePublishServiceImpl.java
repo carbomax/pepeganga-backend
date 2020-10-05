@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
-import uy.com.pepeganga.business.common.entities.User;
+import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
@@ -37,7 +37,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	private Item item;
 	private MercadoLibrePublications meliPublication;
 	private MercadoLibrePublications mlp;
-	User user;
+	Profile profile;
 	
 	//Method to fill the details of marketplace card
 	public MarketplaceDetails getDetailsMarketplaces(Integer idUser) {	
@@ -68,10 +68,10 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	}
 
 	//Method to store the products to publish by user
-	public SelectedProducResponse storeProductToPublish(Integer idUser, Short marketplace, List<String> products)
+	public SelectedProducResponse storeProductToPublish(Integer idProfile, Short marketplace, List<String> products)
 	{				
-		user = new User();
-		user.setId(idUser);
+		profile = new Profile();
+		profile.setId(idProfile);
 		if(marketplace == MarketplaceType.MERCADOLIBRE.getId())
 			itemService = new ItemServiceImpl(productsRepository);		
 		
@@ -84,9 +84,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			item.setSku(sku);
 			
 			meliPublication = new MercadoLibrePublications();
-			meliPublication.setUser(user);
+			meliPublication.setProfile(profile);
 			meliPublication.setItem(item);
-			Integer countItem = mlPublishRepo.cantProductSelectedByUser(idUser, sku);
+			Integer countItem = mlPublishRepo.cantProductSelectedByProfile(idProfile, sku);
 			
 			if(countItem > 0) 
 			{
@@ -99,7 +99,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				{
 					mlp = new MercadoLibrePublications();
 					mlp.setItem((Item)product.get());
-					mlp.setUser((User)user);
+					mlp.setProfile(profile);
 					mlp.setProductName(product.get().getArtDescripCatalogo());
 					mlp.setDescription(product.get().getArtDescripML());
 					mlp.setPrice(product.get().getPrecioPesos());

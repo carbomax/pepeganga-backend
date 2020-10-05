@@ -21,8 +21,8 @@ public class ProductsSelectedController {
 	MercadoLibrePublishService mlp_services;
 	
 	@GetMapping("/select-myproducts")
-	public ResponseEntity<SelectedProducResponse> storeMyProducts(@RequestParam Integer idUser, @RequestParam Short marketplace,
+	public ResponseEntity<SelectedProducResponse> storeMyProducts(@RequestParam Integer idProfile, @RequestParam Short marketplace,
 			@RequestParam List<String> products) {		
-		return new ResponseEntity<>(mlp_services.storeProductToPublish(idUser, marketplace, products), HttpStatus.CREATED);
+		return new ResponseEntity<>(mlp_services.storeProductToPublish(idProfile, marketplace, products), HttpStatus.CREATED);
 	}	
 }

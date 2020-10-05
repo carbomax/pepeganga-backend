@@ -8,7 +8,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -32,8 +31,8 @@ public class MercadoLibrePublications implements Serializable {
 	private Item item;
 			
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="user_id", nullable = false)
-	private User user;
+	@JoinColumn(name="profile_id", nullable = false)
+	private Profile profile;
 	
 	@Column(name="productName")
 	private String productName;	
@@ -95,18 +94,18 @@ public class MercadoLibrePublications implements Serializable {
 	public void setImages(byte[] images) {
 		this.images = images;
 	}
-	public User getUser() {
-		return user;
+	public Profile getProfile() {
+		return profile;
 	}
-	public void setUser(User user) {
-		this.user = user;
+	public void setProfile(Profile profile) {
+		this.profile = profile;
 	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((item == null) ? 0 : item.hashCode());
-		result = prime * result + ((user == null) ? 0 : user.hashCode());
+		result = prime * result + ((profile == null) ? 0 : profile.hashCode());
 		return result;
 	}
 	@Override
@@ -123,13 +122,14 @@ public class MercadoLibrePublications implements Serializable {
 				return false;
 		} else if (!item.equals(other.item))
 			return false;
-		if (user == null) {
-			if (other.user != null)
+		if (profile == null) {
+			if (other.profile != null)
 				return false;
-		} else if (!user.equals(other.user))
+		} else if (!profile.equals(other.profile))
 			return false;
 		return true;
 	}
+	
 	
 	
 }
