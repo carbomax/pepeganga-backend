@@ -16,6 +16,6 @@ public interface MarketplaceService {
 
     void deleteMarketplace(Short id);
     
-    public List<MarketplaceDetails> getListDetailMarketplacesByUser(Integer idUser);  
+    public List<MarketplaceDetails> getListDetailMarketplacesByProfile(Integer idProfile);  
     
 }

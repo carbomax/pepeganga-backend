@@ -40,11 +40,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	Profile profile;
 	
 	//Method to fill the details of marketplace card
-	public MarketplaceDetails getDetailsMarketplaces(Integer idUser) {	
+	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {	
 	
 		MarketplaceDetails marketplaces = new MarketplaceDetails();
 		
-		List<Short> states = mlPublishRepo.findAllStatesByIdUser(idUser);
+		List<Short> states = mlPublishRepo.findAllStatesByIdProfile(idProfile);
 		int nopublish = 0;
 		int publish = 0;
 		int pause = 0;

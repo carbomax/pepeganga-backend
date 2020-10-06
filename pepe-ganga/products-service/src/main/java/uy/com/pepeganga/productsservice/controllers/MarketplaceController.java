@@ -48,9 +48,9 @@ public class MarketplaceController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
     
-    @GetMapping("/marketplaces-details/{idUser}")
-    public ResponseEntity<List<MarketplaceDetails>>getDetailsMarketplaces(@PathVariable("idUser") Integer idUser){
-    	return new ResponseEntity<>(marketplaceService.getListDetailMarketplacesByUser(idUser), HttpStatus.OK);
+    @GetMapping("/marketplaces-details/{idProfile}")
+    public ResponseEntity<List<MarketplaceDetails>>getDetailsMarketplaces(@PathVariable("idProfile") Integer idProfile){
+    	return new ResponseEntity<>(marketplaceService.getListDetailMarketplacesByProfile(idProfile), HttpStatus.OK);
     }
         
 }

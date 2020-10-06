@@ -62,9 +62,9 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
     }
    
-    public List<MarketplaceDetails> getListDetailMarketplacesByUser(Integer idUser){
+    public List<MarketplaceDetails> getListDetailMarketplacesByProfile(Integer idProfile){
     	List<MarketplaceDetails> marketplacesDetailList = new ArrayList<>();
-    	marketplacesDetailList.add(mercadoLibreService.getDetailsMarketplaces(idUser));
+    	marketplacesDetailList.add(mercadoLibreService.getDetailsMarketplaces(idProfile));
     	return marketplacesDetailList;
     }
 }
