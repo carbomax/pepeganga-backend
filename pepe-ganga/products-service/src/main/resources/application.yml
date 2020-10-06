@@ -15,8 +15,6 @@ spring:
     hibernate:
       ddl-auto: update
 
-
-
   cloud:
     loadbalancer:
       ribbon:

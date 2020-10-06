@@ -25,8 +25,11 @@ public class MarginServiceImpl implements MarginService {
     private ProfileRepository profileRepository;
 
     @Override
-    public List<Margin> getMargins() {
-        return (List<Margin>) marginRepository.findAll();
+    public List<Margin> getMargins(Integer profileId) {
+        Optional<Profile> profile = profileRepository.findById(profileId);
+        if (profile.isPresent()){
+            return profile.get().getMargins();
+        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Profile not valid with id %d", profileId));
     }
 
     @Override
