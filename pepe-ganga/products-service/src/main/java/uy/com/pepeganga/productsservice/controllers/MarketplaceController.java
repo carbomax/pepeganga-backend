@@ -52,4 +52,5 @@ public class MarketplaceController {
     public ResponseEntity<List<MarketplaceDetails>>getDetailsMarketplaces(@PathVariable("idUser") Integer idUser){
     	return new ResponseEntity<>(marketplaceService.getListDetailMarketplacesByUser(idUser), HttpStatus.OK);
     }
+        
 }

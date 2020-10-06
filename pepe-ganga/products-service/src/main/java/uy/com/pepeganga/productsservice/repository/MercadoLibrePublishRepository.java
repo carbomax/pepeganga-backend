@@ -12,6 +12,11 @@ import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibrePublications, Object> { 
 	
 	@Query(value = "select ml.states from mercadolibrepublications ml where ml.user_id = ?1", nativeQuery = true)
-	List<String> findAllStatesByIdUser(int user_id);
+	List<Short> findAllStatesByIdUser(int user_id);
 
+	@Query(value = "select ml.item_id from mercadolibrepublications ml where ml.user_id = ?1 and ml.item_id = ?2", nativeQuery = true)
+	String findProductSelectedByUser(int user_id, String item_id);
+
+	@Query(value = "select COUNT(ml.item_id) from mercadolibrepublications ml where ml.profile_id = ?1 and ml.item_id = ?2", nativeQuery = true)
+	Integer cantProductSelectedByProfile(int profile_id, String item_id);
 }

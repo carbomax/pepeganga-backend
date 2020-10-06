@@ -1,14 +1,16 @@
 package uy.com.pepeganga.business.common.entities;
 
-import javax.persistence.*;
 import java.io.Serializable;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "marketplace")
 public class Marketplace implements Serializable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id    
     private Short id;
 
     private String name;

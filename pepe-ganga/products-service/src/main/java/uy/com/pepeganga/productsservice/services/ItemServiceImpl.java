@@ -2,6 +2,7 @@ package uy.com.pepeganga.productsservice.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -84,5 +85,9 @@ public class ItemServiceImpl implements ItemService {
 		pageItemGrid.setTotalPages(result.getTotalPages());
 		pageItemGrid.setTotalProducts(productsRepository.count());
 		return pageItemGrid;
+	}
+
+	public Optional<Item> findItemById(String id) {
+		return this.productsRepository.findById(id);
 	}
 }
