@@ -1,20 +1,18 @@
 package uy.com.pepeganga.productsservice.gridmodels;
 
-import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
-
 public class MarketplaceDetails {
 
-	private MarketplaceType marketplace;	
+	private Short marketplace;	
 	private Integer prodTotal;
 	private Integer prodPublished;
 	private Integer prodPaused;
 	private Integer prodWithoutPublish;
 	
 	
-	public MarketplaceType getMarketplace() {
+	public Short getMarketplace() {
 		return marketplace;
 	}
-	public void setMarketplace(MarketplaceType marketplace) {
+	public void setMarketplace(Short marketplace) {
 		this.marketplace = marketplace;
 	}
 	public Integer getProdTotal() {

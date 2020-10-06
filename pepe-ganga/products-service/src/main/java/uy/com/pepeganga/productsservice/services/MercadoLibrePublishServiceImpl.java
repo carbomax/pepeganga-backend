@@ -59,7 +59,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publish++;	
 		}		
 		
-		marketplaces.setMarketplace(MarketplaceType.MERCADOLIBRE);
+		marketplaces.setMarketplace(MarketplaceType.MERCADOLIBRE.getId());
 		marketplaces.setProdPaused(pause);
 		marketplaces.setProdPublished(publish);
 		marketplaces.setProdWithoutPublish(nopublish);

@@ -63,6 +63,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
     }
    
     public List<MarketplaceDetails> getListDetailMarketplacesByProfile(Integer idProfile){
+    	//Adicionar mas servicios cuando existan mas marketplaces
     	List<MarketplaceDetails> marketplacesDetailList = new ArrayList<>();
     	marketplacesDetailList.add(mercadoLibreService.getDetailsMarketplaces(idProfile));
     	return marketplacesDetailList;
