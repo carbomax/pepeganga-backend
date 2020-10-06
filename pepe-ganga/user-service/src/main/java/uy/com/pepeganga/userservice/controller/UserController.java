@@ -1,17 +1,14 @@
 package uy.com.pepeganga.userservice.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.userservice.service.IUserService;
 
-import javax.ws.rs.PathParam;
+import java.util.List;
 
 
 @RestController
@@ -20,12 +17,6 @@ public class UserController {
 
 	@Autowired
 	private IUserService userService;
-	
-	
-	@GetMapping
-	public ResponseEntity<String> getExample(){
-		return new ResponseEntity<>("User Service Working Successfully", HttpStatus.OK);
-	}
 	
 	@GetMapping("/users")
 	public ResponseEntity<List<User>> getAllUsers(){
@@ -43,7 +34,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/users/{id}")
-	public ResponseEntity<Void> updateUserWithProfile( @PathVariable Integer id){
+	public ResponseEntity<Void> deleteUser( @PathVariable Integer id){
 		userService.deleteUser(id);
 		return new ResponseEntity<>( HttpStatus.NO_CONTENT);
 	}
