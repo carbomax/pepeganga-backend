@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MarginService {
 
-    List<Margin> getMargins();
+    List<Margin> getMargins(Integer profileId);
 
     Margin createMargin(Margin margin, Integer profileId);
 

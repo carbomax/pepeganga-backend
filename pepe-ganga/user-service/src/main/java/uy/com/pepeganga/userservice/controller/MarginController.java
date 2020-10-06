@@ -16,9 +16,9 @@ public class MarginController {
     @Autowired
     private MarginService marginService;
 
-    @GetMapping
-    public ResponseEntity<List<Margin>> getMargins(){
-        return new ResponseEntity<>(marginService.getMargins(), HttpStatus.OK);
+    @GetMapping("/{profileId}")
+    public ResponseEntity<List<Margin>> getMargins(@PathVariable Integer profileId){
+        return new ResponseEntity<>(marginService.getMargins(profileId), HttpStatus.OK);
     }
 
 
