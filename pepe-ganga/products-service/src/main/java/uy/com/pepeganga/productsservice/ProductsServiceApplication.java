@@ -20,7 +20,7 @@ public class ProductsServiceApplication {
 	}
 
 	@Scheduled(fixedRate = 90000, initialDelay = 5000)
-	@CacheEvict(value = "storage", allEntries = true)
+	@CacheEvict(value = "storage", allEntries = true)	
 	public void clear(){
 		System.out.println("deleting temporal cache");
 	}

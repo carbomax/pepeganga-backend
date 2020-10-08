@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -161,7 +161,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	}
 
-	@Cacheable("myproduct")
+	//@CacheEvict(value = "myproducts", allEntries = true)
 	public PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable) {
 		Page<MercadoLibrePublications> result = this.findAll(sku.trim(), nameProduct.trim(), state, familyId, minPrice, maxPrice,
@@ -187,8 +187,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		pageItemMeliGrid.setSort(result.getSort());
 		pageItemMeliGrid.setTotalElements(result.getTotalElements());
 		pageItemMeliGrid.setTotalPages(result.getTotalPages());
-		pageItemMeliGrid.setTotalProducts(productsRepository.count());
+		pageItemMeliGrid.setTotalProducts(mlPublishRepo.count());
 		return pageItemMeliGrid;
 	}
-
+	
 }

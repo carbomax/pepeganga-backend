@@ -29,7 +29,7 @@ public class ProductsSelectedController {
 		return new ResponseEntity<>(mlp_services.storeProductToPublish(idProfile, marketplace, products), HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/items-by-filters/{page}/{size}")
+	@GetMapping("/items-meli-filters/{page}/{size}")
 	public ResponseEntity<PageItemMeliGrid> getItemsMeliByFilters(@RequestParam String sku, @RequestParam String nameProduct,
 			@RequestParam Short state, @RequestParam Short familyId, @RequestParam double minPrice, @RequestParam double maxPrice,
 			@PathVariable int page, @PathVariable int size) {		

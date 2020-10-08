@@ -16,5 +16,6 @@ public interface MercadoLibrePublishService {
 		
 	PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable);
-	
+		
 }
+
