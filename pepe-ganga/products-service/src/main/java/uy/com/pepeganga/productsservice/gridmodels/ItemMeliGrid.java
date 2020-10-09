@@ -13,6 +13,8 @@ public class ItemMeliGrid implements Serializable{
 	 */
 	private static final long serialVersionUID = -2347842736023677325L;
 
+	private Integer id;
+	
 	private String name;
 	
 	private String sku;
@@ -24,7 +26,15 @@ public class ItemMeliGrid implements Serializable{
 	private long currentStock;
 	
 	private String state;
-	
+		
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	private List<Image> images;
 
 	public String getName() {

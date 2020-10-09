@@ -24,5 +24,15 @@ public class ConversionClass {
 		}
         return images;
     }
+    
+    public static byte[] joinImages(List<Image> images)
+    {
+    	StringBuilder photo = new StringBuilder();
+		for (Image ima : images) {
+			if(ima != null)			
+				photo.append(ima.getPhotos().trim()).append(" ");			
+		}			
+		return photo.toString().getBytes();		
+    }
 
 }

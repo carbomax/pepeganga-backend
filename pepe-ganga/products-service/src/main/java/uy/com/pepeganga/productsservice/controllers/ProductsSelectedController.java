@@ -8,11 +8,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import uy.com.pepeganga.business.common.models.Image;
+import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
+import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.services.MercadoLibrePublishService;
 
@@ -35,4 +41,15 @@ public class ProductsSelectedController {
 			@PathVariable int page, @PathVariable int size) {		
 		return new ResponseEntity<>(mlp_services.getItemsMeliByFiltersAndPaginator(sku, nameProduct, state, familyId, minPrice, maxPrice, PageRequest.of(page, size)), HttpStatus.OK);
 	}
+	
+	@PutMapping("/store-common-data")
+	public ResponseEntity<ReasonResponse> storeCommonData(@RequestParam int idProfile, @RequestParam String description, @RequestParam List<String> skuList, @RequestBody List<Image> images){
+		return new ResponseEntity<>(mlp_services.storeCommonData(idProfile, description, skuList, images), HttpStatus.OK);
+	}
+	
+	@PutMapping("/product-info")
+	public ResponseEntity<ReasonResponse> editInfoOfProduct(@RequestBody EditableProductModel product){
+		return new ResponseEntity<>(mlp_services.editInfoOfProduct(product), HttpStatus.OK);
+	}
+	
 }

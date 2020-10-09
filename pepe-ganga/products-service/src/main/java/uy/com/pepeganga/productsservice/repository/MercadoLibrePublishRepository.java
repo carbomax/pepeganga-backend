@@ -17,11 +17,15 @@ public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibr
 	@Query(value = "select ml.states from mercadolibrepublications ml where ml.profile_id = ?1", nativeQuery = true)
 	List<Short> findAllStatesByIdProfile(int profile_id);
 
-	@Query(value = "select ml.item_id from mercadolibrepublications ml where ml.user_id = ?1 and ml.item_id = ?2", nativeQuery = true)
-	String findProductSelectedByUser(int user_id, String item_id);
+	@Query(value = "select ml.item_id from mercadolibrepublications ml where ml.profile_id = ?1 and ml.item_id = ?2", nativeQuery = true)
+	String findIdItemForeignByProfileAndItem(int profile_id, String item_id);
 
 	@Query(value = "select COUNT(ml.item_id) from mercadolibrepublications ml where ml.profile_id = ?1 and ml.item_id = ?2", nativeQuery = true)
 	Integer cantProductSelectedByProfile(int profile_id, String item_id);
 
 	Page<MercadoLibrePublications> findAll(Specification<MercadoLibrePublications> specification, Pageable pageable);
+	
+	@Query(value = "select * from mercadolibrepublications ml where ml.item_id = ?1 and ml.profile_id = ?2", nativeQuery = true)
+	MercadoLibrePublications findByItemAndProfile(String item, Integer profile);
+		
 }

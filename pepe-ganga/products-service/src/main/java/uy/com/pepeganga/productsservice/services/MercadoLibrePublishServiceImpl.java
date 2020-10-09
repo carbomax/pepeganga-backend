@@ -11,7 +11,6 @@ import javax.persistence.criteria.Root;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Service;
 import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.Profile;
+import uy.com.pepeganga.business.common.models.Image;
+import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
@@ -26,6 +27,7 @@ import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.com.pepeganga.productsservice.gridmodels.ItemMeliGrid;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
+import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.repository.MercadoLibrePublishRepository;
 import uy.com.pepeganga.productsservice.repository.ProductsRepository;
@@ -44,12 +46,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	ItemService itemService;
 
 	@Autowired
-	UserRepository userRepo;
-
-	private Item item;
-	private MercadoLibrePublications meliPublication;
-	private MercadoLibrePublications mlp;
-	Profile profile;
+	UserRepository userRepo;	
 
 	// Method to fill the details of marketplace card
 	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {
@@ -81,8 +78,13 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	// Method to store the products to publish by user
 	public SelectedProducResponse storeProductToPublish(Integer idProfile, Short marketplace, List<String> products) {
-		profile = new Profile();
+		Item item;
+		MercadoLibrePublications meliPublication;
+		MercadoLibrePublications mlp;
+		
+		Profile profile = new Profile();
 		profile.setId(idProfile);
+		
 		if (marketplace == MarketplaceType.MERCADOLIBRE.getId())
 			itemService = new ItemServiceImpl(productsRepository);
 
@@ -170,12 +172,13 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		List<ItemMeliGrid> itemMeliGridList = new ArrayList<>();
 		result.getContent().forEach(p -> {
 			ItemMeliGrid itemMeliGrid = new ItemMeliGrid();
+			itemMeliGrid.setId(p.getId());
 			itemMeliGrid.setState(p.getStates() == States.NOPUBLISHED.getId() ? States.NOPUBLISHED.getValue() : p.getStates() == States.PUBLISHED.getId() ? States.PUBLISHED.getValue() : States.PAUSED.getValue());
 			itemMeliGrid.setImages(ConversionClass.separateImages(p.getImages()));
 			itemMeliGrid.setName(p.getProductName());			
 			itemMeliGrid.setPriceUYU(p.getPrice());
 			itemMeliGrid.setSku(p.getItem().getSku());
-			itemMeliGrid.setCurrentStock(p.getItem().getArtCantUnidades());
+			itemMeliGrid.setCurrentStock(p.getItem().getStockActual());
 			itemMeliGrid.setFamily(p.getItem().getFamily());
 			itemMeliGridList.add(itemMeliGrid);
 		});
@@ -191,4 +194,71 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		return pageItemMeliGrid;
 	}
 	
+	public ReasonResponse storeCommonData(Integer idProfile, String description,  List<String> skuList, List<Image> images) {
+		ReasonResponse reason = new ReasonResponse();
+		reason.setSuccess(false);
+		
+		if(description.isBlank() && images.isEmpty())
+		{
+			reason.setReason("Valores de entrada nulos o vacios");
+			return reason;
+		}			
+		
+		try {
+		List<MercadoLibrePublications> productsToUpdate = new ArrayList<>();
+				
+		for (String sku : skuList) {
+			Optional<MercadoLibrePublications> product = Optional.of(mlPublishRepo.findByItemAndProfile(sku, idProfile));
+			if(product.isPresent())
+			{
+				if(!images.isEmpty()) {
+					List<Image> imagesList = ConversionClass.separateImages(product.get().getImages());
+					imagesList.addAll(images);	
+					byte[] imageToStore = ConversionClass.joinImages(imagesList);
+					product.get().setImages(imageToStore);
+				}
+				if(!description.isBlank()) {
+					product.get().setDescription(new String(product.get().getDescription()+ "\n" + description));
+				}
+				
+				productsToUpdate.add(product.get());
+			}			
+		}		
+		
+			mlPublishRepo.saveAll(productsToUpdate);
+			reason.setSuccess(true);			
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			reason.setSuccess(false);
+			reason.setReason("error al almacenar valores");			
+		}
+		return reason;
+	}
+	
+	public ReasonResponse editInfoOfProduct(EditableProductModel product )
+	{
+		ReasonResponse reason = new ReasonResponse();
+		reason.setSuccess(false);
+		Optional<MercadoLibrePublications> prod = mlPublishRepo.findById(product.getId());
+		if(prod.isPresent()) {
+			MercadoLibrePublications store = prod.get();
+			store.setItem(prod.get().getItem());
+			store.setProfile(prod.get().getProfile());
+			store.setDescription(product.getDescription());
+			store.setPrice(product.getPrice());
+			store.setProductName(product.getProductName());
+			store.setStates(product.getStates());
+			
+			if(!product.getImages().isEmpty()) {
+				byte[] image = ConversionClass.joinImages(product.getImages());
+				store.setImages(image);
+			}
+			mlPublishRepo.save(store);
+			reason.setSuccess(true);			
+		}
+		
+		reason.setReason(!reason.isSuccess() ? "Producto Inválido" : "Producto actualizado");  
+		return reason;
+	}
 }
