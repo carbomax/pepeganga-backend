@@ -49,6 +49,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	@Autowired
 	UserRepository userRepo;
 	
+	@Autowired
 	ImageRepository imageRepo;
 
 	// Method to fill the details of marketplace card
@@ -250,7 +251,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				if(imagesToDelete == null || imagesToDelete.isEmpty()) {}
 				else {
 					for (Integer ima : imagesToDelete) {
-						imageRepo.deleteById(ima);
+						if(imageRepo.existsById(ima))
+							imageRepo.deleteById(ima);
 					}			
 				}	
 				
