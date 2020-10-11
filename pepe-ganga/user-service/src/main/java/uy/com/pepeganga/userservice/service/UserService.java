@@ -65,7 +65,6 @@ public class UserService implements IUserService {
             userToUpdate.setEmail(profile.getUser().getEmail());
             userToUpdate.setPassword(profile.getUser().getPassword());
             userToUpdate.setRoles(profile.getUser().getRoles());
-            userToUpdate.setMarketplaces(profile.getUser().getMarketplaces());
             userToUpdate.setEnabled(profile.getUser().getEnabled());
             User userUpdated = userRepository.save(userToUpdate);
             profileToUpdatedDb.get().setFirstName(profile.getFirstName());
@@ -76,6 +75,7 @@ public class UserService implements IUserService {
             profileToUpdatedDb.get().setStore(profile.getStore());
             profileToUpdatedDb.get().setAddress(profile.getAddress());
             profileToUpdatedDb.get().setMargins(profile.getMargins());
+            profileToUpdatedDb.get().setMarketplaces(profile.getMarketplaces());
             profileToUpdatedDb.get().setUser(userUpdated);
             return profileRepository.save(profileToUpdatedDb.get());
         } else {
@@ -105,6 +105,23 @@ public class UserService implements IUserService {
             return userRepository.save(userToUpdate);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not enabled or disabled with id %s, it not exist", id));
+        }
+    }
+
+    @Override
+    public User updateUser(User user, Integer id) {
+        Optional<User> userFounded = userRepository.findById(id);
+        if (userFounded.isPresent()) {
+            User userToUpdate = userFounded.get();
+            userToUpdate.setEnabled(user.getEnabled());
+            userToUpdate.setCreateAt(user.getCreateAt());
+            userToUpdate.setEmail(user.getEmail());
+            userToUpdate.setLoginAttempts(user.getLoginAttempts());
+            userToUpdate.setPassword(user.getPassword());
+            userToUpdate.setRoles(user.getRoles());
+            return userRepository.save(userToUpdate);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s, it not exist", id));
         }
     }
 

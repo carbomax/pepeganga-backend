@@ -18,6 +18,10 @@ public class Margin implements Serializable {
 
     private double value;
 
+    @Column(name = "marketplace_id")
+    private Short marketplaceId;
+
+
     public Short getId() {
         return id;
     }
@@ -48,6 +52,14 @@ public class Margin implements Serializable {
 
     public void setValue(double value) {
         this.value = value;
+    }
+
+    public Short getMarketplaceId() {
+        return marketplaceId;
+    }
+
+    public void setMarketplaceId(Short marketplaceId) {
+        this.marketplaceId = marketplaceId;
     }
 
     @Override

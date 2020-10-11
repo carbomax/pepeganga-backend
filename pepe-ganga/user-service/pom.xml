@@ -48,7 +48,6 @@
         	</artifactId>
 		</dependency>
 
-		<!-- Dependency temporal to test user-service -->
 		<!--Business Common-->
 		<dependency>
 			<groupId>uy.com.pepeganga</groupId>
