@@ -8,14 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import uy.com.pepeganga.business.common.models.Image;
+import uy.com.pepeganga.business.common.entities.Image;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
@@ -47,9 +46,21 @@ public class ProductsSelectedController {
 		return new ResponseEntity<>(mlp_services.storeCommonData(idProfile, description, skuList, images), HttpStatus.OK);
 	}
 	
-	@PutMapping("/product-info")
-	public ResponseEntity<ReasonResponse> editInfoOfProduct(@RequestBody EditableProductModel product){
-		return new ResponseEntity<>(mlp_services.editInfoOfProduct(product), HttpStatus.OK);
+	@PutMapping("/edit-product-info")
+	public ResponseEntity<EditableProductModel> updateInfoOfProduct(@RequestBody EditableProductModel product, @RequestParam List<Integer>imagesToDelete){
+		try {
+			return new ResponseEntity<>(mlp_services.editInfoOfProduct(product, imagesToDelete), HttpStatus.OK);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			return new ResponseEntity<>(product, HttpStatus.CONFLICT);
+		}
+		
+	}
+	
+	@GetMapping("/product-info/{id}")
+	public ResponseEntity<EditableProductModel> getInfoOfProduct(@PathVariable Integer id){
+		return new ResponseEntity<>(mlp_services.getCustomProduct(id), HttpStatus.OK);
 	}
 	
 }

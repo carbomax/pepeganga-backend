@@ -1,7 +1,8 @@
 package uy.com.pepeganga.productsservice.models;
 
 import java.util.List;
-import uy.com.pepeganga.business.common.models.Image;
+
+import uy.com.pepeganga.business.common.entities.Image;
 
 public class EditableProductModel {
 
@@ -16,6 +17,13 @@ public class EditableProductModel {
 	private double price;	
 
 	private List<Image> images;
+	
+	/* **No editable fields** */
+	private String sku;
+	
+	private double price_cost;
+	
+	private long currentStock;
 
 	public Integer getId() {
 		return id;
@@ -63,6 +71,30 @@ public class EditableProductModel {
 
 	public void setImages(List<Image> images) {
 		this.images = images;
+	}
+
+	public String getSku() {
+		return sku;
+	}
+
+	public void setSku(String sku) {
+		this.sku = sku;
+	}
+
+	public double getPrice_cost() {
+		return price_cost;
+	}
+
+	public void setPrice_cost(double price_cost) {
+		this.price_cost = price_cost;
+	}
+
+	public long getCurrentStock() {
+		return currentStock;
+	}
+
+	public void setCurrentStock(long currentStock) {
+		this.currentStock = currentStock;
 	}
 	
 	

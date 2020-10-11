@@ -3,7 +3,7 @@ package uy.com.pepeganga.business.common.utils.conversions;
 import java.util.ArrayList;
 import java.util.List;
 
-import uy.com.pepeganga.business.common.models.Image;
+import uy.com.pepeganga.business.common.entities.Image;
 
 
 public class ConversionClass {
@@ -17,9 +17,10 @@ public class ConversionClass {
         String[] imageList = imageS.split(" ");
         
         for (int i = 0; i < imageList.length; i++) {
-			Image img = new Image();
-			img.setId(i + 1);
+			Image img = new Image();			
 			img.setPhotos(imageList[i]);
+			img.setOrder(-1);
+			img.setTitle("");
 			images.add(img);
 		}
         return images;

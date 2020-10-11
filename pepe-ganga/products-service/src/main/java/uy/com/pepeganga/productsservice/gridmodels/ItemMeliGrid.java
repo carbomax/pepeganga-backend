@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import uy.com.pepeganga.business.common.entities.Family;
-import uy.com.pepeganga.business.common.models.Image;
+import uy.com.pepeganga.business.common.entities.Image;
 
 public class ItemMeliGrid implements Serializable{	
 	

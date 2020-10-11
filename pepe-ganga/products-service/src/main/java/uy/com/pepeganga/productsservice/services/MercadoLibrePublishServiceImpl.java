@@ -15,10 +15,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import uy.com.pepeganga.business.common.entities.Image;
 import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.Profile;
-import uy.com.pepeganga.business.common.models.Image;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
@@ -29,6 +29,7 @@ import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
+import uy.com.pepeganga.productsservice.repository.ImageRepository;
 import uy.com.pepeganga.productsservice.repository.MercadoLibrePublishRepository;
 import uy.com.pepeganga.productsservice.repository.ProductsRepository;
 import uy.com.pepeganga.productsservice.repository.UserRepository;
@@ -46,7 +47,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	ItemService itemService;
 
 	@Autowired
-	UserRepository userRepo;	
+	UserRepository userRepo;
+	
+	ImageRepository imageRepo;
 
 	// Method to fill the details of marketplace card
 	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {
@@ -113,7 +116,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setDescription(product.get().getArtDescripML());
 					mlp.setPrice(product.get().getPrecioPesos());
 					mlp.setStates(States.NOPUBLISHED.getId());
-					mlp.setImages(product.get().getImages());
+					mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
 					prodToStore.add(mlp);
 				}
 			}
@@ -174,7 +177,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			ItemMeliGrid itemMeliGrid = new ItemMeliGrid();
 			itemMeliGrid.setId(p.getId());
 			itemMeliGrid.setState(p.getStates() == States.NOPUBLISHED.getId() ? States.NOPUBLISHED.getValue() : p.getStates() == States.PUBLISHED.getId() ? States.PUBLISHED.getValue() : States.PAUSED.getValue());
-			itemMeliGrid.setImages(ConversionClass.separateImages(p.getImages()));
+			itemMeliGrid.setImages(p.getImages());
 			itemMeliGrid.setName(p.getProductName());			
 			itemMeliGrid.setPriceUYU(p.getPrice());
 			itemMeliGrid.setSku(p.getItem().getSku());
@@ -212,10 +215,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			if(product.isPresent())
 			{
 				if(!images.isEmpty()) {
-					List<Image> imagesList = ConversionClass.separateImages(product.get().getImages());
-					imagesList.addAll(images);	
-					byte[] imageToStore = ConversionClass.joinImages(imagesList);
-					product.get().setImages(imageToStore);
+					List<Image> imagesList = product.get().getImages();
+					imagesList.addAll(images);						
+					product.get().setImages(imagesList);
 				}
 				if(!description.isBlank()) {
 					product.get().setDescription(new String(product.get().getDescription()+ "\n" + description));
@@ -236,29 +238,76 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		return reason;
 	}
 	
-	public ReasonResponse editInfoOfProduct(EditableProductModel product )
+	public EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete ) throws Exception
 	{
+		MercadoLibrePublications result;
 		ReasonResponse reason = new ReasonResponse();
 		reason.setSuccess(false);
-		Optional<MercadoLibrePublications> prod = mlPublishRepo.findById(product.getId());
-		if(prod.isPresent()) {
-			MercadoLibrePublications store = prod.get();
-			store.setItem(prod.get().getItem());
-			store.setProfile(prod.get().getProfile());
-			store.setDescription(product.getDescription());
-			store.setPrice(product.getPrice());
-			store.setProductName(product.getProductName());
-			store.setStates(product.getStates());
-			
-			if(!product.getImages().isEmpty()) {
-				byte[] image = ConversionClass.joinImages(product.getImages());
-				store.setImages(image);
+		try {				
+			Optional<MercadoLibrePublications> prod = mlPublishRepo.findById(product.getId());
+			if(prod.isPresent()) {
+				
+				if(imagesToDelete == null || imagesToDelete.isEmpty()) {}
+				else {
+					for (Integer ima : imagesToDelete) {
+						imageRepo.deleteById(ima);
+					}			
+				}	
+				
+				MercadoLibrePublications store = prod.get();
+				store.setItem(prod.get().getItem());
+				store.setProfile(prod.get().getProfile());
+				store.setDescription(product.getDescription());
+				store.setPrice(product.getPrice());
+				store.setProductName(product.getProductName());
+				store.setStates(product.getStates());
+				
+				if(!product.getImages().isEmpty()) {			
+					store.setImages(product.getImages());
+				}
+				result = mlPublishRepo.save(store);	
+				reason.setSuccess(true);
+				
+				//Producto a devolver
+				EditableProductModel productEditabled = new EditableProductModel();
+				productEditabled.setId(result.getId());
+				productEditabled.setProductName(result.getProductName());
+				productEditabled.setDescription(result.getDescription());
+				productEditabled.setStates(result.getStates());
+				productEditabled.setPrice(result.getPrice());
+				productEditabled.setImages(result.getImages());
+				productEditabled.setSku(product.getSku());
+				productEditabled.setPrice_cost(product.getPrice_cost());
+				productEditabled.setCurrentStock(product.getCurrentStock());
+				return productEditabled;
 			}
-			mlPublishRepo.save(store);
-			reason.setSuccess(true);			
+				//NO se encuntra el producto en base dato, devuelve exception				
+			throw new Exception();	
 		}
+		catch (Exception e) {
+			// TODO: handle exception
+			throw new Exception(e);
+		}
+	}
+
+	public EditableProductModel getCustomProduct(Integer id)
+	{
+		EditableProductModel editP= new EditableProductModel();
+		if(id == null) 
+			return editP;
 		
-		reason.setReason(!reason.isSuccess() ? "Producto Inválido" : "Producto actualizado");  
-		return reason;
+		Optional<MercadoLibrePublications> item = mlPublishRepo.findById(id);	
+		if(item.isPresent()) {
+			editP.setId(item.get().getId());
+			editP.setCurrentStock(item.get().getItem().getStockActual());
+			editP.setDescription(item.get().getDescription());
+			editP.setPrice(item.get().getPrice());
+			editP.setPrice_cost(item.get().getItem().getPrecioPesos());
+			editP.setProductName(item.get().getProductName());
+			editP.setSku(item.get().getItem().getSku());
+			editP.setStates(item.get().getStates());
+			editP.setImages(item.get().getImages());			
+		} 
+		return editP;
 	}
 }

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 
 @Repository
-public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibrePublications, Object> { 
+public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibrePublications, Integer> { 
 	
 	@Query(value = "select ml.states from mercadolibrepublications ml where ml.profile_id = ?1", nativeQuery = true)
 	List<Short> findAllStatesByIdProfile(int profile_id);

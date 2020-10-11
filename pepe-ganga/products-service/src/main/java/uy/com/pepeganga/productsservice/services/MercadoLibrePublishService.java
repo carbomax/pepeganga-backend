@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import uy.com.pepeganga.business.common.models.Image;
+import uy.com.pepeganga.business.common.entities.Image;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
@@ -22,6 +22,8 @@ public interface MercadoLibrePublishService {
 
 	ReasonResponse storeCommonData(Integer idProfile, String description,  List<String> skuList, List<Image> images);
 	
-	ReasonResponse editInfoOfProduct(EditableProductModel product );
+	EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete )  throws Exception;
+	
+	EditableProductModel getCustomProduct(Integer id);
 }
 
