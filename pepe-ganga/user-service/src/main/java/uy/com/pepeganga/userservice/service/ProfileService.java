@@ -19,4 +19,9 @@ public class ProfileService implements IProfileService{
     public List<Profile> getProfiles() {
         return profileRepository.findAll();
     }
+
+    @Override
+    public Profile findProfileByUserEmail(String email) {
+        return profileRepository.findProfileByUserEmail(email);
+    }
 }

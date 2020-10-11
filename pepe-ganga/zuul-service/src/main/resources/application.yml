@@ -1,6 +1,3 @@
-#server:
- # port: ${PORT:0}
- 
 server:
   port: 9999
 
@@ -29,10 +26,10 @@ zuul:
     oauth:
         service-id: oauth-service
         path: /pepeganga/security/**
-        sensitive-headers: Cookie,Set-Cookie
     consuming:
         service-id: consuming-store-service
         path: /pepeganga/consuming/**
+  sensitive-headers: Cookie,Set-Cookie
 
 hystrix:
    command:
