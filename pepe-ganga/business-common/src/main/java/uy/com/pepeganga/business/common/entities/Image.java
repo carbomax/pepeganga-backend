@@ -25,8 +25,8 @@ public class Image implements Serializable{
 	@Column(name="photos")
 	private String photos;
 	
-	@Column(name="order")
-	private Integer order;
+	@Column(name="order_in_list")
+	private int order;
 	
 	@Column(name="title")
 	private String title;
@@ -43,10 +43,10 @@ public class Image implements Serializable{
 	public void setPhotos(String photos) {
 		this.photos = photos;
 	}
-	public Integer getOrder() {
+	public int getOrder() {
 		return order;
 	}
-	public void setOrder(Integer order) {
+	public void setOrder(int order) {
 		this.order = order;
 	}
 	public String getTitle() {
