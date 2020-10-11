@@ -36,6 +36,9 @@ public class Profile implements Serializable {
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private User user;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	private List<Marketplace>  marketplaces;
+
 	public Integer getId() {
 		return id;
 	}
@@ -114,6 +117,14 @@ public class Profile implements Serializable {
 
 	public void setMargins(List<Margin> margins) {
 		this.margins = margins;
+	}
+
+	public List<Marketplace> getMarketplaces() {
+		return marketplaces;
+	}
+
+	public void setMarketplaces(List<Marketplace> marketplaces) {
+		this.marketplaces = marketplaces;
 	}
 
 	@Override

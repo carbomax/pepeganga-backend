@@ -48,4 +48,10 @@ public class UserController {
 	public ResponseEntity<User> findUserByEmail(@PathVariable Integer id, @RequestParam boolean enable){
 		return new ResponseEntity<>(userService.enableOrDisable(id, enable), HttpStatus.OK);
 	}
+
+	@PutMapping("/users/update-user/{id}")
+	public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable Integer id){
+		return new ResponseEntity<>(userService.updateUser(user, id), HttpStatus.OK);
+	}
+
 }

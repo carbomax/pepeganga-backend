@@ -37,6 +37,8 @@ public class User implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date createAt;
 
+	private Integer loginAttempts = 0;
+
 	@PrePersist
 	public void prePersist(){
 		this.createAt = new Date();
@@ -46,8 +48,7 @@ public class User implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY)
 	private  List<Role> roles;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	private List<Marketplace>  marketplaces;
+
 
 	public Integer getId() {
 		return id;
@@ -97,12 +98,12 @@ public class User implements Serializable {
 		this.createAt = createAt;
 	}
 
-	public List<Marketplace> getMarketplaces() {
-		return marketplaces;
+	public Integer getLoginAttempts() {
+		return loginAttempts;
 	}
 
-	public void setMarketplaces(List<Marketplace> marketplaces) {
-		this.marketplaces = marketplaces;
+	public void setLoginAttempts(Integer loginAttempts) {
+		this.loginAttempts = loginAttempts;
 	}
 
 	@Override

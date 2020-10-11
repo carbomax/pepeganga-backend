@@ -19,4 +19,8 @@ public interface IUserService {
 	void deleteUser(Integer id);
 
 	User enableOrDisable(Integer id,  boolean enableOrDisable);
+
+	User updateUser(User user , Integer id);
+
+
 }
