@@ -27,7 +27,7 @@ public class UserService implements IUserService, UserDetailsService {
     private  UserFeignClient client;
 
     @Override
-    public UserDetails loadUserByUsername(String email) {
+    public UserDetails loadUserByUsername(String email)  {
        uy.com.pepeganga.business.common.entities.User user = findByEmail(email);
 
        try {

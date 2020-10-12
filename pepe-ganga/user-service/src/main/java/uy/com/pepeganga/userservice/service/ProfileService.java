@@ -5,11 +5,13 @@ import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.userservice.repository.ProfileRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class ProfileService implements IProfileService{
+public class ProfileService implements IProfileService {
 
     private final ProfileRepository profileRepository;
+
 
     public ProfileService(ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
@@ -17,7 +19,10 @@ public class ProfileService implements IProfileService{
 
     @Override
     public List<Profile> getProfiles() {
-        return profileRepository.findAll();
+        return profileRepository.findAll().stream().map(profile -> {
+            profile.getUser().setPassword("");
+            return profile;
+        }).collect(Collectors.toList());
     }
 
     @Override
