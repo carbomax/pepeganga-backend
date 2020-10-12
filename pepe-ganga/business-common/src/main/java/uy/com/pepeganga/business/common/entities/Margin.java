@@ -21,6 +21,16 @@ public class Margin implements Serializable {
     @Column(name = "marketplace_id")
     private Short marketplaceId;
 
+    @Transient
+    private Marketplace marketplace;
+
+    public Marketplace getMarketplace() {
+        return marketplace;
+    }
+
+    public void setMarketplace(Marketplace marketplace) {
+        this.marketplace = marketplace;
+    }
 
     public Short getId() {
         return id;

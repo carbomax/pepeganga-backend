@@ -13,8 +13,20 @@ public class Marketplace implements Serializable {
     private Short id;
 
     private String name;
+    
+    
+    
 
-    public Short getId() {
+    public Marketplace() {
+		super();
+	}
+
+	public Marketplace(Short id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public Short getId() {
         return id;
     }
 
