@@ -1,6 +1,8 @@
 package uy.com.pepeganga.userservice.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,10 +23,13 @@ public class UserService implements IUserService {
 
     private final ProfileRepository profileRepository;
 
+    private final BCryptPasswordEncoder cryptPasswordEncoder;
 
-    public UserService(UserRepository userRepository, ProfileRepository profileRepository) {
+
+    public UserService(UserRepository userRepository, ProfileRepository profileRepository, BCryptPasswordEncoder cryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.profileRepository = profileRepository;
+        this.cryptPasswordEncoder = cryptPasswordEncoder;
     }
 
 
@@ -47,7 +52,9 @@ public class UserService implements IUserService {
         if (userRepository.existsByEmail(profile.getUser().getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("User with email: %s exist", profile.getUser().getEmail()));
         }
-        User userSaved = userRepository.save(profile.getUser());
+        User userToSaved = profile.getUser();
+        userToSaved.setPassword(cryptPasswordEncoder.encode(userToSaved.getPassword()));
+        User userSaved = userRepository.save(userToSaved);
         profile.setUser(userSaved);
         return profileRepository.save(profile);
     }
@@ -63,7 +70,7 @@ public class UserService implements IUserService {
         if (profileToUpdatedDb.isPresent() && userToUpdatedDb.isPresent()) {
             User userToUpdate = userToUpdatedDb.get();
             userToUpdate.setEmail(profile.getUser().getEmail());
-            userToUpdate.setPassword(profile.getUser().getPassword());
+            userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
             userToUpdate.setRoles(profile.getUser().getRoles());
             userToUpdate.setEnabled(profile.getUser().getEnabled());
             User userUpdated = userRepository.save(userToUpdate);
@@ -102,6 +109,7 @@ public class UserService implements IUserService {
         if (user.isPresent()) {
             User userToUpdate = user.get();
             userToUpdate.setEnabled(enableOrDisable);
+            userToUpdate.setLoginAttempts(0);
             return userRepository.save(userToUpdate);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not enabled or disabled with id %s, it not exist", id));
@@ -117,7 +125,7 @@ public class UserService implements IUserService {
             userToUpdate.setCreateAt(user.getCreateAt());
             userToUpdate.setEmail(user.getEmail());
             userToUpdate.setLoginAttempts(user.getLoginAttempts());
-            userToUpdate.setPassword(user.getPassword());
+            userToUpdate.setPassword(cryptPasswordEncoder.encode(user.getPassword()));
             userToUpdate.setRoles(user.getRoles());
             return userRepository.save(userToUpdate);
         } else {

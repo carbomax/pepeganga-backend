@@ -15,12 +15,12 @@ public interface MercadoLibrePublishService {
 	
 	MarketplaceDetails getDetailsMarketplaces(Integer idUser);
 	
-	SelectedProducResponse storeProductToPublish(Integer idProfile, Short marketplace, List<String> product);
+	SelectedProducResponse storeProductToPublish(String idProfile, Short marketplace, List<String> product);
 		
-	PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String sku, String nameProduct, Short state, Short familyId,
+	PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String profileEncode, String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable);
 
-	ReasonResponse storeCommonData(Integer idProfile, String description,  List<String> skuList, List<Image> images);
+	ReasonResponse storeCommonData(String profileEncode, String description,  List<String> skuList, List<Image> images);
 	
 	EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete )  throws Exception;
 	

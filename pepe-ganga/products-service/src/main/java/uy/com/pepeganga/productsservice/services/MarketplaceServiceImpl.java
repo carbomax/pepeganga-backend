@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.Marketplace;
+import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.repository.MarketplaceRepository;
 
@@ -62,7 +63,10 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
     }
    
-    public List<MarketplaceDetails> getListDetailMarketplacesByProfile(Integer idProfile){
+    public List<MarketplaceDetails> getListDetailMarketplacesByProfile(String profileEncode){
+    	
+    	Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
+    	
     	//Adicionar mas servicios cuando existan mas marketplaces
     	List<MarketplaceDetails> marketplacesDetailList = new ArrayList<>();
     	marketplacesDetailList.add(mercadoLibreService.getDetailsMarketplaces(idProfile));
