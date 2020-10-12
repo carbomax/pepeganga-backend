@@ -1,7 +1,9 @@
 package uy.com.pepeganga.business.common.entities;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,10 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-//@IdClass(MeliPublicationsPK.class)
 @Table(name = "mercadolibrepublications")
 public class MercadoLibrePublications implements Serializable {
 	
@@ -45,11 +47,10 @@ public class MercadoLibrePublications implements Serializable {
 	
 	@Column(name="price")
 	private double price;
-
 	
-	@Column(name="images", columnDefinition = "blob", length = 10000)
-	private byte[] images;
-		
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "meli_id")
+	private List<Image> images;		
 	
 	public Integer getId() {
 		return id;
@@ -87,11 +88,11 @@ public class MercadoLibrePublications implements Serializable {
 	public void setPrice(double price) {
 		this.price = price;
 	}
-	
-	public byte[] getImages() {
+		
+	public List<Image> getImages() {
 		return images;
 	}
-	public void setImages(byte[] images) {
+	public void setImages(List<Image> images) {
 		this.images = images;
 	}
 	public Profile getProfile() {
