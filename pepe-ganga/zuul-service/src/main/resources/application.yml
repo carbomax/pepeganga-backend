@@ -30,6 +30,9 @@ zuul:
         service-id: consuming-store-service
         path: /pepeganga/consuming/**
   sensitive-headers: Cookie,Set-Cookie
+  upload:
+        service-id: upload-file-service
+        path: /pepeganga/upload/**
 
 hystrix:
    command:
