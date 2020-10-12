@@ -81,7 +81,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	}
 
 	// Method to store the products to publish by user
-	public SelectedProducResponse storeProductToPublish(Integer idProfile, Short marketplace, List<String> products) {
+	public SelectedProducResponse storeProductToPublish(String profileEncode, Short marketplace, List<String> products) {
+		
+		// Decode data on other side, by processing encoded data		
+		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
+				
 		Item item;
 		MercadoLibrePublications meliPublication;
 		MercadoLibrePublications mlp;
@@ -141,10 +145,13 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		return select;
 	}
 
-	private Page<MercadoLibrePublications> findAll(String sku, String nameProduct, Short state, Short familyId, double minPrice,
+	private Page<MercadoLibrePublications> findAll(Integer idProfile, String sku, String nameProduct, Short state, Short familyId, double minPrice,
 			double maxPrice, Pageable pageable) {
 		return mlPublishRepo.findAll((Root<MercadoLibrePublications> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
+			if (idProfile != null) {
+				predicates.add(cb.equal(root.join("profile").get("id").as(Integer.class), idProfile));
+			}
 			if (minPrice != -1 && maxPrice != -1) {
 				predicates.add(cb.between(root.join("item").get("precioPesos"), minPrice, maxPrice));
 			}
@@ -168,9 +175,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	}
 
 	//@CacheEvict(value = "myproducts", allEntries = true)
-	public PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String sku, String nameProduct, Short state, Short familyId,
+	public PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String profileEncode, String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable) {
-		Page<MercadoLibrePublications> result = this.findAll(sku.trim(), nameProduct.trim(), state, familyId, minPrice, maxPrice,
+		
+		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
+		Page<MercadoLibrePublications> result = this.findAll(idProfile, sku.trim(), nameProduct.trim(), state, familyId, minPrice, maxPrice,
 				pageable);
 
 		List<ItemMeliGrid> itemMeliGridList = new ArrayList<>();
@@ -198,7 +207,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		return pageItemMeliGrid;
 	}
 	
-	public ReasonResponse storeCommonData(Integer idProfile, String description,  List<String> skuList, List<Image> images) {
+	public ReasonResponse storeCommonData(String profileEncode, String description,  List<String> skuList, List<Image> images) {
 		ReasonResponse reason = new ReasonResponse();
 		reason.setSuccess(false);
 		
@@ -210,6 +219,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		
 		try {
 		List<MercadoLibrePublications> productsToUpdate = new ArrayList<>();
+		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
 				
 		for (String sku : skuList) {
 			Optional<MercadoLibrePublications> product = Optional.of(mlPublishRepo.findByItemAndProfile(sku, idProfile));

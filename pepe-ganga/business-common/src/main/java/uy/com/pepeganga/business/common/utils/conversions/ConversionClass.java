@@ -1,6 +1,7 @@
 package uy.com.pepeganga.business.common.utils.conversions;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import uy.com.pepeganga.business.common.entities.Image;
@@ -36,4 +37,16 @@ public class ConversionClass {
 		return photo.toString().getBytes();		
     }
 
+    public static String decodeBase64ToString(String encode64) {    	
+		byte[] valueDecoded = Base64.getDecoder().decode(encode64);
+		String value = new String(valueDecoded);
+		return value;
+    }
+   
+    public static Integer decodeBase64ToInt(String encode64) {    	
+		byte[] valueDecoded = Base64.getDecoder().decode(encode64);
+		String value = new String(valueDecoded);
+		Integer decode = Integer.valueOf(value);
+		return decode;
+    }
 }

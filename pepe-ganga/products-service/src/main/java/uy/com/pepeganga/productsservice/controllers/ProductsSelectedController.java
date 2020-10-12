@@ -28,22 +28,22 @@ public class ProductsSelectedController {
 	@Autowired
 	MercadoLibrePublishService mlp_services;
 	
-	@GetMapping("/select-myproducts")
-	public ResponseEntity<SelectedProducResponse> storeMyProducts(@RequestParam Integer idProfile, @RequestParam Short marketplace,
-			@RequestParam List<String> products) {		
-		return new ResponseEntity<>(mlp_services.storeProductToPublish(idProfile, marketplace, products), HttpStatus.CREATED);
+	@GetMapping("/select-myproducts/{profileEncode}")
+	public ResponseEntity<SelectedProducResponse> storeMyProducts(@PathVariable String profileEncode, @RequestParam Short marketplace,
+			@RequestParam List<String> products) {			
+		return new ResponseEntity<>(mlp_services.storeProductToPublish(profileEncode.trim(), marketplace, products), HttpStatus.CREATED);
 	}
 	
-	@GetMapping("/items-meli-filters/{page}/{size}")
+	@GetMapping("/items-meli-filters/{page}/{size}/{profileEncode}")
 	public ResponseEntity<PageItemMeliGrid> getItemsMeliByFilters(@RequestParam String sku, @RequestParam String nameProduct,
 			@RequestParam Short state, @RequestParam Short familyId, @RequestParam double minPrice, @RequestParam double maxPrice,
-			@PathVariable int page, @PathVariable int size) {		
-		return new ResponseEntity<>(mlp_services.getItemsMeliByFiltersAndPaginator(sku, nameProduct, state, familyId, minPrice, maxPrice, PageRequest.of(page, size)), HttpStatus.OK);
+			@PathVariable int page, @PathVariable int size, @PathVariable String profileEncode) {		
+		return new ResponseEntity<>(mlp_services.getItemsMeliByFiltersAndPaginator(profileEncode.trim(), sku, nameProduct, state, familyId, minPrice, maxPrice, PageRequest.of(page, size)), HttpStatus.OK);
 	}
 	
-	@PutMapping("/store-common-data")
-	public ResponseEntity<ReasonResponse> storeCommonData(@RequestParam int idProfile, @RequestParam String description, @RequestParam List<String> skuList, @RequestBody List<Image> images){
-		return new ResponseEntity<>(mlp_services.storeCommonData(idProfile, description, skuList, images), HttpStatus.OK);
+	@PutMapping("/store-common-data/{profileEncode}")
+	public ResponseEntity<ReasonResponse> storeCommonData( @PathVariable String profileEncode, @RequestParam String description, @RequestParam List<String> skuList, @RequestBody List<Image> images){
+		return new ResponseEntity<>(mlp_services.storeCommonData(profileEncode.trim(), description, skuList, images), HttpStatus.OK);
 	}
 	
 	@PutMapping("/edit-product-info")
