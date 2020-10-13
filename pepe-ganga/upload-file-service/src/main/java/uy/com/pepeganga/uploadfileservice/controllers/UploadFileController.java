@@ -25,12 +25,17 @@ public class UploadFileController {
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, String.format("Archivo no válido %s"));
 		}		
 		try {			
-			return new ResponseEntity<>(fileService.uploadFile(image), HttpStatus.OK);
+			return new ResponseEntity<String>(fileService.uploadFile(image), HttpStatus.OK);
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Error almacenando archivo %s", e.getMessage()));
-		}
+		}		
+	}
+	
+	@PostMapping("/file/upload")
+	public ResponseEntity<String> upload(@RequestBody String image){
+		return new ResponseEntity<>(new String(), HttpStatus.OK);
 		
 	}
 	

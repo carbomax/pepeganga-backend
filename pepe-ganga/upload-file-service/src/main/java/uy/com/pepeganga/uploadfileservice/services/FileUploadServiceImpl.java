@@ -27,12 +27,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 		builder.append(System.getProperty("user.home"));
 		builder.append(File.separator);
 		String directory = (property.getFileName().equals("default") || property.getFileName().isBlank()) ? optionalFileName : property.getFileName();
+		builder.append(directory);	
 		
 		File folder = new File(builder.toString());
 		if(!folder.exists())
-			folder.mkdir();
-		
-		builder.append(directory);		
+			folder.mkdir();		
+			
 		builder.append(File.separator);
 		builder.append(file.getOriginalFilename());
 		
@@ -40,6 +40,6 @@ public class FileUploadServiceImpl implements FileUploadService {
 		Path path = Paths.get(builder.toString());
 		Files.write(path, fileBytes);
 		
-		return new String(builder.toString());
+		return new String("almacenado");
 	}
 }
