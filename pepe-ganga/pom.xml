@@ -14,5 +14,6 @@
         <module>zuul-service</module>
         <module>consuming-webservice-store</module>
         <module>products-service</module>
+        <module>upload-file-service</module>
     </modules>
 </project>
