@@ -22,7 +22,7 @@ public class UploadFileController {
 	@PostMapping("/file/upload-file")
 	public ResponseEntity<String> uploadFile(@RequestBody MultipartFile image){
 		if(image == null || image.isEmpty()){
-			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, String.format("Archivo no válido %s"));
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, String.format("Archivo no válido"));
 		}		
 		try {			
 			return new ResponseEntity<String>(fileService.uploadFile(image), HttpStatus.OK);
