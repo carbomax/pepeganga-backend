@@ -59,7 +59,13 @@
 				spring-cloud-starter-netflix-eureka-client
 			</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+            <version>1.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

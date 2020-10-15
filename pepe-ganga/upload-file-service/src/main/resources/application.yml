@@ -3,7 +3,9 @@ server:
   error:
     include-message: always
     include-binding-errors: always
-  tomcat:    max-swallow-size: -1        
+  tomcat:
+    max-swallow-size: -1
+        
     
 spring:
   application:
@@ -23,5 +25,5 @@ eureka:
         defaultZone: http://localhost:8761/eureka
 
 #El directorio debe crearse en el home del usuario o sección        
-nombre_directorio: default 
+nombre_directorio: default
 
