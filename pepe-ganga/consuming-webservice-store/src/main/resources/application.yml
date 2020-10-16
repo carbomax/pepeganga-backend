@@ -12,7 +12,7 @@ spring:
     url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 
 eureka:
   instance:

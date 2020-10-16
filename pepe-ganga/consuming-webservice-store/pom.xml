@@ -119,29 +119,29 @@
 							<url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>
 						</schema>
 					</schemas>
-					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
-						</schema>
-					</schemas>
-					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.marcas</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://201.217.140.35/agile/acargamarcas.aspx?wsdl</url>
-						</schema>
-					</schemas>
-					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.items</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://201.217.140.35/agile/aCargaArticulosPaginado.aspx?wsdl</url>
-						</schema>
-					</schemas>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
--->
+		<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
+        <schemas>
+            <schema>
+                <url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
+            </schema>
+        </schemas>
+     <generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.marcas</generatePackage>
+        <schemas>
+            <schema>
+                <url>http://201.217.140.35/agile/acargamarcas.aspx?wsdl</url>
+            </schema>
+        </schemas>
+         <generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.items</generatePackage>
+        <schemas>
+            <schema>
+                <url>http://201.217.140.35/agile/aCargaArticulosPaginado.aspx?wsdl</url>
+            </schema>
+        </schemas>
+    </configuration>
+</plugin>
+</plugins>
+</build> -->
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
