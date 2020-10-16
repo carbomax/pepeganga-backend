@@ -37,6 +37,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers( "/pepeganga/security/oauth/token").permitAll()
+                .antMatchers(HttpMethod.GET,"/pepeganga/upload/api/file/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/pepeganga/products/**", "/pepeganga/user/**", "/pepeganga/consuming/**")
                 .hasAnyRole(RoleType.ADMIN.name(),RoleType.INVITED.name(), RoleType.SELLER.name())
                 .antMatchers(HttpMethod.POST, "/**")
