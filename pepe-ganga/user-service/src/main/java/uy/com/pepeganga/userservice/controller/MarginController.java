@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.Margin;
-import uy.com.pepeganga.userservice.service.MarginService;
+import uy.com.pepeganga.userservice.service.IMarginService;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class MarginController {
 
     @Autowired
-    private MarginService marginService;
+    private IMarginService marginService;
 
     @GetMapping("/{profileId}")
     public ResponseEntity<List<Margin>> getMargins(@PathVariable Integer profileId){

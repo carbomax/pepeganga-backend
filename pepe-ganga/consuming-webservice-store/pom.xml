@@ -7,7 +7,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.3.3.RELEASE</version>
-		<relativePath /> <!-- lookup parent from repository -->
+		<relativePath /> <!-- lookup parent from uy.pepeganga.meli.service.repository -->
 	</parent>
 	<groupId>uy.com.pepeganga.consumingwsstore</groupId>
 	<artifactId>consuming-webservice-store</artifactId>

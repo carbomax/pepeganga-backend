@@ -1,259 +1,223 @@
-# Java Client SDK
+
+<h1 align="center">
+  <a href="https://developers.mercadolibre.com">
+    <img src="https://user-images.githubusercontent.com/1153516/29861072-689ec57e-8d3e-11e7-8368-dd923543258f.jpg" alt="Mercado Libre Developers" width="230"></a>
+  </a>
+  <br><br>
+  MercadoLibre's JAVA SDK
+  <br>
+</h1>
+
+<h4 align="center">This is the official JAVA SDK for MercadoLibre's Platform.</h4>
+
+
 
 ## Requirements
 
-Building the API client library requires [Maven](https://maven.apache.org/) to be installed.
+Building the API client library requires:
+1. Java 1.7+
+2. Maven/Gradle
 
 ## Installation
 
-To install the API client library to your local Maven repository, simply execute:
+To install the API client library to your local Maven uy.pepeganga.meli.service.repository, simply execute:
 
 ```shell
-mvn install
+mvn clean install
 ```
 
-To deploy it to a remote Maven repository instead, configure the settings of the repository and execute:
+To deploy it to a remote Maven uy.pepeganga.meli.service.repository instead, configure the settings of the uy.pepeganga.meli.service.repository and execute:
 
 ```shell
-mvn deploy
+mvn clean deploy
+```
+
+Refer to the [OSSRH Guide](http://central.sonatype.org/pages/ossrh-guide.html) for more information.
+
+### Maven users
+
+Add this dependency to your project's POM:
+
+```xml
+<dependency>
+  <groupId>org.openapitools</groupId>
+  <artifactId>openapi-java-client</artifactId>
+  <version>0.1.7</version>
+  <scope>compile</scope>
+</dependency>
+```
+
+### Gradle users
+
+Add this dependency to your project's build file:
+
+```groovy
+compile "org.openapitools:openapi-java-client:0.1.7"
 ```
 
 ### Others
 
 At first generate the JAR by executing:
 
-    mvn package
+```shell
+mvn clean package
+```
 
 Then manually install the following JARs:
 
-* target/java-client-sdk-master.jar
-* target/lib/*.jar
+* `target/openapi-java-client-0.1.7.jar`
+* `target/lib/*.jar`
 
-## Getting Started
 
-Please follow the [installation](#installation) instruction and execute the following Java code:
+## Usage
 
 ```java
+// Auth URLs Options by country
 
-import io.swagger.client.ApiException;
-import io.swagger.client.api.DefaultApi;
-import io.swagger.client.model.*;
+// 1:  "https://auth.mercadolibre.com.ar"
+// 2:  "https://auth.mercadolivre.com.br"
+// 3:  "https://auth.mercadolibre.com.co"
+// 4:  "https://auth.mercadolibre.com.mx"
+// 5:  "https://auth.mercadolibre.com.uy"
+// 6:  "https://auth.mercadolibre.cl"
+// 7:  "https://auth.mercadolibre.com.cr"
+// 8:  "https://auth.mercadolibre.com.ec"
+// 9:  "https://auth.mercadolibre.com.ve"
+// 10: "https://auth.mercadolibre.com.pa"
+// 11: "https://auth.mercadolibre.com.pe"
+// 12: "https://auth.mercadolibre.com.do"
+// 13: "https://auth.mercadolibre.com.bo"
+// 14: "https://auth.mercadolibre.com.py"
 
+// For example in your app, you can make some like this to get de auth
+String clientId = "Your client_id"
+String redirectUri = "Your redirect uri"
+String url = "https://auth.mercadolibre.com.ar/authorization?response_type=code&client_id=" + clientId + "&redirect_uri=" + redirectUri + "";
+System.out.println(url);
 
-public class DefaultApiExample {
+```
 
-/*Replace with your application Client Id, Client Secret and RedirectUri*/
+his will give you the url to redirect the user. You need to specify a callback url which will be the one that the user will redirected after a successfull authrization process.
 
-    Long ClientId = 0;  
-    String SecretKey = "abc123";
-    String redirectUri = "https://your_url.com";
-    
-    private final DefaultApi api = new DefaultApi();
-    
-    private static void getAuthUrl() throws UnsupportedEncodingException {
-           DefaultApi api = new DefaultApi(new ApiClient(), clientId, clientSecret);
-           String response = api.getAuthUrl(redirectUri, Configuration.AuthUrls.{your_site_id});
-    }
-    
-    private static void getAccessToken() throws UnsupportedEncodingException {
-               DefaultApi api = new DefaultApi(new ApiClient(), clientId, clientSecret);
-               String code = "{your_code}";
-               AccessToken response = api.authorize(code, redirectUri);
-    }
-     
-    private static void refreshToken() throws UnsupportedEncodingException {
-                    DefaultApi api = new DefaultApi(new ApiClient(), clientId, clientSecret);
-                    String refreshToken = "{your_refresh_token}";
-                    RefreshToken response = api.refreshAccessToken(refreshToken);
-    }
-    
-    private static void GET() throws ApiException {
-            String resource = "{api_resource}";
-            Object response = api.defaultGet(resource);
-    }
-    
-    public void POST() throws ApiException {
-            String resource = "{api_resource}";
-            Object body = new Object();
-            body.field("{some_value}");
-            Object response = api.defaultPost(accessToken, resource, body);
-    }
-        
-    public void PUT() throws ApiException {
-                String id = "{object_id}";
-                String resource = "{api_resource}";
-                Object body = new Object();
-                body.field("{some_value}");
-                Object response = api.defaultPut(resource, id, accessToken, body);
-    }
-    
-    public void DELETE() throws ApiException {
-                 String id = "{object_id}";
-                 String resource = "{api_resource}";
-                 Object response = api.defaultDelete(resource, id, accessToken);
-    }
+Once the user is redirected to your callback url, you'll receive in the query string, a parameter named code. You'll need this for the second part of the process
 
+## Examples for OAuth - get token
+```java
+
+//Import classes:
+import meli.ApiClient;
+import meli.ApiException;
+import meli.Configuration;
+import meli_marketplace_lib.OAuth20Api;
+
+public class getToken {
+  public static void main(String[] args) {
+  ApiClient defaultClient = Configuration.getDefaultApiClient();
+  defaultClient.setBasePath("https://api.mercadolibre.com");
+
+  OAuth20Api apiInstance = new OAuth20Api(defaultClient);
+  String grantType = "authorization_code"; // or 'refresh_token' if you need get one new token
+  String clientId = "client_id_example"; // Your client_id
+  String clientSecret = "client_secret_example"; // Your client_secret 
+  String redirectUri = "redirect_uri_example"; // Your redirect_uri
+  String code = "code_example"; // The parameter CODE, empty if your send a refresh_token 
+  String refreshToken = ""; // Your refresh_token 
+    try {
+      Object response = apiInstance.getToken(grantType, clientId, clientSecret, redirectUri, code, refreshToken);
+      System.out.println(response);
+    } catch (ApiException e) {
+      System.err.println("Exception when calling OAuth20Api#getToken");
+      System.err.println("Status code: " + e.getCode());
+      System.err.println("Reason: " + e.getResponseBody());
+      System.err.println("Response headers: " + e.getResponseHeaders());
+      e.printStackTrace();
+    }
+  }
 }
 
 ```
 
-## Documentation for API Endpoints
+## Example using the RestClient with a POST Item
 
-All URIs are relative to *https://api.mercadolibre.com*
+```java
 
-Class | Method | HTTP request | Description
------------- | ------------- | ------------- | -------------
-*DefaultApi* | **defaultGet** | **GET** /{resource}/{id} | Returns details about an object.
-*DefaultApi* | **defaultPut** | **PUT** /{resource}/{id}/attributes | Updates an object.
-*DefaultApi* | **defaultPost** | **POST** /{resource}/ | Creates an object.
-*DefaultApi* | **defaultDelete** | **DELETE** /{resource}/{id} | Deletes an object.
-*DefaultApi* | [**categoriesCategoryIdAttributesGet**](docs/DefaultApi.md#categoriesCategoryIdAttributesGet) | **GET** /categories/{category_id}/attributes | Returns all attributes from a category.
-*DefaultApi* | [**categoriesCategoryIdGet**](docs/DefaultApi.md#categoriesCategoryIdGet) | **GET** /categories/{category_id} | Returns information about a category.
-*DefaultApi* | [**itemsItemIdGet**](docs/DefaultApi.md#itemsItemIdGet) | **GET** /items/{item_id} | Return item infromation.
-*DefaultApi* | [**itemsItemIdPut**](docs/DefaultApi.md#itemsItemIdPut) | **PUT** /items/{item_id} | Update an item.
-*DefaultApi* | [**itemsPost**](docs/DefaultApi.md#itemsPost) | **POST** /items | List an item.
-*DefaultApi* | [**itemsValidatePost**](docs/DefaultApi.md#itemsValidatePost) | **POST** /items/validate | Validate the JSON before listing an item.
-*DefaultApi* | [**ordersOrderIdGet**](docs/DefaultApi.md#ordersOrderIdGet) | **GET** /orders/{order_id} | Get an order by ID.
-*DefaultApi* | [**ordersSearchGet**](docs/DefaultApi.md#ordersSearchGet) | **GET** /orders/search | Search orders by seller or buyer.
-*DefaultApi* | [**shipmentsShipmentIdGet**](docs/DefaultApi.md#shipmentsShipmentIdGet) | **GET** /shipments/{shipment_id} | Retrieves all data to make a delivery.
-*DefaultApi* | [**sitesGet**](docs/DefaultApi.md#sitesGet) | **GET** /sites | Return all sites where MercadoLibre operates.
-*DefaultApi* | [**sitesSiteIdCategoryPredictorPredictGet**](docs/DefaultApi.md#sitesSiteIdCategoryPredictorPredictGet) | **GET** /sites/{site_id}/category_predictor/predict | Predict category by title.
-*DefaultApi* | [**sitesSiteIdGet**](docs/DefaultApi.md#sitesSiteIdGet) | **GET** /sites/{site_id} | Return information about a site.
-*DefaultApi* | [**usersMeGet**](docs/DefaultApi.md#usersMeGet) | **GET** /users/me | Return account information about the authenticated user.
-*DefaultApi* | [**usersUserIdGet**](docs/DefaultApi.md#usersUserIdGet) | **GET** /users/{user_id} | Return user account information.
+// Import classes:
+import meli.ApiClient;
+import meli.ApiException;
+import meli.Configuration;
+import meli.model.*;
+import meli_marketplace_lib.RestClientApi;
 
+import java.util.ArrayList;
+import java.util.List;
 
-## Documentation for Models
+public class restClientPost {
+  public static void main(String[] args) {
+    ApiClient defaultClient = Configuration.getDefaultApiClient();
+    defaultClient.setBasePath("https://api.mercadolibre.com");
 
- - [Address](docs/Address.md)
- - [AlternativePhone](docs/AlternativePhone.md)
- - [AttributeCombinations](docs/AttributeCombinations.md)
- - [Attributes](docs/Attributes.md)
- - [BillData](docs/BillData.md)
- - [Billing](docs/Billing.md)
- - [Buy](docs/Buy.md)
- - [BuyerReputation](docs/BuyerReputation.md)
- - [BuyerReputationTransactions](docs/BuyerReputationTransactions.md)
- - [Canceled](docs/Canceled.md)
- - [Categories](docs/Categories.md)
- - [CategoryPrediction](docs/CategoryPrediction.md)
- - [CategoryResponse](docs/CategoryResponse.md)
- - [CategorySettings](docs/CategorySettings.md)
- - [City](docs/City.md)
- - [Claims](docs/Claims.md)
- - [Context](docs/Context.md)
- - [Conversation](docs/Conversation.md)
- - [CostComponents](docs/CostComponents.md)
- - [Country](docs/Country.md)
- - [Credit](docs/Credit.md)
- - [Currencies](docs/Currencies.md)
- - [DelayedHandlingTime](docs/DelayedHandlingTime.md)
- - [Descriptions](docs/Descriptions.md)
- - [Error](docs/Error.md)
- - [EstimatedDeliveryExtended](docs/EstimatedDeliveryExtended.md)
- - [EstimatedDeliveryFinal](docs/EstimatedDeliveryFinal.md)
- - [EstimatedDeliveryLimit](docs/EstimatedDeliveryLimit.md)
- - [EstimatedDeliveryTime](docs/EstimatedDeliveryTime.md)
- - [EstimatedHandlingLimit](docs/EstimatedHandlingLimit.md)
- - [EstimatedScheduleLimit](docs/EstimatedScheduleLimit.md)
- - [From](docs/From.md)
- - [Geolocation](docs/Geolocation.md)
- - [Identification](docs/Identification.md)
- - [IdentificationTypesRules](docs/IdentificationTypesRules.md)
- - [ImmediatePayment](docs/ImmediatePayment.md)
- - [ItemJson](docs/ItemJson.md)
- - [ItemResponse](docs/ItemResponse.md)
- - [ItemResponseAttributes](docs/ItemResponseAttributes.md)
- - [ItemResponsePictures](docs/ItemResponsePictures.md)
- - [ListImmediatePayment](docs/ListImmediatePayment.md)
- - [Location](docs/Location.md)
- - [Message](docs/Message.md)
- - [MessageAttachmentsValidations](docs/MessageAttachmentsValidations.md)
- - [MessageCreated](docs/MessageCreated.md)
- - [MessageFrom](docs/MessageFrom.md)
- - [MessageJSON](docs/MessageJSON.md)
- - [MessageModeration](docs/MessageModeration.md)
- - [MessageSearchResults](docs/MessageSearchResults.md)
- - [MessageText](docs/MessageText.md)
- - [MessageTo](docs/MessageTo.md)
- - [Metrics](docs/Metrics.md)
- - [Moderation](docs/Moderation.md)
- - [Municipality](docs/Municipality.md)
- - [Neighborhood](docs/Neighborhood.md)
- - [NotYetRated](docs/NotYetRated.md)
- - [Offset](docs/Offset.md)
- - [Paging](docs/Paging.md)
- - [PathFromRoot](docs/PathFromRoot.md)
- - [Phone](docs/Phone.md)
- - [Pictures](docs/Pictures.md)
- - [PredictionPathFromRoot](docs/PredictionPathFromRoot.md)
- - [Ratings](docs/Ratings.md)
- - [ReceiverAddress](docs/ReceiverAddress.md)
- - [ReceiverAddressCity](docs/ReceiverAddressCity.md)
- - [ReceiverAddressCountry](docs/ReceiverAddressCountry.md)
- - [ReceiverAddressMunicipality](docs/ReceiverAddressMunicipality.md)
- - [ReceiverAddressNeighborhood](docs/ReceiverAddressNeighborhood.md)
- - [ReceiverAddressState](docs/ReceiverAddressState.md)
- - [Results](docs/Results.md)
- - [ResultsFrom](docs/ResultsFrom.md)
- - [ResultsText](docs/ResultsText.md)
- - [ResultsTo](docs/ResultsTo.md)
- - [Rules](docs/Rules.md)
- - [SaleTerms](docs/SaleTerms.md)
- - [Sales](docs/Sales.md)
- - [SearchLocation](docs/SearchLocation.md)
- - [SearchLocationCity](docs/SearchLocationCity.md)
- - [SearchLocationState](docs/SearchLocationState.md)
- - [Sell](docs/Sell.md)
- - [SellImmediatePayment](docs/SellImmediatePayment.md)
- - [SellerAddress](docs/SellerAddress.md)
- - [SellerReputation](docs/SellerReputation.md)
- - [SenderAddress](docs/SenderAddress.md)
- - [Shipment](docs/Shipment.md)
- - [Shipping](docs/Shipping.md)
- - [ShippingItems](docs/ShippingItems.md)
- - [ShippingOption](docs/ShippingOption.md)
- - [ShoppingCart](docs/ShoppingCart.md)
- - [Site](docs/Site.md)
- - [SiteSettings](docs/SiteSettings.md)
- - [Sites](docs/Sites.md)
- - [SitesSite](docs/SitesSite.md)
- - [State](docs/State.md)
- - [Status](docs/Status.md)
- - [StatusHistory](docs/StatusHistory.md)
- - [Text](docs/Text.md)
- - [TimeFrame](docs/TimeFrame.md)
- - [To](docs/To.md)
- - [Transactions](docs/Transactions.md)
- - [Unrated](docs/Unrated.md)
- - [UserResponse](docs/UserResponse.md)
- - [Variations](docs/Variations.md)
- - [Warnings](docs/Warnings.md)
+    RestClientApi apiInstance = new RestClientApi(defaultClient);
+    String resource = "items"; //  resource like items, search, category etc
+    String accessToken = "access_token_example"; // Your access token 
+    
+    // Example to post an item in Argentina
+    List<ItemPictures> pictures = new ArrayList<ItemPictures>();
+    String source =	"https://http2.mlstatic.com/storage/developers-site-cms-admin/openapi/319968615067-mp3.jpg";
+    pictures.add(new ItemPictures().source(source));
 
+      List<AttributesValues> attrValues = new ArrayList<AttributesValues>();
+      attrValues.add(new AttributesValues().name("8 GB"));
+      List<Attributes> attributes = new ArrayList<Attributes>();
+      attributes.add(new Attributes()
+          .id("DATA_STORAGE_CAPACITY")
+          .name("Capacidad de almacenamiento de datos")
+          .valueName("8 GB")
+          .values(attrValues)
+          .attributeGroupName("Otros")
+          .attributeGroupId("OTHERS"));
+      
+    Item item = new Item();
+    item.title("Item de test - No Ofertar java");
+    item.categoryId("MLA5991");
+    item.price(350);
+    item.currencyId("ARS");
+    item.availableQuantity("12");
+    item.buyingMode("buy_it_now");
+    item.listingTypeId("bronze");
+    item.condition("new");
+    item.description("Item de Teste. Mercado Livre SDK");
+    item.videoId("RXWn6kftTHY");
+    item.pictures(pictures);
+    item.attributes(attributes);
+    try {
+      Object result = apiInstance.resourcePost(resource, accessToken, item);
+      System.out.println(result);
+      } catch (ApiException e) {
+        System.err.println("Exception when calling RestClientApi#resourcePost");
+        System.err.println("Status code: " + e.getCode());
+        System.err.println("Reason: " + e.getResponseBody());
+        System.err.println("Response headers: " + e.getResponseHeaders());
+        e.printStackTrace();
+      }
+	}
+}
 
-## Documentation for Authorization
-
-Authentication schemes defined for the API:
-### oAuth2
-
-- **Type**: OAuth
-- **Flow**: accessCode
-- **Authorization URL**: https://auth.mercadolibre.com.ar/authorization [Check AuthURL values by Site](/src/main/java/io/swagger/client/Configuration.java)
-- **Token URL**: https://api.mercadolibre.com/oauth/token
-- **Scopes**: 
-  - read: Grants read access
-  - write: Grants write access
-  - offline_access: Grants read and write access, and adds the possibility to get a refresh token and stay authenticated as the user.
-
+```
 
 ## Recommendation
 
 It's recommended to create an instance of `ApiClient` per thread in a multithreaded environment to avoid any potential issues.
 
-## Author
-Florencia Solari (fsolari)
 
-Most code was auto generated by [swagger code generator](https://github.com/swagger-api/swagger-codegen.git)
+## Documentation & Important notes
 
-## Old version
-If you are looking for the older java-sdk, please refer to [here](https://github.com/mercadolibre/java-sdk/tree/old-java-sdk)
+##### The URIs are relative to https://api.mercadolibre.com
+
+##### The Authorization URLs (set the correct country domain): https://auth.mercadolibre.{country_domain}
+
+
+#####  All docs for the library are located [here](https://github.com/mercadolibre/java-sdk/tree/master/docs)
+
+#####  Check out our examples codes in the folder [examples](https://github.com/mercadolibre/java-sdk/tree/master/examples)
+
+##### Don’t forget to check out our [developer site](https://developers.mercadolibre.com/)

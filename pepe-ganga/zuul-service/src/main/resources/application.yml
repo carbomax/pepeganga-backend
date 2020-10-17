@@ -26,10 +26,14 @@ zuul:
     oauth:
         service-id: oauth-service
         path: /pepeganga/security/**
+        sensitive-headers: Cookie,Set-Cookie
     consuming:
         service-id: consuming-store-service
         path: /pepeganga/consuming/**
-  sensitive-headers: Cookie,Set-Cookie
+    meli:
+      service-id: meli-service
+      path: /pepeganga/meli/**
+
 
 hystrix:
    command:
