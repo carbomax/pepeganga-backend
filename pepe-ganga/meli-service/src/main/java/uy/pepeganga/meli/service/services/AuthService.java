@@ -53,9 +53,7 @@ public class AuthService implements IAuthService {
         String redirectUri = "https://localhost:4200/home/meli-accounts"; // Your redirect_uri
         String refreshToken = ""; // Your refresh_token
 
-            MeliAutheticationResponse meliAutheticationResponse = mapper.convertValue(auth20Api.getToken(grantType, clientId, clientSecret, redirectUri, code, refreshToken), MeliAutheticationResponse.class);
-
-            return meliAutheticationResponse;
+            return mapper.convertValue(auth20Api.getToken(grantType, clientId, clientSecret, redirectUri, code, refreshToken), MeliAutheticationResponse.class);
 
     }
 
@@ -63,12 +61,13 @@ public class AuthService implements IAuthService {
     public ResponseEntity<Map<String, Object>> updateAfterToken(Integer accountId, String code) {
         Map<String, Object> map = new HashMap<>();
         try {
-            MeliAutheticationResponse meliAutheticationResponse = getToken(code);
-            logger.info("By account id: {}, Meli token response: user id:  {}", accountId, meliAutheticationResponse.getUserId());
+
             Optional<MeliAccount> accountFounded = meliAccountRepository.findById(accountId);
             if(accountFounded.isEmpty()){
                 map.put("error",  new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
             } else {
+                MeliAutheticationResponse meliAutheticationResponse = getToken(code);
+                logger.info("By account id: {}, Meli token response: user id:  {}", accountId, meliAutheticationResponse.getUserId());
                 MeliAccount meliAccountToUpdate = meliService.findAccountById(accountId);
                 meliAccountToUpdate.setAccessToken(meliAutheticationResponse.getAccesToken());
                 meliAccountToUpdate.setScope(meliAutheticationResponse.getScope());
