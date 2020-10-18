@@ -16,6 +16,12 @@ public class ApiMeliModelException implements Serializable {
         this.exception = exception;
     }
 
+    public ApiMeliModelException(int code, String responseBody) {
+        this.code = code;
+        this.responseBody = responseBody;
+    }
+
+
     public int getCode() {
         return code;
     }

@@ -27,6 +27,9 @@ zuul:
         service-id: oauth-service
         path: /pepeganga/security/**
         sensitive-headers: Cookie,Set-Cookie
+    upload:
+        service-id: upload-file-service
+        path: /pepeganga/upload/**
     consuming:
         service-id: consuming-store-service
         path: /pepeganga/consuming/**

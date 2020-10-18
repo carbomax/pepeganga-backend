@@ -33,14 +33,19 @@ public class MeliAccount implements Serializable {
     @Column(name = "token_type")
     private String tokenType;
 
+    @Column(name = "refresh_token")
+    private String refreshToken;
+
     private String nickname;
 
     private String email;
 
     private String permalink;
 
+    private Integer status = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "profile_id", nullable = false)
     @JsonBackReference
     private Profile profile;
 
@@ -138,5 +143,21 @@ public class MeliAccount implements Serializable {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

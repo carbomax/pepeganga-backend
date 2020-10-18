@@ -20,13 +20,13 @@ Building the API client library requires:
 
 ## Installation
 
-To install the API client library to your local Maven uy.pepeganga.meli.service.repository, simply execute:
+To install the API client library to your local Maven repository, simply execute:
 
 ```shell
 mvn clean install
 ```
 
-To deploy it to a remote Maven uy.pepeganga.meli.service.repository instead, configure the settings of the uy.pepeganga.meli.service.repository and execute:
+To deploy it to a remote Maven repository instead, configure the settings of the repository and execute:
 
 ```shell
 mvn clean deploy

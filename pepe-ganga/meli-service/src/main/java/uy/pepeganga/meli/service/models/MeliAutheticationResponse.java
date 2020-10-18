@@ -16,8 +16,9 @@ public class MeliAutheticationResponse implements Serializable {
 
     private String scope;
 
-    private Integer userId;
+    private Long userId;
 
+    private String refreshToken;
 
     @JsonProperty("access_token")
     public String getAccesToken() {
@@ -40,7 +41,12 @@ public class MeliAutheticationResponse implements Serializable {
     }
 
     @JsonProperty("user_id")
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
+    }
+
+    @JsonProperty("refresh_token")
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }
