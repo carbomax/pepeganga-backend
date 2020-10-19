@@ -13,6 +13,8 @@ import uy.com.pepeganga.uploadfileservice.services.FileUploadService;
 
 import javax.activation.FileTypeMap;
 import java.io.File;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,6 +36,22 @@ public class UploadFileController {
 			// TODO: handle exception
 			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Error almacenando archivo %s", e.getMessage()));
 		}		
+	}
+
+	@PostMapping("/file/upload-filelist")
+	public ResponseEntity<List<ReasonResponse>> uploadFileList(@RequestBody ArrayList<MultipartFile> imageList){
+		for (MultipartFile image: imageList) {
+			if(image == null && image.isEmpty()){
+				throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Usted ha subido archivos no validos"));
+			}
+		}
+		try {
+			return new ResponseEntity<List<ReasonResponse>>(fileService.uploadFileList(imageList), HttpStatus.OK);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Error almacenando archivos %s", e.getMessage()));
+		}
 	}
 
 	@GetMapping("/file/{name}")

@@ -7,6 +7,7 @@ import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,27 @@ public class FileUploadServiceImpl implements FileUploadService {
 		result.setReason("http://localhost:9999/pepeganga/upload/api/file/" + file.getOriginalFilename());
 		result.setSuccess(true);
 		return result;
+	}
+
+	public List<ReasonResponse> uploadFileList(List<MultipartFile> fileList) throws IOException {
+		List<ReasonResponse> resultList = new ArrayList<>();
+
+		for (MultipartFile file: fileList) {
+			ReasonResponse result = new ReasonResponse();
+			result.setSuccess(false);
+
+			StringBuilder builder = buildURI(true);
+			builder.append(file.getOriginalFilename());
+
+			byte[] fileBytes = file.getBytes();
+			Path path = Paths.get(builder.toString());
+			Files.write(path, fileBytes);
+
+			result.setReason("http://localhost:9999/pepeganga/upload/api/file/" + file.getOriginalFilename());
+			result.setSuccess(true);
+			resultList.add(result);
+		}
+		return resultList;
 	}
 
     public byte[] getImage(String nameImage) throws IOException {
