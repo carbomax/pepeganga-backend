@@ -1,6 +1,7 @@
 package uy.com.pepeganga.business.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,6 +28,10 @@ public class Profile implements Serializable {
 	private String store;
 
 	private String businessName;
+
+	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	@JsonManagedReference
+	private List<MeliAccount> meliAccounts;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "profile_id")
@@ -127,7 +132,15 @@ public class Profile implements Serializable {
 		this.marketplaces = marketplaces;
 	}
 
-	@Override
+    public List<MeliAccount> getMeliAccounts() {
+        return meliAccounts;
+    }
+
+    public void setMeliAccounts(List<MeliAccount> meliAccounts) {
+        this.meliAccounts = meliAccounts;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
