@@ -38,20 +38,14 @@ public class UploadFileController {
 		}		
 	}
 
-	@PostMapping("/file/upload-filelist")
-	public ResponseEntity<List<ReasonResponse>> uploadFileList(@RequestBody ArrayList<MultipartFile> imageList){
-		for (MultipartFile image: imageList) {
-			if(image == null && image.isEmpty()){
-				throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Usted ha subido archivos no validos"));
-			}
-		}
-		try {
-			return new ResponseEntity<List<ReasonResponse>>(fileService.uploadFileList(imageList), HttpStatus.OK);
-		}
-		catch (Exception e) {
-			// TODO: handle exception
-			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Error almacenando archivos %s", e.getMessage()));
-		}
+	@RequestMapping(
+			value = ("/upload"),
+			headers = "content-type=multipart/form-data",
+			method = RequestMethod.POST)
+	public ResponseEntity<String> uploadFile(@RequestParam("image") MultipartFile file, @RequestParam("imagen") MultipartFile file1) {
+		System.out.println(file.getOriginalFilename());
+		System.out.println(file1.getOriginalFilename());
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
 	@GetMapping("/file/{name}")

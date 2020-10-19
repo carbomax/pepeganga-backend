@@ -10,8 +10,6 @@ public interface FileUploadService {
 
 	ReasonResponse uploadFile(MultipartFile file) throws IOException;
 
-	List<ReasonResponse> uploadFileList(List<MultipartFile> fileList) throws IOException;
-
 	byte[] getImage(String nameImage) throws IOException;
 
 	StringBuilder buildURI( boolean createDir);
