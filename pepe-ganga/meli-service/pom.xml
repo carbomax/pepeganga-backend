@@ -32,7 +32,6 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-
         <!--Business Common-->
         <dependency>
             <groupId>uy.com.pepeganga</groupId>

@@ -29,13 +29,13 @@ public class MeliController {
     }
 
 
-    @GetMapping("/update/{accountId}")
+    @PutMapping("/update/{accountId}")
     public ResponseEntity<MeliAccount> updateMeliAccount(@PathVariable Integer accountId, @RequestBody MeliAccount meliAccount) {
         return new ResponseEntity<>(meliService.updateMeliAccount(accountId, meliAccount), HttpStatus.OK);
     }
 
     @DeleteMapping("/{accountId}")
-    public ResponseEntity<Void> updateMeliAccount(@PathVariable Integer accountId) {
+    public ResponseEntity<Void> deleteMeliAccount(@PathVariable Integer accountId) {
         meliService.deleteMeliAccount(accountId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
