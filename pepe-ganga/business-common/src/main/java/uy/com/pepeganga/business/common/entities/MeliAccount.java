@@ -44,6 +44,12 @@ public class MeliAccount implements Serializable {
 
     private Integer status = 0;
 
+    private String userType;
+
+    private Integer points = 0;
+
+    private String siteId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     @JsonBackReference
@@ -159,5 +165,29 @@ public class MeliAccount implements Serializable {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public String getUserType() {
+        return userType;
+    }
+
+    public void setUserType(String userType) {
+        this.userType = userType;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+
+    public String getSiteId() {
+        return siteId;
+    }
+
+    public void setSiteId(String siteId) {
+        this.siteId = siteId;
     }
 }

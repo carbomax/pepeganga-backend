@@ -11,7 +11,6 @@ public class Margin implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
 
-    @Column(unique = true)
     private String name;
 
     private int type;
