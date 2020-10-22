@@ -44,10 +44,6 @@ public class UserService implements IUserService {
 
     @Override
     public Profile saveUserProfile(Profile profile) {
-        if (!Utils.isNumeric(profile.getRut())) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, String.format("Rut is not a number %s", profile.getRut()));
-        }
-
         if (userRepository.existsByEmail(profile.getUser().getEmail())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("User with email: %s exist", profile.getUser().getEmail()));
         }
@@ -60,10 +56,6 @@ public class UserService implements IUserService {
 
     @Override
     public Profile updateUserProfile(Profile profile, Integer profileId, Integer userId) {
-
-        if (!Utils.isNumeric(profile.getRut())) {
-            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, String.format("Rut is not a number %s", profile.getRut()));
-        }
         Optional<Profile> profileToUpdatedDb = profileRepository.findById(profileId);
         Optional<User> userToUpdatedDb = userRepository.findById(userId);
         if (profileToUpdatedDb.isPresent() && userToUpdatedDb.isPresent()) {
