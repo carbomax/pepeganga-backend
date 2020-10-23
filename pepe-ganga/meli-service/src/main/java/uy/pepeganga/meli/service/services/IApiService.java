@@ -1,19 +1,22 @@
 package uy.pepeganga.meli.service.services;
 
 import meli.ApiException;
+import meli.model.Item;
 import org.springframework.http.ResponseEntity;
-import uy.com.pepeganga.business.common.entities.MeliAccount;
+import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 
 import java.util.Map;
 
-public interface IAuthService {
+public interface IApiService {
 
     MeliAutheticationResponse getTokenByCode(String code) throws ApiException;
 
     ResponseEntity<Map<String, Object>> updateAfterToken(Integer profileId, String code);
 
-    MeliAccount getTokenByRefreshToken(MeliAccount account) throws ApiException;
+    SellerAccount getTokenByRefreshToken(SellerAccount account) throws ApiException;
 
     Map<String, Object> synchronizeAccount(Integer accountId);
+
+    Object createPublication(Item publicationRequest, String token) throws ApiException;
 }

@@ -31,7 +31,7 @@ public class Profile implements Serializable {
 
 	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
-	private List<MeliAccount> meliAccounts;
+	private List<SellerAccount> sellerAccounts;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "profile_id")
@@ -132,12 +132,12 @@ public class Profile implements Serializable {
 		this.marketplaces = marketplaces;
 	}
 
-    public List<MeliAccount> getMeliAccounts() {
-        return meliAccounts;
+    public List<SellerAccount> getSellerAccounts() {
+        return sellerAccounts;
     }
 
-    public void setMeliAccounts(List<MeliAccount> meliAccounts) {
-        this.meliAccounts = meliAccounts;
+    public void setSellerAccounts(List<SellerAccount> sellerAccounts) {
+        this.sellerAccounts = sellerAccounts;
     }
 
     @Override

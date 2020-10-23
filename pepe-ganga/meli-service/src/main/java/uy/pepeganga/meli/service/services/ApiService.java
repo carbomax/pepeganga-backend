@@ -3,6 +3,7 @@ package uy.pepeganga.meli.service.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
+import meli.model.Item;
 import meli_marketplace_lib.OAuth20Api;
 import meli_marketplace_lib.RestClientApi;
 import org.slf4j.Logger;
@@ -13,13 +14,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusAccount;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.MeliResponseBodyException;
 import uy.pepeganga.meli.service.models.MeliUserAccount;
-import uy.pepeganga.meli.service.repository.MeliAccountRepository;
-import uy.com.pepeganga.business.common.entities.MeliAccount;
+import uy.pepeganga.meli.service.repository.SellerAccountRepository;
+import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
 
@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class AuthService implements IAuthService {
+public class ApiService implements IApiService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
     @Value("${meli.api.client}")
     private String clientId;
@@ -49,7 +49,7 @@ public class AuthService implements IAuthService {
     ObjectMapper mapper;
 
     @Autowired
-    MeliAccountRepository meliAccountRepository;
+    SellerAccountRepository sellerAccountRepository;
 
     @Autowired
     ProfileRepository profileRepository;
@@ -78,22 +78,22 @@ public class AuthService implements IAuthService {
         Map<String, Object> map = new HashMap<>();
         try {
 
-            Optional<MeliAccount> accountFounded = meliAccountRepository.findById(accountId);
+            Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(accountId);
             if (accountFounded.isEmpty()) {
                 map.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
             } else {
                 MeliAutheticationResponse meliAutheticationResponse = getTokenByCode(code);
                 logger.info("By account id: {}, Meli token response: user id:  {}", accountId, meliAutheticationResponse.getUserId());
-                MeliAccount meliAccountToUpdate = meliService.findAccountById(accountId);
-                meliAccountToUpdate.setAccessToken(meliAutheticationResponse.getAccesToken());
-                meliAccountToUpdate.setScope(meliAutheticationResponse.getScope());
-                meliAccountToUpdate.setTokenType(meliAutheticationResponse.getTokenType());
-                meliAccountToUpdate.setExpiresIn(meliAutheticationResponse.getExpiresIn());
-                meliAccountToUpdate.setUserId(meliAutheticationResponse.getUserId());
-                meliAccountToUpdate.setRefreshToken(meliAutheticationResponse.getRefreshToken());
-                meliAccountToUpdate.setStatus(MeliStatusAccount.AUTHORIZED.getCode());
+                SellerAccount sellerAccountToUpdate = meliService.findAccountById(accountId);
+                sellerAccountToUpdate.setAccessToken(meliAutheticationResponse.getAccesToken());
+                sellerAccountToUpdate.setScope(meliAutheticationResponse.getScope());
+                sellerAccountToUpdate.setTokenType(meliAutheticationResponse.getTokenType());
+                sellerAccountToUpdate.setExpiresIn(meliAutheticationResponse.getExpiresIn());
+                sellerAccountToUpdate.setUserId(meliAutheticationResponse.getUserId());
+                sellerAccountToUpdate.setRefreshToken(meliAutheticationResponse.getRefreshToken());
+                sellerAccountToUpdate.setStatus(MeliStatusAccount.AUTHORIZED.getCode());
 
-                map.put("response", meliAccountRepository.save(meliAccountToUpdate));
+                map.put("response", sellerAccountRepository.save(sellerAccountToUpdate));
             }
 
             return new ResponseEntity<>(map, HttpStatus.OK);
@@ -110,7 +110,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public MeliAccount getTokenByRefreshToken(MeliAccount account) throws ApiException {
+    public SellerAccount getTokenByRefreshToken(SellerAccount account) throws ApiException {
 
 
         MeliAutheticationResponse meliAutheticationResponse = mapper.convertValue(auth20Api.getToken("refresh_token", clientId, clientSecret, "", "", account.getRefreshToken()), MeliAutheticationResponse.class);
@@ -123,7 +123,7 @@ public class AuthService implements IAuthService {
         account.setRefreshToken(meliAutheticationResponse.getRefreshToken());
         account.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
 
-        return meliAccountRepository.save(account);
+        return sellerAccountRepository.save(account);
     }
 
     @Override
@@ -133,21 +133,21 @@ public class AuthService implements IAuthService {
         //  https://api.mercadolibre.com/users/$USER_ID?access_token=¢ACCESS_TOKEN
 
         Map<String, Object> map = new HashMap<>();
-        Optional<MeliAccount> accountFounded = meliAccountRepository.findById(accountId);
+        Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(accountId);
         if (accountFounded.isEmpty()) {
             map.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
         } else {
             try {
                 String resource = "/users/" + accountFounded.get().getUserId();
                 MeliUserAccount meliUserAccount = mapper.convertValue(restClientApiUy.resourceGet(resource, accountFounded.get().getAccessToken().trim()), MeliUserAccount.class);
-                MeliAccount meliAccountToUpdate = accountFounded.get();
-                meliAccountToUpdate.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
-                meliAccountToUpdate.setEmail(meliUserAccount.getEmail());
-                meliAccountToUpdate.setNickname(meliUserAccount.getNickname());
-                meliAccountToUpdate.setSiteId(meliUserAccount.getSiteId());
-                meliAccountToUpdate.setUserType(meliUserAccount.getUserType());
-                meliAccountToUpdate.setPoints(meliUserAccount.getPoints());
-                map.put("response", meliAccountRepository.save(meliAccountToUpdate));
+                SellerAccount sellerAccountToUpdate = accountFounded.get();
+                sellerAccountToUpdate.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
+                sellerAccountToUpdate.setEmail(meliUserAccount.getEmail());
+                sellerAccountToUpdate.setNickname(meliUserAccount.getNickname());
+                sellerAccountToUpdate.setSiteId(meliUserAccount.getSiteId());
+                sellerAccountToUpdate.setUserType(meliUserAccount.getUserType());
+                sellerAccountToUpdate.setPoints(meliUserAccount.getPoints());
+                map.put("response", sellerAccountRepository.save(sellerAccountToUpdate));
             } catch (ApiException e) {
 
                 try {
@@ -162,6 +162,13 @@ public class AuthService implements IAuthService {
         }
 
         return map;
+    }
+
+    @Override
+    public Object createPublication(Item publicationRequest, String token) throws ApiException {
+
+            return  restClientApiUy.resourcePost("items", token, publicationRequest);
+
     }
 
 }

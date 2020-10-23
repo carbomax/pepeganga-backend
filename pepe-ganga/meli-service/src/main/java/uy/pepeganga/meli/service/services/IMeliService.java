@@ -1,19 +1,23 @@
 package uy.pepeganga.meli.service.services;
 
-import uy.com.pepeganga.business.common.entities.MeliAccount;
+import meli.model.Item;
+import uy.com.pepeganga.business.common.entities.SellerAccount;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IMeliService {
 
-    MeliAccount createAccountByProfile(Integer profileId, MeliAccount meliAccount);
+    SellerAccount createAccountByProfile(Integer profileId, SellerAccount sellerAccount);
 
-    MeliAccount updateMeliAccount(Integer accountId, MeliAccount meliAccount);
+    SellerAccount updateMeliAccount(Integer accountId, SellerAccount sellerAccount);
 
     void deleteMeliAccount(Integer accountId);
 
-    List<MeliAccount> meliAccountsByProfileId(Integer profileId);
+    List<SellerAccount> meliAccountsByProfileId(Integer profileId);
 
-    MeliAccount findAccountById(Integer accountId);
+    SellerAccount findAccountById(Integer accountId);
+
+    Map<String, Object> createPublication(Item publicationRequest, Integer account);
 
 }
