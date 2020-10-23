@@ -8,28 +8,30 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import uy.pepeganga.meli.service.services.IAuthService;
+import uy.pepeganga.meli.service.services.IApiService;
+import uy.pepeganga.meli.service.services.IMeliService;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthMeliController {
 
     @Autowired
-    IAuthService authService;
+    IApiService apiService;
 
     @Autowired
-    ObjectMapper mapper;
+    IMeliService meliService;
 
 
     @GetMapping("/{accountId}/{code}")
     public ResponseEntity<Map<String, Object>> authorizeAccount(@PathVariable Integer accountId, @PathVariable String code ){
-      return authService.updateAfterToken(accountId, code);
+      return apiService.updateAfterToken(accountId, code);
     }
 
     @GetMapping("/synchronize-account/{accountId}")
     public ResponseEntity<Map<String, Object>> synchronizeAccount(@PathVariable Integer accountId){
-        return new ResponseEntity<>( authService.synchronizeAccount(accountId), HttpStatus.OK);
+        return new ResponseEntity<>( apiService.synchronizeAccount(accountId), HttpStatus.OK);
     }
+
 }

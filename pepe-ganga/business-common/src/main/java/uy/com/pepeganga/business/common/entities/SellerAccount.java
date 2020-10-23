@@ -1,13 +1,15 @@
 package uy.com.pepeganga.business.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import uy.com.pepeganga.business.common.utils.enums.MarginType;
+import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "meliaccount")
-public class MeliAccount implements Serializable {
+@Table(name = "selleraccount")
+public class SellerAccount implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -49,6 +51,8 @@ public class MeliAccount implements Serializable {
     private Integer points = 0;
 
     private String siteId;
+
+    private Short marketplaceId = MarketplaceType.MERCADOLIBRE.getId();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
@@ -189,5 +193,13 @@ public class MeliAccount implements Serializable {
 
     public void setSiteId(String siteId) {
         this.siteId = siteId;
+    }
+
+    public Short getMarketplaceId() {
+        return marketplaceId;
+    }
+
+    public void setMarketplaceId(Short marketplaceId) {
+        this.marketplaceId = marketplaceId;
     }
 }
