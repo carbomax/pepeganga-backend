@@ -322,4 +322,34 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		} 
 		return editP;
 	}
+
+	public List<MercadoLibrePublications> getFullProduct(List<String> skus, String profileEncode) throws Exception {
+
+		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
+		List<MercadoLibrePublications> productList = new ArrayList<>();
+		for (String sku: skus) {
+			Optional<MercadoLibrePublications> product = Optional.of(mlPublishRepo.findByItemAndProfile(sku, idProfile));
+			if(product.isPresent()) {
+				productList.add(product.get());
+			}
+		}
+		if(!productList.isEmpty()) {
+			return productList ;
+		}
+		else{
+			throw new Exception("Producto no encontrado");
+		}
+	}
+
+	public List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception {
+		List<EditableProductModel> result = new ArrayList<>();
+		for (Integer id: ids) {
+			var product = getCustomProduct(id);
+			if(product != null){
+				result.add(product);
+			}
+		}
+		return result;
+
+	}
 }

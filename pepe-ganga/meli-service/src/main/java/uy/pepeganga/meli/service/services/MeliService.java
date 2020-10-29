@@ -1,23 +1,28 @@
 package uy.pepeganga.meli.service.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
-import meli.model.Attributes;
-import meli.model.AttributesValues;
-import meli.model.Item;
-import meli.model.ItemPictures;
+import meli.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
+import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
+import uy.pepeganga.meli.service.models.DetailsModelResponse;
+import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
+import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
@@ -27,6 +32,12 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     SellerAccountRepository sellerAccountRepository;
+
+    @Autowired
+    DetailsPublicationMeliRepository detailsPublicationRepository;
+
+    @Autowired
+    MercadoLibrePublishRepository mlPublishRepository;
 
     @Autowired
     ProfileRepository profileRepository;
@@ -108,8 +119,19 @@ public class MeliService  implements IMeliService{
                     .attributeGroupName("Otros")
                     .attributeGroupId("OTHERS"));
 
+            Shipping shipping = new Shipping("me2");
+            shipping.localPickUp(false);
+            shipping.freeShipping(false);
+            shipping.methods(new ArrayList<>());
+
+            List<SaleTerms> saleTerms = new ArrayList<>();
+            saleTerms.add(new SaleTerms("WARRANTY_TYPE")
+                    .name("Tipo de garantía")
+                    .valueName("Garantia del vendedor")
+                    .valueId("2230280"));
+
             Item item = new Item();
-            item.title("Item de test - No Ofertar java");
+            item.title("Item de test2 - No Changes java");
             item.categoryId("MLU1915");
             item.price(350);
             item.currencyId("UYU");
@@ -117,10 +139,12 @@ public class MeliService  implements IMeliService{
             item.buyingMode("buy_it_now");
             item.listingTypeId("bronze");
             item.condition("new");
-            item.description("Item de Teste. Mercado Livre SDK");
+            item.description("Item de Teste. Mercado Libre con cambios en la SDK");
             item.videoId("RXWn6kftTHY");
             item.pictures(pictures);
             item.attributes(attributes);
+            item.shipping(shipping);
+            item.saleTerms(saleTerms);
             try {
                 response.put("response", apiService.createPublication(publicationRequest, accountFounded.get().getAccessToken()));
                 return response;
@@ -135,5 +159,102 @@ public class MeliService  implements IMeliService{
 
     }
 
+    @Override
+    public List<Map<String, Object>> createPublicationList(List<Item> items, Integer accountId ) throws Exception {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Map<String, Object>> responseList = new ArrayList<>();
+        try {
+            for (Item item : items) {
+                String sku = "";
+                Map<String, Object> response = createPublication(item, accountId);
+                sku = item.getAttributes().stream().filter(m -> m.getId() == "SELLER_SKU").findFirst().isPresent() ?
+                        item.getAttributes().stream().filter(m -> m.getId() == "SELLER_SKU").findFirst().get().getValueName() :
+                        "WHITOUT-SKU";
+                if(response.containsKey("response")){
+                    resultMap.put("published", true);
+                    resultMap.put("sku", sku);
+                    resultMap.put("product", response.get("response"));
+                    responseList.add(resultMap);
+                }
+                else{
+                    resultMap.put("published", false);
+                    resultMap.put("sku", sku);
+                    resultMap.put("product", response.get("MELI_ERROR"));
+                    responseList.add(resultMap);
+                }
+            }
+            return responseList;
+        }
+        catch (Exception e){
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin){
+        List<DetailsPublicationsMeli> detailsMeli = new ArrayList<>();
+        for (ItemModel iter: items) {
+            DetailsPublicationsMeli detail = new DetailsPublicationsMeli();
+            detail.setTitle(iter.getItem().getTitle());
+            detail.setAccountMeli(accountId);
+            detail.setCategoryMeli(iter.getItem().getCategoryId());
+            detail.setMargin(idMargin);
+            detail.setPricePublication(iter.getItem().getPrice());
+
+            Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdProduct());
+            if(meli.isPresent())
+                detail.setMlPublication(meli.get());
+            else
+                continue;
+
+            if(iter.getItem().getSaleTerms() != null) {
+                Optional<SaleTerms> warrantyType = iter.getItem().getSaleTerms().stream().filter(p -> p.getId().equals("WARRANTY_TYPE")).findFirst();
+                detail.setWarrantyType(warrantyType.get().getValueName());
+
+                Optional<SaleTerms> warrantyTime = iter.getItem().getSaleTerms().stream().filter(p -> p.getId().equals("WARRANTY_TIME")).findFirst();
+                detail.setWarrantyTime(warrantyTime.get().getValueName());
+            }
+            detail.setStatus("In process");
+            detailsMeli.add(detail);
+        }
+        detailsPublicationRepository.saveAll(detailsMeli);
+        return true;
+    }
+
+    @Override
+    public boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException {
+        List<DetailsPublicationsMeli> detailsToUpdate = new ArrayList<>();
+
+        if(createOrUpdateDetailPublicationsMeli(items, accountId, idMargin)){
+            for (ItemModel item: items) {
+                Map<String, Object> response = createPublication(item.getItem(), accountId);
+                if(response.containsKey("response")){
+                    Object obj = response.get("response");
+                    DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
+                    Optional<Attributes> attr = item.getItem().getAttributes().stream().filter(p -> p.getId() == "SELLER_SKU").findFirst();
+                    if(attr.isPresent()){
+                        String sku = attr.get().getValueName();
+                        DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, accountId);
+                        detailP.setStatus(detailM.getStatus());
+                        detailP.setIdPublicationMeli(detailM.getIdPublication());
+                        detailP.setLastUpgrade(detailM.getLastUpdated());
+                        detailP.setPermalink(detailM.getPermalink());
+                        detailsToUpdate.add(detailP);
+                    }
+                }
+                else{
+                    Optional<Attributes> attr = item.getItem().getAttributes().stream().filter(p -> p.getId() == "SELLER_SKU").findFirst();
+                    if(attr.isPresent()){
+                        String sku = attr.get().getValueName();
+                        DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, accountId);
+                        detailP.setStatus("fail");
+                        detailsToUpdate.add(detailP);
+                    }
+                }
+            }
+            detailsPublicationRepository.saveAll(detailsToUpdate);
+        }
+    return true;
+    }
 
 }

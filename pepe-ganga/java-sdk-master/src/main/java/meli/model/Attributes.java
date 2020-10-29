@@ -65,7 +65,6 @@ public class Attributes {
   @SerializedName(SERIALIZED_NAME_ATTRIBUTE_GROUP_NAME)
   private String attributeGroupName;
 
-
   public Attributes id(String id) {
     
     this.id = id;
