@@ -86,6 +86,18 @@ public class Item {
   @SerializedName(SERIALIZED_NAME_VARIATIONS)
   private List<Variations> variations = null;
 
+  public static final String SERIALIZED_NAME_SHIPPING = "shipping";
+  @SerializedName(SERIALIZED_NAME_SHIPPING)
+  private Shipping shipping;
+
+  public static final String SERIALIZED_NAME_SALE_TERMS = "sale_terms";
+  @SerializedName(SERIALIZED_NAME_SALE_TERMS)
+  private List<SaleTerms> saleTerms = null;
+
+  public static final String SERIALIZED_NAME_TAGS = "tags";
+  @SerializedName(SERIALIZED_NAME_TAGS)
+  List<String> tags;
+
 
   public Item title(String title) {
     
@@ -395,6 +407,63 @@ public class Item {
     this.variations = variations;
   }
 
+  public Item shipping(Shipping shipping) {
+
+    this.shipping = shipping;
+    return this;
+  }
+
+  public Shipping getShipping() {
+    return shipping;
+  }
+
+  public void setShipping(Shipping shipping) {
+    this.shipping = shipping;
+  }
+
+  public Item saleTerms(List<SaleTerms> saleTerms) {
+
+    this.saleTerms = saleTerms;
+    return this;
+  }
+
+  public Item addSaleTermsItem(SaleTerms saleTermsItem) {
+    if (this.saleTerms == null) {
+      this.saleTerms = new ArrayList<SaleTerms>();
+    }
+    this.saleTerms.add(saleTermsItem);
+    return this;
+  }
+
+  public List<SaleTerms> getSaleTerms() {
+    return saleTerms;
+  }
+
+  public void setSaleTerms(List<SaleTerms> saleTerms) {
+    this.saleTerms = saleTerms;
+  }
+
+  public Item tags(List<String> tags) {
+
+    this.tags = tags;
+    return this;
+  }
+
+  public Item addTagsItem(String tagsItem) {
+    if (this.tags == null) {
+      this.tags = new ArrayList<String>();
+    }
+    this.tags.add(tagsItem);
+    return this;
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
+  }
 
   @Override
   public boolean equals(java.lang.Object o) {
@@ -417,12 +486,14 @@ public class Item {
         Objects.equals(this.videoId, item.videoId) &&
         Objects.equals(this.pictures, item.pictures) &&
         Objects.equals(this.attributes, item.attributes) &&
-        Objects.equals(this.variations, item.variations);
+        Objects.equals(this.variations, item.variations) &&
+        Objects.equals(this.shipping, item.shipping) &&
+        Objects.equals(this.saleTerms, item.saleTerms);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(title, categoryId, price, currencyId, availableQuantity, buyingMode, listingTypeId, condition, description, videoId, pictures, attributes, variations);
+    return Objects.hash(title, categoryId, price, currencyId, availableQuantity, buyingMode, listingTypeId, condition, description, videoId, pictures, attributes, variations, shipping, saleTerms);
   }
 
 
@@ -443,6 +514,8 @@ public class Item {
     sb.append("    pictures: ").append(toIndentedString(pictures)).append("\n");
     sb.append("    attributes: ").append(toIndentedString(attributes)).append("\n");
     sb.append("    variations: ").append(toIndentedString(variations)).append("\n");
+    sb.append("    shipping: ").append(toIndentedString(shipping)).append("\n");
+    sb.append("    saleTerms: ").append(toIndentedString(saleTerms)).append("\n");
     sb.append("}");
     return sb.toString();
   }

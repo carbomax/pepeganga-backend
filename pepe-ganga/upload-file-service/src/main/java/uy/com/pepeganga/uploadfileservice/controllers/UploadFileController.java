@@ -13,6 +13,8 @@ import uy.com.pepeganga.uploadfileservice.services.FileUploadService;
 
 import javax.activation.FileTypeMap;
 import java.io.File;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -34,6 +36,16 @@ public class UploadFileController {
 			// TODO: handle exception
 			throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("Error almacenando archivo %s", e.getMessage()));
 		}		
+	}
+
+	@RequestMapping(
+			value = ("/upload"),
+			headers = "content-type=multipart/form-data",
+			method = RequestMethod.POST)
+	public ResponseEntity<String> uploadFile(@RequestParam("image") MultipartFile file, @RequestParam("imagen") MultipartFile file1) {
+		System.out.println(file.getOriginalFilename());
+		System.out.println(file1.getOriginalFilename());
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
 	@GetMapping("/file/{name}")

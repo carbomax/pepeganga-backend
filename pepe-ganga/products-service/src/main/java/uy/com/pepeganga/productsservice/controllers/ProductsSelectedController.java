@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import uy.com.pepeganga.business.common.entities.Image;
+import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
@@ -62,5 +63,23 @@ public class ProductsSelectedController {
 	public ResponseEntity<EditableProductModel> getInfoOfProduct(@PathVariable Integer id){
 		return new ResponseEntity<>(mlp_services.getCustomProduct(id), HttpStatus.OK);
 	}
-	
+
+	@GetMapping("/full-product/{profileEncode}")
+	public ResponseEntity<List<MercadoLibrePublications>> getFullProducts(@PathVariable String profileEncode, @RequestParam List<String>skus) {
+		try {
+			return new ResponseEntity<>(mlp_services.getFullProduct(skus, profileEncode), HttpStatus.OK);
+		}catch (Exception e){
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	}
+
+	@GetMapping("/full-product-id")
+	public ResponseEntity<List<EditableProductModel>> getFullProductById(@RequestParam List<Integer> ids) {
+		try {
+			return new ResponseEntity<>(mlp_services.getFullProductById(ids), HttpStatus.OK);
+		}catch (Exception e){
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	}
+
 }
