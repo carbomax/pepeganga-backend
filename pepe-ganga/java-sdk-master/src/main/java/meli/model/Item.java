@@ -94,6 +94,10 @@ public class Item {
   @SerializedName(SERIALIZED_NAME_SALE_TERMS)
   private List<SaleTerms> saleTerms = null;
 
+  public static final String SERIALIZED_NAME_TAGS = "tags";
+  @SerializedName(SERIALIZED_NAME_TAGS)
+  List<String> tags;
+
 
   public Item title(String title) {
     
@@ -437,6 +441,28 @@ public class Item {
 
   public void setSaleTerms(List<SaleTerms> saleTerms) {
     this.saleTerms = saleTerms;
+  }
+
+  public Item tags(List<String> tags) {
+
+    this.tags = tags;
+    return this;
+  }
+
+  public Item addTagsItem(String tagsItem) {
+    if (this.tags == null) {
+      this.tags = new ArrayList<String>();
+    }
+    this.tags.add(tagsItem);
+    return this;
+  }
+
+  public List<String> getTags() {
+    return tags;
+  }
+
+  public void setTags(List<String> tags) {
+    this.tags = tags;
   }
 
   @Override

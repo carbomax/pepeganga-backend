@@ -22,14 +22,13 @@ public class DetailsModelResponse {
     private String listingTypeId;
     private String condition;
     private String description;
-    private List<ItemPictures> pictures;
-    private List<Attributes> attributes;
-    private Shipping shipping;
-    private List<SaleTerms> saleTerms;
+    private List<AttributeModelResponse> attributes;
+    private ShippingModelResponse shipping;
+    private List<SaleTermsModelResponse> saleTerms;
     private String lastUpdated;
     private String status;
     private String permalink;
-    private List<Variations> variations;
+    private List<VariationsModelResponse> variations;
     private String warranty;
 
     @JsonProperty("id")
@@ -80,20 +79,16 @@ public class DetailsModelResponse {
     public String getDescription() {
         return description;
     }
-    @JsonProperty("pictures")
-    public List<ItemPictures> getPictures() {
-        return pictures;
-    }
     @JsonProperty("attributes")
-    public List<Attributes> getAttributes() {
+    public List<AttributeModelResponse> getAttributes() {
         return attributes;
     }
     @JsonProperty("shipping")
-    public Shipping getShipping() {
+    public ShippingModelResponse getShipping() {
         return shipping;
     }
     @JsonProperty("sale_terms")
-    public List<SaleTerms> getSaleTerms() {
+    public List<SaleTermsModelResponse> getSaleTerms() {
         return saleTerms;
     }
     @JsonProperty("last_updated")
@@ -109,7 +104,7 @@ public class DetailsModelResponse {
         return permalink;
     }
     @JsonProperty("variations")
-    public List<Variations> getVariations() {
+    public List<VariationsModelResponse> getVariations() {
         return variations;
     }
     @JsonProperty("warranty")

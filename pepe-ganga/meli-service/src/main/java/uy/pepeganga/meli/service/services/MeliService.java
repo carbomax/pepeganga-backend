@@ -195,6 +195,19 @@ public class MeliService  implements IMeliService{
         List<DetailsPublicationsMeli> detailsMeli = new ArrayList<>();
         for (ItemModel iter: items) {
             DetailsPublicationsMeli detail = new DetailsPublicationsMeli();
+            String valueName = "";
+            for (Attributes attr1: iter.getItem().getAttributes()) {
+                if(attr1.getId().equals("SELLER_SKU")){
+                    valueName = attr1.getValueName();
+                }
+            }
+            if(!valueName.isBlank()) {
+                DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(valueName, accountId);
+                if(detailP != null)
+                    detail = detailP;
+            }
+
+
             detail.setTitle(iter.getItem().getTitle());
             detail.setAccountMeli(accountId);
             detail.setCategoryMeli(iter.getItem().getCategoryId());
@@ -231,9 +244,14 @@ public class MeliService  implements IMeliService{
                 if(response.containsKey("response")){
                     Object obj = response.get("response");
                     DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
-                    Optional<Attributes> attr = item.getItem().getAttributes().stream().filter(p -> p.getId() == "SELLER_SKU").findFirst();
-                    if(attr.isPresent()){
-                        String sku = attr.get().getValueName();
+                    String valueName="";
+                    for (Attributes attr1: item.getItem().getAttributes()) {
+                        if(attr1.getId().equals("SELLER_SKU")){
+                            valueName = attr1.getValueName();
+                        }
+                    }
+                    if(!valueName.isBlank()){
+                        String sku = valueName;
                         DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, accountId);
                         detailP.setStatus(detailM.getStatus());
                         detailP.setIdPublicationMeli(detailM.getIdPublication());
@@ -243,9 +261,14 @@ public class MeliService  implements IMeliService{
                     }
                 }
                 else{
-                    Optional<Attributes> attr = item.getItem().getAttributes().stream().filter(p -> p.getId() == "SELLER_SKU").findFirst();
-                    if(attr.isPresent()){
-                        String sku = attr.get().getValueName();
+                    String valueName="";
+                    for (Attributes attr1: item.getItem().getAttributes()) {
+                        if(attr1.getId().equals("SELLER_SKU")){
+                            valueName = attr1.getValueName();
+                        }
+                    }
+                    if(!valueName.isBlank()){
+                        String sku = valueName;
                         DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, accountId);
                         detailP.setStatus("fail");
                         detailsToUpdate.add(detailP);
