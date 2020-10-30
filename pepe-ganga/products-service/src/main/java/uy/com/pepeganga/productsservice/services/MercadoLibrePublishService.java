@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 import uy.com.pepeganga.business.common.entities.Image;
+import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
@@ -25,5 +26,9 @@ public interface MercadoLibrePublishService {
 	EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete )  throws Exception;
 	
 	EditableProductModel getCustomProduct(Integer id);
+
+	List<MercadoLibrePublications> getFullProduct(List<String> skus, String profileEncode) throws Exception;
+
+	List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception;
 }
 
