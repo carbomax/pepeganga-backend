@@ -15,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import uy.com.pepeganga.business.common.entities.Image;
-import uy.com.pepeganga.business.common.entities.Item;
-import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
-import uy.com.pepeganga.business.common.entities.Profile;
+import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
@@ -27,12 +24,10 @@ import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.com.pepeganga.productsservice.gridmodels.ItemMeliGrid;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
+import uy.com.pepeganga.productsservice.models.AccountMarginModel;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
-import uy.com.pepeganga.productsservice.repository.ImageRepository;
-import uy.com.pepeganga.productsservice.repository.MercadoLibrePublishRepository;
-import uy.com.pepeganga.productsservice.repository.ProductsRepository;
-import uy.com.pepeganga.productsservice.repository.UserRepository;
+import uy.com.pepeganga.productsservice.repository.*;
 
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService {
@@ -44,6 +39,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	ProductsRepository productsRepository;
 
 	@Autowired
+	DetailsPublicationMeliRepository detailsRepository;
+
+	@Autowired
 	ItemService itemService;
 
 	@Autowired
@@ -51,6 +49,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	
 	@Autowired
 	ImageRepository imageRepo;
+
+	@Autowired
+	MarginRepository marginRepo;
+
+	@Autowired
+	AccountMeliRepository sellerAccountRepo;
 
 	// Method to fill the details of marketplace card
 	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {
@@ -318,7 +322,21 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			editP.setProductName(item.get().getProductName());
 			editP.setSku(item.get().getItem().getSku());
 			editP.setStates(item.get().getStates());
-			editP.setImages(item.get().getImages());			
+			editP.setImages(item.get().getImages());
+
+			if(item.get().getStates() == States.PUBLISHED.getId()) {
+				Optional<DetailsPublicationsMeli> details = Optional.ofNullable(detailsRepository.findByPublications(item.get().getId()));
+				if(details.isPresent()){
+					Optional<Margin> margin = marginRepo.findById(details.get().getMargin());
+					Optional<SellerAccount> sellerAcount = sellerAccountRepo.findById(details.get().getAccountMeli());
+					if(margin.isPresent() && sellerAcount.isPresent()){
+						AccountMarginModel account_margin = new AccountMarginModel(sellerAcount.get().getBusinessName(),
+								sellerAcount.get().getId(),margin.get().getName(), margin.get().getId(), margin.get().getType(),
+								margin.get().getValue());
+						editP.setAccount_margin(account_margin);
+					}
+				}
+			}
 		} 
 		return editP;
 	}

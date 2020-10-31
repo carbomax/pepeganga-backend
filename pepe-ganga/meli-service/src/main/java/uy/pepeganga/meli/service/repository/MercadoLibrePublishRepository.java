@@ -26,5 +26,8 @@ public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibr
 	
 	@Query(value = "select * from mercadolibrepublications ml where ml.item_id = ?1 and ml.profile_id = ?2", nativeQuery = true)
 	MercadoLibrePublications findByItemAndProfile(String item, Integer profile);
+
+	@Query(value = "update mercadolibrepublications ml set ml.price = ?1 where ml.id = ?2", nativeQuery = true)
+	Void updatePriceColumn(Double price, Integer id);
 		
 }

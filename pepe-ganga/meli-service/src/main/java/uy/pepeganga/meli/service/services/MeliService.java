@@ -102,7 +102,7 @@ public class MeliService  implements IMeliService{
             response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
             return response;
         } else {
-
+/*
             // Example to post an item in Argentina
             List<ItemPictures> pictures = new ArrayList<>();
             String source =	"https://http2.mlstatic.com/storage/developers-site-cms-admin/openapi/319968615067-mp3.jpg";
@@ -144,7 +144,7 @@ public class MeliService  implements IMeliService{
             item.pictures(pictures);
             item.attributes(attributes);
             item.shipping(shipping);
-            item.saleTerms(saleTerms);
+            item.saleTerms(saleTerms);*/
             try {
                 response.put("response", apiService.createPublication(publicationRequest, accountFounded.get().getAccessToken()));
                 return response;
@@ -215,8 +215,13 @@ public class MeliService  implements IMeliService{
             detail.setPricePublication(iter.getItem().getPrice());
 
             Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdProduct());
-            if(meli.isPresent())
+            if(meli.isPresent()) {
                 detail.setMlPublication(meli.get());
+                var price = (double) iter.getItem().getPrice();
+                meli.get().setPrice(price);
+                meli.get().setStates((short)1);
+                mlPublishRepository.save(meli.get());
+            }
             else
                 continue;
 
