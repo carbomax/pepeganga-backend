@@ -116,7 +116,7 @@ public class UserService implements IUserService {
             userToUpdate.setCreateAt(user.getCreateAt());
             userToUpdate.setEmail(user.getEmail());
             userToUpdate.setLoginAttempts(user.getLoginAttempts());
-            userToUpdate.setPassword(cryptPasswordEncoder.encode(user.getPassword()));
+           userToUpdate.setPassword(user.getPassword());
             userToUpdate.setRoles(user.getRoles());
             return userRepository.save(userToUpdate);
         } else {

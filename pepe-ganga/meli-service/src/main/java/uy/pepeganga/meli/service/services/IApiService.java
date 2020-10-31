@@ -19,4 +19,8 @@ public interface IApiService {
     Map<String, Object> synchronizeAccount(Integer accountId);
 
     Object createPublication(Item publicationRequest, String token) throws ApiException;
+
+    Object getOrderByNotificationResource(String orderId, String token) throws ApiException;
+
+    Object getOrdersBySeller(Long seller, String token) throws ApiException;
 }

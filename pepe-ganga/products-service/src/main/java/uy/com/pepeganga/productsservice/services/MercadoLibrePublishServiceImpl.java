@@ -1,33 +1,36 @@
 package uy.com.pepeganga.productsservice.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
+import uy.com.pepeganga.productsservice.gridmodels.DetailsPublicationsMeliGrid;
 import uy.com.pepeganga.productsservice.gridmodels.ItemMeliGrid;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
-import uy.com.pepeganga.productsservice.models.AccountMarginModel;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.repository.*;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService {
@@ -39,9 +42,6 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	ProductsRepository productsRepository;
 
 	@Autowired
-	DetailsPublicationMeliRepository detailsRepository;
-
-	@Autowired
 	ItemService itemService;
 
 	@Autowired
@@ -51,10 +51,10 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	ImageRepository imageRepo;
 
 	@Autowired
-	MarginRepository marginRepo;
+	ProfileRepository profileRepository;
 
 	@Autowired
-	AccountMeliRepository sellerAccountRepo;
+	DetailsPublicationsMeliRepository detailsPublicationsMeliRepository;
 
 	// Method to fill the details of marketplace card
 	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {
@@ -322,21 +322,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			editP.setProductName(item.get().getProductName());
 			editP.setSku(item.get().getItem().getSku());
 			editP.setStates(item.get().getStates());
-			editP.setImages(item.get().getImages());
-
-			if(item.get().getStates() == States.PUBLISHED.getId()) {
-				Optional<DetailsPublicationsMeli> details = Optional.ofNullable(detailsRepository.findByPublications(item.get().getId()));
-				if(details.isPresent()){
-					Optional<Margin> margin = marginRepo.findById(details.get().getMargin());
-					Optional<SellerAccount> sellerAcount = sellerAccountRepo.findById(details.get().getAccountMeli());
-					if(margin.isPresent() && sellerAcount.isPresent()){
-						AccountMarginModel account_margin = new AccountMarginModel(sellerAcount.get().getBusinessName(),
-								sellerAcount.get().getId(),margin.get().getName(), margin.get().getId(), margin.get().getType(),
-								margin.get().getValue());
-						editP.setAccount_margin(account_margin);
-					}
-				}
-			}
+			editP.setImages(item.get().getImages());			
 		} 
 		return editP;
 	}
@@ -369,5 +355,38 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}
 		return result;
 
+	}
+
+	@Override
+	public List<DetailsPublicationsMeliGrid> getPublicationsDetailsBySellerProfile(Integer profileId, int page, int size) {
+		Optional<Profile> profile = profileRepository.findById(profileId);
+		if (profile.isPresent()) {
+			List<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findByProfileAccounts(profile.get().getSellerAccounts().stream().map(SellerAccount::getId).collect(Collectors.toList()), PageRequest.of(page, size));
+			List<DetailsPublicationsMeliGrid> publicationsMeliGrids =  new ArrayList<>();
+			detailsPublication.forEach(details -> {
+				DetailsPublicationsMeliGrid publicationsMeliGrid = new DetailsPublicationsMeliGrid();
+				publicationsMeliGrid.setAccountName(
+						Objects.requireNonNull(details.getMlPublication().getProfile().getSellerAccounts()
+								.stream().filter(account -> account.getId().equals(details.getAccountMeli())).findFirst().orElse(null)).getBusinessName()
+				);
+				publicationsMeliGrid.setAccountMeli(details.getAccountMeli());
+				publicationsMeliGrid.setMlPublicationId(details.getMlPublication().getId());
+				publicationsMeliGrid.setCategoryMeli(details.getCategoryMeli());
+				publicationsMeliGrid.setId(details.getId());
+				publicationsMeliGrid.setIdPublicationMeli(details.getIdPublicationMeli());
+				publicationsMeliGrid.setImages(details.getMlPublication().getImages().stream().map(Image::getPhotos).collect(Collectors.toList()));
+				publicationsMeliGrid.setMargin(details.getMargin());
+				publicationsMeliGrid.setLastUpgrade(details.getLastUpgrade());
+				publicationsMeliGrid.setPermalink(details.getPermalink());
+				publicationsMeliGrid.setPricePublication(details.getPricePublication());
+				publicationsMeliGrid.setTitle(details.getTitle());
+				publicationsMeliGrid.setSku(details.getMlPublication().getItem().getSku());
+				publicationsMeliGrid.setStatus(details.getStatus());
+				publicationsMeliGrids.add(publicationsMeliGrid);
+			});
+			return publicationsMeliGrids;
+		} else {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
+		}
 	}
 }

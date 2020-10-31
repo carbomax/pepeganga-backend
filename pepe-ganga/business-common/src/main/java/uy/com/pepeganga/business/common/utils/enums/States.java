@@ -1,7 +1,7 @@
 package uy.com.pepeganga.business.common.utils.enums;
 
 public enum States {
-	 PUBLISHED("Publicado", (short) 1),
+	    PUBLISHED("Publicado", (short) 1),
 	    NOPUBLISHED("No Publicado", (short) 2),
 	    PAUSED("Pausado", (short) 3);
 

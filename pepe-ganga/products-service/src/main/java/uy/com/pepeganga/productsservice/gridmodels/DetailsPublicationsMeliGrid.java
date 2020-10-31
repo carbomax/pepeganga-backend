@@ -1,73 +1,56 @@
-package uy.com.pepeganga.business.common.entities;
+package uy.com.pepeganga.productsservice.gridmodels;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.List;
 
-@Entity
-@Table(name = "detailspublicationsmeli")
-public class DetailsPublicationsMeli implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DetailsPublicationsMeliGrid implements Serializable {
+
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="mlpublication", nullable = false)
-    @JsonBackReference
-    private MercadoLibrePublications mlPublication;
+    private Integer mlPublicationId;
 
-    @Column(name="account_meli")
     private Integer accountMeli;
 
-    @Column(name="id_publication_meli")
     private String idPublicationMeli;
 
-    @Column(name="title")
     private String title;
 
-    @Column(name="permalink")
     private String permalink;
 
-    @Column(name="category_meli")
     private String categoryMeli;
 
-    @Column(name="price_publication")
     private Integer pricePublication;
 
-    @Column(name="warranty_type")
     private String warrantyType;
 
-    @Column(name="warranty_time")
     private String warrantyTime;
 
-    @Column(name="margin")
     private Short margin;
 
-    @Column(name="last_upgrade")
     private String lastUpgrade;
 
-    @Column(name="status")
     private String status;
 
-    private Integer saleStatus = 0;
+    private String sku;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    private String accountName;
+
+    private List<String> images;
 
     public Integer getId() {
         return id;
     }
 
-    public MercadoLibrePublications getMlPublication() {
-        return mlPublication;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public void setMlPublication(MercadoLibrePublications mlPublication) {
-        this.mlPublication = mlPublication;
+    public Integer getMlPublicationId() {
+        return mlPublicationId;
+    }
+
+    public void setMlPublicationId(Integer mlPublicationId) {
+        this.mlPublicationId = mlPublicationId;
     }
 
     public Integer getAccountMeli() {
@@ -158,26 +141,27 @@ public class DetailsPublicationsMeli implements Serializable {
         this.status = status;
     }
 
-    public Integer getSaleStatus() {
-        return saleStatus;
+    public String getSku() {
+        return sku;
     }
 
-    public void setSaleStatus(Integer saleStatus) {
-        this.saleStatus = saleStatus;
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DetailsPublicationsMeli)) return false;
-        DetailsPublicationsMeli that = (DetailsPublicationsMeli) o;
-        return Objects.equals(id, that.id);
+    public List<String> getImages() {
+        return images;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 
+    public String getAccountName() {
+        return accountName;
+    }
 
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
 }
