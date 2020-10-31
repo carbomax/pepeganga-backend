@@ -1,5 +1,6 @@
 package uy.com.pepeganga.business.common.entities;
 
+
 import java.io.Serializable;
 import java.util.List;
 
