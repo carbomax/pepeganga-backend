@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
-import uy.com.pepeganga.business.common.utils.conversions.Utils;
 import uy.com.pepeganga.userservice.repository.ProfileRepository;
 import uy.com.pepeganga.userservice.repository.UserRepository;
 
@@ -55,27 +54,34 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public Profile updateUserProfile(Profile profile, Integer profileId, Integer userId) {
+
+        if(userRepository.existsByEmail(profile.getUser().getEmail())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("User with email: %s exist", profile.getUser().getEmail()));
+        }
         Optional<Profile> profileToUpdatedDb = profileRepository.findById(profileId);
         Optional<User> userToUpdatedDb = userRepository.findById(userId);
         if (profileToUpdatedDb.isPresent() && userToUpdatedDb.isPresent()) {
-            User userToUpdate = userToUpdatedDb.get();
-            userToUpdate.setEmail(profile.getUser().getEmail());
-            userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
-            userToUpdate.setRoles(profile.getUser().getRoles());
-            userToUpdate.setEnabled(profile.getUser().getEnabled());
-            User userUpdated = userRepository.save(userToUpdate);
-            profileToUpdatedDb.get().setFirstName(profile.getFirstName());
-            profileToUpdatedDb.get().setLastName(profile.getLastName());
-            profileToUpdatedDb.get().setBusinessName(profile.getBusinessName());
-            profileToUpdatedDb.get().setImage(profile.getImage());
-            profileToUpdatedDb.get().setRut(profile.getRut());
-            profileToUpdatedDb.get().setStore(profile.getStore());
-            profileToUpdatedDb.get().setAddress(profile.getAddress());
-            profileToUpdatedDb.get().setMargins(profile.getMargins());
-            profileToUpdatedDb.get().setMarketplaces(profile.getMarketplaces());
-            profileToUpdatedDb.get().setUser(userUpdated);
-            return profileRepository.save(profileToUpdatedDb.get());
+
+                User userToUpdate = userToUpdatedDb.get();
+                userToUpdate.setEmail(profile.getUser().getEmail());
+                userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
+                userToUpdate.setRoles(profile.getUser().getRoles());
+                userToUpdate.setEnabled(profile.getUser().getEnabled());
+                User userUpdated = userRepository.save(userToUpdate);
+                profileToUpdatedDb.get().setFirstName(profile.getFirstName());
+                profileToUpdatedDb.get().setLastName(profile.getLastName());
+                profileToUpdatedDb.get().setBusinessName(profile.getBusinessName());
+                profileToUpdatedDb.get().setImage(profile.getImage());
+                profileToUpdatedDb.get().setRut(profile.getRut());
+                profileToUpdatedDb.get().setStore(profile.getStore());
+                profileToUpdatedDb.get().setAddress(profile.getAddress());
+                profileToUpdatedDb.get().setMargins(profile.getMargins());
+                profileToUpdatedDb.get().setMarketplaces(profile.getMarketplaces());
+                profileToUpdatedDb.get().setUser(userUpdated);
+                return profileRepository.save(profileToUpdatedDb.get());
+
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profile.getUser().getId()));
         }
