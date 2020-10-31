@@ -22,6 +22,7 @@ import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
+import uy.pepeganga.meli.service.utils.ApiResources;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -167,8 +168,18 @@ public class ApiService implements IApiService {
     @Override
     public Object createPublication(Item publicationRequest, String token) throws ApiException {
 
-            return  restClientApiUy.resourcePost("items", token, publicationRequest);
+            return  restClientApiUy.resourcePost(ApiResources.ITEMS, token, publicationRequest);
 
+    }
+
+    @Override
+    public Object getOrderByNotificationResource(String notificationResource, String token) throws ApiException {
+        return restClientApiUy.resourceGet(notificationResource, token);
+    }
+
+    @Override
+    public Object getOrdersBySeller(Long sellerId, String token) throws ApiException {
+        return restClientApiUy.resourceGet(String.format(ApiResources.ORDERS + "/search?seller=%d", sellerId), token);
     }
 
 }
