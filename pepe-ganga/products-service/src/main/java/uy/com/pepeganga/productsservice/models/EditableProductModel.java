@@ -25,8 +25,6 @@ public class EditableProductModel {
 	
 	private long currentStock;
 
-	private AccountMarginModel account_margin;
-
 	public Integer getId() {
 		return id;
 	}
@@ -97,13 +95,5 @@ public class EditableProductModel {
 
 	public void setCurrentStock(long currentStock) {
 		this.currentStock = currentStock;
-	}
-
-	public AccountMarginModel getAccount_margin() {
-		return account_margin;
-	}
-
-	public void setAccount_margin(AccountMarginModel account_margin) {
-		this.account_margin = account_margin;
 	}
 }
