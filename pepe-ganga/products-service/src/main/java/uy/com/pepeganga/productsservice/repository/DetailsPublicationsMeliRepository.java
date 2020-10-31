@@ -13,4 +13,8 @@ public interface DetailsPublicationsMeliRepository  extends JpaRepository<Detail
     @Transactional(readOnly = true)
     @Query(value = "select * from detailspublicationsmeli where account_meli in (:accountsId) ", nativeQuery = true)
     List<DetailsPublicationsMeli> findByProfileAccounts(List<Integer> accountsId, Pageable pageable);
+
+    @Transactional(readOnly = true)
+    @Query(value = "select * from detailspublicationsmeli dt where dt.mlpublication = ?1", nativeQuery = true)
+    DetailsPublicationsMeli findByPublications(Integer idMLPublication);
 }
