@@ -28,6 +28,8 @@ public class MeliOrders implements Serializable {
 
     private Long shippingId;
 
+    private Long businessDateCreated = 0L;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private MeliOrderSeller seller;
@@ -140,5 +142,11 @@ public class MeliOrders implements Serializable {
         this.items = items;
     }
 
+    public Long getBusinessDateCreated() {
+        return businessDateCreated;
+    }
 
+    public void setBusinessDateCreated(Long businessDateCreated) {
+        this.businessDateCreated = businessDateCreated;
+    }
 }

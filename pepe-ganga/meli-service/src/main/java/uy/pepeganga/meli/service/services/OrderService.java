@@ -5,6 +5,7 @@ import meli.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,12 @@ import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +66,7 @@ public class OrderService implements IOrderService {
 
         List<Notification> notifications = notificationRepository.findByTopic(NotificationTopic.ORDERS_V2.getTopicName().trim());
         if (notifications != null) {
+            logger.info("Notifications received: {}", notifications.size());
             this.processingOrdersNotifications(notifications);
         } else logger.info("There are no notifications to process");
     }
@@ -134,6 +142,24 @@ public class OrderService implements IOrderService {
             orders.setPayments(payments);
         }
 
+        if(order.getDateCreated() != null){
+            Date date;
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                date = formatter.parse(order.getDateCreated());
+            } catch (ParseException e) {
+                logger.info("");
+                date = new Date();
+            }
+
+            Calendar calendar = Calendar.getInstance(Locale.getDefault());
+            calendar.setTime(date);
+            String dateOrder = String.format("%d%d%d", Calendar.YEAR, Calendar.MONTH+1, Calendar.DAY_OF_MONTH);
+            Long.getLong(dateOrder);
+            System.out.println(calendar.get(Calendar.YEAR));
+            System.out.println(calendar.get(Calendar.MONTH));
+            System.out.println(calendar.get(Calendar.DAY_OF_MONTH));
+        }
         // private order values
         orders.setCurrencyId(order.getCurrencyId());
         orders.setDateClosed(order.getDateClosed());
@@ -169,11 +195,11 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<MeliOrders> getAllOrdersByProfile(Integer profileId, int page, int size) {
+    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size) {
         Optional<Profile> profile = profileRepository.findById(profileId);
 
         if (profile.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profile.get().getId()));
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
         } else {
             List<String> accounts = new ArrayList<>();
             profile.get().getSellerAccounts().forEach(sellerAccount -> {
@@ -182,9 +208,10 @@ public class OrderService implements IOrderService {
                 }
             });
 
-            return ordersRepository.findBySellerId(accounts, PageRequest.of(page, size));
+            return ordersRepository.findBySellerId(accounts, statusFilter, nameClient, dateFrom, dateTo, PageRequest.of(page, size));
 
         }
 
     }
+
 }
