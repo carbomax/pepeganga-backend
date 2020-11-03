@@ -1,5 +1,6 @@
 package uy.pepeganga.meli.service.services;
 
+import org.springframework.data.domain.Page;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public interface IOrderService {
     Object delete();
 
     // Real implementation
-    List<MeliOrders> getAllOrdersByProfile(Integer profileId, int page, int size);
+    Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size);
 
 }
