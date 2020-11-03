@@ -6,13 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import uy.com.pepeganga.business.common.entities.Image;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
@@ -79,6 +73,28 @@ public class ProductsSelectedController {
 			return new ResponseEntity<>(mlp_services.getFullProductById(ids), HttpStatus.OK);
 		}catch (Exception e){
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+	}
+
+	@DeleteMapping("/delete-products/{productsList}")
+	public ResponseEntity<Boolean> deleteProductsOfStore(@PathVariable List<Integer> productsList){
+		try {
+			if(productsList.isEmpty())
+				return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
+			return new ResponseEntity<Boolean>(mlp_services.deleteProductsOfStore(productsList), HttpStatus.OK);
+		}catch (Exception e){
+			return new ResponseEntity<>(false, HttpStatus.CONFLICT);
+		}
+	}
+
+	@DeleteMapping("/delete-product/{product}")
+	public ResponseEntity<Boolean> deleteProductsOfStore(@PathVariable Integer product){
+		try {
+			if(product == null)
+				return new ResponseEntity<Boolean>(false, HttpStatus.NOT_ACCEPTABLE);
+			return new ResponseEntity<Boolean>(mlp_services.deleteProductOfStore(product), HttpStatus.OK);
+		}catch (Exception e){
+			return new ResponseEntity<>(false, HttpStatus.CONFLICT);
 		}
 	}
 

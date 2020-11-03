@@ -12,6 +12,10 @@ public class SaleTerms {
     @SerializedName(SERIALIZED_NAME_ID)
     private String id;
 
+    public static final String SERIALIZED_NAME_VALUE_NAME = "value_name";
+    @SerializedName(SERIALIZED_NAME_VALUE_NAME)
+    private String valueName;
+/*
     public static final String SERIALIZED_NAME_NAME = "name";
     @SerializedName(SERIALIZED_NAME_NAME)
     private String name;
@@ -20,10 +24,6 @@ public class SaleTerms {
     @SerializedName(SERIALIZED_NAME_VALUE_ID)
     private String valueId;
 
-    public static final String SERIALIZED_NAME_VALUE_NAME = "value_name";
-    @SerializedName(SERIALIZED_NAME_VALUE_NAME)
-    private String valueName;
-
     public static final String SERIALIZED_NAME_VALUE_STRUCT = "value_struct";
     @SerializedName(SERIALIZED_NAME_VALUE_STRUCT)
     private AttributesValueStruct valueStruct;
@@ -31,7 +31,7 @@ public class SaleTerms {
     public static final String SERIALIZED_NAME_VALUES = "values";
     @SerializedName(SERIALIZED_NAME_VALUES)
     private List<AttributesValues> values = null;
-
+*/
     public SaleTerms(String id) {
         this.id = id;
     }
@@ -50,52 +50,6 @@ public class SaleTerms {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-
-    public SaleTerms name(String name) {
-
-        this.name = name;
-        return this;
-    }
-
-    /**
-     * Get name
-     * @return name
-     **/
-    @javax.annotation.Nullable
-    @ApiModelProperty(example = "Capacidad de almacenamiento de datos", value = "")
-
-    public String getName() {
-        return name;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public SaleTerms valueId(String valueId) {
-
-        this.valueId = valueId;
-        return this;
-    }
-
-    /**
-     * Get valueId
-     * @return valueId
-     **/
-    @javax.annotation.Nullable
-    @ApiModelProperty(value = "")
-
-    public String getValueId() {
-        return valueId;
-    }
-
-
-    public void setValueId(String valueId) {
-        this.valueId = valueId;
     }
 
 
@@ -121,6 +75,45 @@ public class SaleTerms {
         this.valueName = valueName;
     }
 
+   /*
+    public SaleTerms name(String name) {
+
+        this.name = name;
+        return this;
+    }
+
+
+    @javax.annotation.Nullable
+    @ApiModelProperty(example = "Capacidad de almacenamiento de datos", value = "")
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public SaleTerms valueId(String valueId) {
+
+        this.valueId = valueId;
+        return this;
+    }
+
+    @javax.annotation.Nullable
+    @ApiModelProperty(value = "")
+
+    public String getValueId() {
+        return valueId;
+    }
+
+
+    public void setValueId(String valueId) {
+        this.valueId = valueId;
+    }
+
 
     public SaleTerms valueStruct(AttributesValueStruct valueStruct) {
 
@@ -128,10 +121,7 @@ public class SaleTerms {
         return this;
     }
 
-    /**
-     * Get valueStruct
-     * @return valueStruct
-     **/
+
     @javax.annotation.Nullable
     @ApiModelProperty(value = "")
 
@@ -159,10 +149,7 @@ public class SaleTerms {
         return this;
     }
 
-    /**
-     * Get values
-     * @return values
-     **/
+
     @javax.annotation.Nullable
     @ApiModelProperty(value = "")
 
@@ -188,12 +175,12 @@ public class SaleTerms {
                 Objects.equals(values, saleTerms.values);
     }
 
-    @Override
+     @Override
     public int hashCode() {
         return Objects.hash(id, name, valueId, valueName, valueStruct, values);
     }
 
-    @Override
+     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Attributes {\n");
@@ -203,6 +190,30 @@ public class SaleTerms {
         sb.append("    valueName: ").append(toIndentedString(valueName)).append("\n");
         sb.append("    valueStruct: ").append(toIndentedString(valueStruct)).append("\n");
         sb.append("    values: ").append(toIndentedString(values)).append("\n");
+        sb.append("}");
+        return sb.toString();
+    }
+*/
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SaleTerms)) return false;
+        SaleTerms saleTerms = (SaleTerms) o;
+        return Objects.equals(id, saleTerms.id) &&
+               Objects.equals(valueName, saleTerms.valueName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, valueName);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("class Attributes {\n");
+        sb.append("    id: ").append(toIndentedString(id)).append("\n");
+        sb.append("    valueName: ").append(toIndentedString(valueName)).append("\n");
         sb.append("}");
         return sb.toString();
     }

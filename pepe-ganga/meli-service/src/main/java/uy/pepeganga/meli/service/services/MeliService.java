@@ -193,6 +193,7 @@ public class MeliService  implements IMeliService{
     @Override
     public boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin){
         List<DetailsPublicationsMeli> detailsMeli = new ArrayList<>();
+        List<MercadoLibrePublications> meliPublicationsList = new ArrayList<>();
         for (ItemModel iter: items) {
             DetailsPublicationsMeli detail = new DetailsPublicationsMeli();
             String valueName = "";
@@ -220,7 +221,7 @@ public class MeliService  implements IMeliService{
                 var price = (double) iter.getItem().getPrice();
                 meli.get().setPrice(price);
                 meli.get().setStates((short)1);
-                mlPublishRepository.save(meli.get());
+                meliPublicationsList.add(meli.get());
             }
             else
                 continue;
@@ -232,10 +233,11 @@ public class MeliService  implements IMeliService{
                 Optional<SaleTerms> warrantyTime = iter.getItem().getSaleTerms().stream().filter(p -> p.getId().equals("WARRANTY_TIME")).findFirst();
                 detail.setWarrantyTime(warrantyTime.get().getValueName());
             }
-            detail.setStatus("In process");
+            detail.setStatus("in process");
             detailsMeli.add(detail);
         }
         detailsPublicationRepository.saveAll(detailsMeli);
+        mlPublishRepository.saveAll(meliPublicationsList);
         return true;
     }
 
@@ -284,5 +286,6 @@ public class MeliService  implements IMeliService{
         }
     return true;
     }
+
 
 }

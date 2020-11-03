@@ -34,5 +34,9 @@ public interface MercadoLibrePublishService {
 	List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception;
 
 	List<DetailsPublicationsMeliGrid> getPublicationsDetailsBySellerProfile(Integer profileId, int page, int size);
+
+	Boolean deleteProductsOfStore(List<Integer> product);
+
+	Boolean deleteProductOfStore(Integer product);
 }
 

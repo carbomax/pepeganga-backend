@@ -28,7 +28,8 @@ public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibr
 	Integer cantProductSelectedByProfile(int profile_id, String item_id);
 
 	Page<MercadoLibrePublications> findAll(Specification<MercadoLibrePublications> specification, Pageable pageable);
-	
+
+	@Transactional(readOnly = true)
 	@Query(value = "select * from mercadolibrepublications ml where ml.item_id = ?1 and ml.profile_id = ?2", nativeQuery = true)
 	MercadoLibrePublications findByItemAndProfile(String item, Integer profile);
 		

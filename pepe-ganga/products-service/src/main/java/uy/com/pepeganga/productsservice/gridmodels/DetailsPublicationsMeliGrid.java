@@ -37,6 +37,12 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     private List<String> images;
 
+    private String description;
+
+    private long currentStock;
+
+    private Integer saleStatus;
+
     public Integer getId() {
         return id;
     }
@@ -163,5 +169,29 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     public void setAccountName(String accountName) {
         this.accountName = accountName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public long getCurrentStock() {
+        return currentStock;
+    }
+
+    public void setCurrentStock(long currentStock) {
+        this.currentStock = currentStock;
+    }
+
+    public Integer getSaleStatus() {
+        return saleStatus;
+    }
+
+    public void setSaleStatus(Integer saleStatus) {
+        this.saleStatus = saleStatus;
     }
 }

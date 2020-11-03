@@ -57,6 +57,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	DetailsPublicationsMeliRepository detailsPublicationsMeliRepository;
 
 	// Method to fill the details of marketplace card
+	@Override
 	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {
 
 		MarketplaceDetails marketplaces = new MarketplaceDetails();
@@ -85,6 +86,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	}
 
 	// Method to store the products to publish by user
+	@Override
 	public SelectedProducResponse storeProductToPublish(String profileEncode, Short marketplace, List<String> products) {
 		
 		// Decode data on other side, by processing encoded data		
@@ -153,6 +155,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			double maxPrice, Pageable pageable) {
 		return mlPublishRepo.findAll((Root<MercadoLibrePublications> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
+			Short noPublished = (short)2;
+			predicates.add(cb.equal(root.get("states").as(Short.class), noPublished));
 			if (idProfile != null) {
 				predicates.add(cb.equal(root.join("profile").get("id").as(Integer.class), idProfile));
 			}
@@ -165,9 +169,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			if (StringUtils.isNotBlank(nameProduct)) {
 				predicates.add(cb.like(root.get("productName").as(String.class), "%" + nameProduct + "%"));
 			}
-			if (state != -1) {
+			/*if (state != -1) {
 				predicates.add(cb.equal(root.get("states").as(Short.class), state));
-			}
+			}*/
 
 			if (familyId != -1) {
 				predicates.add(cb.equal(root.join("item").get("family").get("id").as(Short.class), familyId));
@@ -179,6 +183,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	}
 
 	//@CacheEvict(value = "myproducts", allEntries = true)
+	@Override
 	public PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String profileEncode, String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable) {
 		
@@ -210,7 +215,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		pageItemMeliGrid.setTotalProducts(mlPublishRepo.count());
 		return pageItemMeliGrid;
 	}
-	
+	@Override
 	public ReasonResponse storeCommonData(String profileEncode, String description,  List<String> skuList, List<Image> images) {
 		ReasonResponse reason = new ReasonResponse();
 		reason.setSuccess(false);
@@ -252,7 +257,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}
 		return reason;
 	}
-	
+
+	@Override
 	public EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete ) throws Exception
 	{
 		MercadoLibrePublications result;
@@ -306,6 +312,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}
 	}
 
+	@Override
 	public EditableProductModel getCustomProduct(Integer id)
 	{
 		EditableProductModel editP= new EditableProductModel();
@@ -327,6 +334,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		return editP;
 	}
 
+	@Override
 	public List<MercadoLibrePublications> getFullProduct(List<String> skus, String profileEncode) throws Exception {
 
 		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
@@ -345,6 +353,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}
 	}
 
+	@Override
 	public List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception {
 		List<EditableProductModel> result = new ArrayList<>();
 		for (Integer id: ids) {
@@ -382,11 +391,28 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setTitle(details.getTitle());
 				publicationsMeliGrid.setSku(details.getMlPublication().getItem().getSku());
 				publicationsMeliGrid.setStatus(details.getStatus());
+				publicationsMeliGrid.setDescription(details.getMlPublication().getDescription());
+				publicationsMeliGrid.setCurrentStock(details.getMlPublication().getItem().getStockActual());
+				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
 				publicationsMeliGrids.add(publicationsMeliGrid);
 			});
 			return publicationsMeliGrids;
 		} else {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
 		}
+	}
+
+	@Override
+	public Boolean deleteProductsOfStore(List<Integer> products){
+		products.forEach(d -> {
+			deleteProductOfStore(d);
+		});
+		return true;
+	}
+
+	@Override
+	public Boolean deleteProductOfStore(Integer product){
+		mlPublishRepo.deleteById(product);
+		return true;
 	}
 }
