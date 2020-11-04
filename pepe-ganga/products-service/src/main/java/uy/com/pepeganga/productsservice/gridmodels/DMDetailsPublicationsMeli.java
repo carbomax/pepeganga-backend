@@ -5,7 +5,7 @@ import uy.com.pepeganga.business.common.entities.Image;
 import java.io.Serializable;
 import java.util.List;
 
-public class DetailsPublicationsMeliGrid implements Serializable {
+public class DMDetailsPublicationsMeli implements Serializable {
 
     private Integer id;
 
@@ -44,6 +44,8 @@ public class DetailsPublicationsMeliGrid implements Serializable {
     private long currentStock;
 
     private Integer saleStatus;
+
+    private int totalElements;
 
     public Integer getId() {
         return id;
@@ -195,5 +197,13 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     public void setSaleStatus(Integer saleStatus) {
         this.saleStatus = saleStatus;
+    }
+
+    public int getTotalElements() {
+        return totalElements;
+    }
+
+    public void setTotalElements(int totalElements) {
+        this.totalElements = totalElements;
     }
 }
