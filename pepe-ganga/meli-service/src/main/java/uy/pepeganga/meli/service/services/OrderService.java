@@ -16,6 +16,8 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
+import uy.pepeganga.meli.service.models.orders.DMOrderItem;
+import uy.pepeganga.meli.service.models.orders.DMOrderItems;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
 
@@ -59,6 +61,9 @@ public class OrderService implements IOrderService {
 
     @Autowired
     NotificationRepository notificationRepository;
+
+    @Autowired
+    DetailsPublicationMeliRepository detailsPublicationMeliRepository;
 
     @Override
     @Transactional
@@ -133,6 +138,7 @@ public class OrderService implements IOrderService {
             order.getOrderItems().forEach(dmOrderItems -> orderItems.add(new MeliOrderItem(dmOrderItems.getItem().getId(), dmOrderItems.getItem().getTitle(),
                     dmOrderItems.getItem().getCategoryId(), dmOrderItems.getItem().getSellerSku(), dmOrderItems.getQuantity(), dmOrderItems.getUnitPrice(), dmOrderItems.getCurrencyId())));
             orders.setItems(orderItems);
+            this.updateItemPublished(order.getOrderItems());
         }
 
         // Payments in order
@@ -155,10 +161,7 @@ public class OrderService implements IOrderService {
             Calendar calendar = Calendar.getInstance(Locale.getDefault());
             calendar.setTime(date);
             String dateOrder = String.format("%d%d%d", Calendar.YEAR, Calendar.MONTH+1, Calendar.DAY_OF_MONTH);
-            Long.getLong(dateOrder);
-            System.out.println(calendar.get(Calendar.YEAR));
-            System.out.println(calendar.get(Calendar.MONTH));
-            System.out.println(calendar.get(Calendar.DAY_OF_MONTH));
+            orders.setBusinessDateCreated(Long.getLong(dateOrder));
         }
         // private order values
         orders.setCurrencyId(order.getCurrencyId());
@@ -169,6 +172,20 @@ public class OrderService implements IOrderService {
         orders.setStatus(order.getStatus());
         orders.setTotalAmount(order.getTotalAmount());
         ordersRepository.save(orders);
+    }
+
+    private void updateItemPublished(List<DMOrderItems> dmOrderItems){
+
+        dmOrderItems.forEach( dmOrderItems1 -> {
+            DetailsPublicationsMeli detailItemPublication = detailsPublicationMeliRepository.findByIdPublicationMeli(dmOrderItems1.getItem().getId());
+            if(detailItemPublication != null){
+                logger.info("Updating item publication with idPublicationMeli: {}, account: {}", detailItemPublication.getIdPublicationMeli(), detailItemPublication.getAccountMeli());
+                detailItemPublication.setSaleStatus(1);
+                detailsPublicationMeliRepository.save(detailItemPublication);
+                logger.info("DetailItemPublication updated successfully");
+            }
+
+        });
     }
 
     @Override
