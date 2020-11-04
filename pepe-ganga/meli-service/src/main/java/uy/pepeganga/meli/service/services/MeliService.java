@@ -16,6 +16,7 @@ import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.DetailsModelResponse;
+import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
@@ -287,5 +288,27 @@ public class MeliService  implements IMeliService{
     return true;
     }
 
+    //Metodo no terminado Aun
+    @Override
+    public DetailsPublicationsMeliGrid RepublishProduct(DetailsPublicationsMeliGrid product){
+        Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(product.getAccountMeli());
+        Map<String, Object> response = new HashMap<>();
 
+        UpdateTitleAndPriceRequest request = new UpdateTitleAndPriceRequest();
+        request.setPrice(product.getPricePublication());
+        request.setTitle(product.getTitle());
+        if (accountFounded.isEmpty()) {
+            //response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", product.getAccountMeli())));
+            // new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", product.getAccountMeli()));
+        }
+
+        try {
+            response.put("response", apiService.updateTitleAndPrice(request, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+            return new DetailsPublicationsMeliGrid();
+        } catch (ApiException e) {
+            logger.error(" Error getting token Meli Response: {}", e.getResponseBody());
+            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+            return new DetailsPublicationsMeliGrid();
+        }
+    }
 }

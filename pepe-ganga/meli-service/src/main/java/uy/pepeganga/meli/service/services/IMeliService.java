@@ -2,6 +2,8 @@ package uy.pepeganga.meli.service.services;
 
 import meli.model.Item;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.pepeganga.meli.service.models.ApiMeliModelException;
+import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 
 import java.util.List;
@@ -26,4 +28,6 @@ public interface IMeliService {
     boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException;
 
     boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin);
+
+    DetailsPublicationsMeliGrid RepublishProduct(DetailsPublicationsMeliGrid product);
 }

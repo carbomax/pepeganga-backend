@@ -383,7 +383,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setCategoryMeli(details.getCategoryMeli());
 				publicationsMeliGrid.setId(details.getId());
 				publicationsMeliGrid.setIdPublicationMeli(details.getIdPublicationMeli());
-				publicationsMeliGrid.setImages(details.getMlPublication().getImages().stream().map(Image::getPhotos).collect(Collectors.toList()));
+				publicationsMeliGrid.setImages(details.getMlPublication().getImages());
 				publicationsMeliGrid.setMargin(details.getMargin());
 				publicationsMeliGrid.setLastUpgrade(details.getLastUpgrade());
 				publicationsMeliGrid.setPermalink(details.getPermalink());

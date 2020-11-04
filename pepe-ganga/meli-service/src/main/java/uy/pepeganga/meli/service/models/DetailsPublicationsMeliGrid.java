@@ -1,4 +1,4 @@
-package uy.com.pepeganga.productsservice.gridmodels;
+package uy.pepeganga.meli.service.models;
 
 import uy.com.pepeganga.business.common.entities.Image;
 

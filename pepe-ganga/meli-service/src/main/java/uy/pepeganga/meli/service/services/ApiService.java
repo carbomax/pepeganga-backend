@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
 import meli.model.Item;
+import meli.model.UpdateTitleAndPriceRequest;
 import meli_marketplace_lib.OAuth20Api;
 import meli_marketplace_lib.RestClientApi;
 import org.slf4j.Logger;
@@ -181,6 +182,12 @@ public class ApiService implements IApiService {
     public Object getOrdersBySeller(Long sellerId, String token) throws ApiException {
         return restClientApiUy.resourceGet(String.format(ApiResources.ORDERS + "/search?seller=%d", sellerId), token);
     }
+
+    @Override
+    public Object updateTitleAndPrice(UpdateTitleAndPriceRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%ITEM_ID", idPublicationMeli), token, request);
+    }
+
 
 }
 
