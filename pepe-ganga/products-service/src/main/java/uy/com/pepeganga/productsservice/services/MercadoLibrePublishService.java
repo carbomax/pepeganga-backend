@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
-import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
 import uy.com.pepeganga.business.common.entities.Image;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
-import uy.com.pepeganga.productsservice.gridmodels.DetailsPublicationsMeliGrid;
+import uy.com.pepeganga.productsservice.gridmodels.DMDetailsPublicationsMeli;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
+import uy.com.pepeganga.productsservice.gridmodels.PageDeatilsPublicationMeli;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
@@ -33,7 +33,7 @@ public interface MercadoLibrePublishService {
 
 	List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception;
 
-	List<DetailsPublicationsMeliGrid> getPublicationsDetailsBySellerProfile(Integer profileId, int page, int size);
+	PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, int page, int size);
 
 	Boolean deleteProductsOfStore(List<Integer> product);
 

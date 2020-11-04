@@ -185,7 +185,7 @@ public class ApiService implements IApiService {
 
     @Override
     public Object updateTitleAndPrice(UpdateTitleAndPriceRequest request, String token, String idPublicationMeli) throws ApiException {
-        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%ITEM_ID", idPublicationMeli), token, request);
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
     }
 
 
