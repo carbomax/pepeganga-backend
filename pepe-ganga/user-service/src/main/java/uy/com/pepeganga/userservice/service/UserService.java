@@ -57,12 +57,14 @@ public class UserService implements IUserService {
     @Transactional
     public Profile updateUserProfile(Profile profile, Integer profileId, Integer userId) {
 
-        if(userRepository.existsByEmail(profile.getUser().getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("User with email: %s exist", profile.getUser().getEmail()));
-        }
+
         Optional<Profile> profileToUpdatedDb = profileRepository.findById(profileId);
         Optional<User> userToUpdatedDb = userRepository.findById(userId);
         if (profileToUpdatedDb.isPresent() && userToUpdatedDb.isPresent()) {
+
+            if(!userToUpdatedDb.get().getEmail().equals(profile.getUser().getEmail()) && userRepository.existsByEmail(profile.getUser().getEmail())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, String.format("User with email: %s exist", profile.getUser().getEmail()));
+            }
 
                 User userToUpdate = userToUpdatedDb.get();
                 userToUpdate.setEmail(profile.getUser().getEmail());

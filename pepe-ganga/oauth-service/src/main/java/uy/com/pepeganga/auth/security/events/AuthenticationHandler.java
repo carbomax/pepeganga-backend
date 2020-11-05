@@ -8,9 +8,12 @@ import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import uy.com.pepeganga.auth.services.IUserService;
 import uy.com.pepeganga.business.common.entities.User;
+
+import java.util.Objects;
 
 @Component
 public class AuthenticationHandler implements AuthenticationEventPublisher {
@@ -43,6 +46,9 @@ public class AuthenticationHandler implements AuthenticationEventPublisher {
 
         try{
             User user = userService.findByEmail(authentication.getName());
+            if(Objects.isNull(user)){
+                throw  new UsernameNotFoundException(String.format("Login error, user with email: %s ,not fount", authentication.getName()));
+            }
             if(user.getLoginAttempts() >= 3){
                 logger.error("El user with email {} will be disabled for three bad login attempts: {}", user.getEmail(), user.getLoginAttempts());
                 user.setEnabled(false);
