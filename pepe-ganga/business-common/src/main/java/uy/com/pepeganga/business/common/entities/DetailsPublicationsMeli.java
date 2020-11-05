@@ -54,6 +54,8 @@ public class DetailsPublicationsMeli implements Serializable {
 
     private Integer saleStatus = 0;
 
+    private Integer deleted = 0;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -164,6 +166,14 @@ public class DetailsPublicationsMeli implements Serializable {
 
     public void setSaleStatus(Integer saleStatus) {
         this.saleStatus = saleStatus;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
     }
 
     @Override
