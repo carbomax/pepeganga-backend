@@ -16,6 +16,7 @@ import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.models.AuthAddInformationClaim;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +30,9 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email)  {
        uy.com.pepeganga.business.common.entities.User user = findByEmail(email);
+       if(Objects.isNull(user)){
+           throw  new UsernameNotFoundException(String.format("Login error, user with email: %s ,not fount", email));
+       }
 
        try {
 
