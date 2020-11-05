@@ -384,8 +384,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setMargin(details.getMargin());
 				publicationsMeliGrid.setLastUpgrade(details.getLastUpgrade());
 				publicationsMeliGrid.setPermalink(details.getPermalink());
-				publicationsMeliGrid.setPricePublication(details.getPricePublication());
-				publicationsMeliGrid.setTitle(details.getTitle());
+				publicationsMeliGrid.setPricePublication((int) details.getMlPublication().getPrice());
+				publicationsMeliGrid.setPriceCost(details.getMlPublication().getItem().getPrecioPesos());
+				publicationsMeliGrid.setTitle(details.getMlPublication().getProductName());
 				publicationsMeliGrid.setSku(details.getMlPublication().getItem().getSku());
 				publicationsMeliGrid.setStatus(details.getStatus());
 				publicationsMeliGrid.setDescription(details.getMlPublication().getDescription());

@@ -23,6 +23,8 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     private Integer pricePublication;
 
+    private Double priceCost;
+
     private String warrantyType;
 
     private String warrantyTime;
@@ -205,5 +207,13 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     public void setTotalElements(int totalElements) {
         this.totalElements = totalElements;
+    }
+
+    public Double getPriceCost() {
+        return priceCost;
+    }
+
+    public void setPriceCost(Double priceCost) {
+        this.priceCost = priceCost;
     }
 }
