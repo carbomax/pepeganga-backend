@@ -2,10 +2,13 @@ package uy.pepeganga.meli.service.services;
 
 import meli.ApiException;
 import meli.model.Item;
-import meli.model.UpdateTitleAndPriceRequest;
 import org.springframework.http.ResponseEntity;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
+import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
+import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
+import uy.pepeganga.meli.service.models.publications.PicturesRequest;
+import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
 
 import java.util.Map;
 
@@ -25,5 +28,10 @@ public interface IApiService {
 
     Object getOrdersBySeller(Long seller, String token) throws ApiException;
 
-    Object updateTitleAndPrice(UpdateTitleAndPriceRequest request, String token, String idPublicationMeli) throws ApiException;
+    Object updateDescription(DescriptionRequest request, String token, String idPublicationMeli) throws ApiException;
+
+    Object updatePropertiesWithSales(PropertiesWithSalesRequest request, String token, String idPublicationMeli) throws ApiException;
+
+    Object updatePropertiesWithoutSales(PropertiesWithoutSalesRequest request, String token, String idPublicationMeli) throws ApiException;
+
 }

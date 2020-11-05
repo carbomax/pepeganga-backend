@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
 import meli.model.Item;
-import meli.model.UpdateTitleAndPriceRequest;
 import meli_marketplace_lib.OAuth20Api;
 import meli_marketplace_lib.RestClientApi;
 import org.slf4j.Logger;
@@ -19,6 +18,10 @@ import uy.com.pepeganga.business.common.utils.enums.MeliStatusAccount;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.MeliResponseBodyException;
 import uy.pepeganga.meli.service.models.MeliUserAccount;
+import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
+import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
+import uy.pepeganga.meli.service.models.publications.PicturesRequest;
+import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
@@ -168,9 +171,7 @@ public class ApiService implements IApiService {
 
     @Override
     public Object createPublication(Item publicationRequest, String token) throws ApiException {
-
             return  restClientApiUy.resourcePost(ApiResources.ITEMS, token, publicationRequest);
-
     }
 
     @Override
@@ -184,11 +185,19 @@ public class ApiService implements IApiService {
     }
 
     @Override
-    public Object updateTitleAndPrice(UpdateTitleAndPriceRequest request, String token, String idPublicationMeli) throws ApiException {
-        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%ITEM_ID", idPublicationMeli), token, request);
+    public Object updatePropertiesWithoutSales(PropertiesWithoutSalesRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
     }
 
+    @Override
+    public Object updatePropertiesWithSales(PropertiesWithSalesRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
+    }
 
+    @Override
+    public Object updateDescription(DescriptionRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s" + "/description?api_version=2", idPublicationMeli), token, request);
+    }
 }
 
 

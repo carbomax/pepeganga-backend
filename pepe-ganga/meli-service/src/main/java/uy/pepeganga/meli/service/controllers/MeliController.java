@@ -1,11 +1,13 @@
 package uy.pepeganga.meli.service.controllers;
 
+import meli.ApiException;
 import meli.model.Item;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.services.IMeliService;
 
@@ -64,6 +66,16 @@ public class MeliController {
             return new ResponseEntity<Boolean>(meliService.createPublicationsFlow(items, accountId, idMargin), HttpStatus.CREATED);
         }
         catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @PutMapping("/republish-product")
+    public ResponseEntity<DetailsPublicationsMeliGrid> republishProduct(DetailsPublicationsMeliGrid product){
+        try {
+            return new ResponseEntity<DetailsPublicationsMeliGrid>(meliService.republishProduct(product), HttpStatus.CREATED);
+        }
+        catch (ApiException e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
