@@ -118,17 +118,17 @@ public class ApiService implements IApiService {
     public SellerAccount getTokenByRefreshToken(SellerAccount account) throws ApiException {
 
 
-        MeliAutheticationResponse meliAutheticationResponse = mapper.convertValue(auth20Api.getToken("refresh_token", clientId, clientSecret, "", "", account.getRefreshToken()), MeliAutheticationResponse.class);
-        logger.info("By account id: {}, Meli refresh token response: user id:  {}", account.getId(), account.getUserId());
-        account.setAccessToken(meliAutheticationResponse.getAccesToken());
-        account.setScope(meliAutheticationResponse.getScope());
-        account.setTokenType(meliAutheticationResponse.getTokenType());
-        account.setExpiresIn(meliAutheticationResponse.getExpiresIn());
-        account.setUserId(meliAutheticationResponse.getUserId());
-        account.setRefreshToken(meliAutheticationResponse.getRefreshToken());
-        account.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
+            MeliAutheticationResponse meliAutheticationResponse = mapper.convertValue(auth20Api.getToken("refresh_token", clientId, clientSecret, "", "", account.getRefreshToken()), MeliAutheticationResponse.class);
+            logger.info("By account id: {}, Meli refresh token response: user id:  {}", account.getId(), account.getUserId());
+            account.setAccessToken(meliAutheticationResponse.getAccesToken());
+            account.setScope(meliAutheticationResponse.getScope());
+            account.setTokenType(meliAutheticationResponse.getTokenType());
+            account.setExpiresIn(meliAutheticationResponse.getExpiresIn());
+            account.setUserId(meliAutheticationResponse.getUserId());
+            account.setRefreshToken(meliAutheticationResponse.getRefreshToken());
+            account.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
 
-        return sellerAccountRepository.save(account);
+            return sellerAccountRepository.save(account);
     }
 
     @Override
