@@ -1,10 +1,11 @@
 package uy.pepeganga.meli.service.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import uy.com.pepeganga.business.common.entities.Image;
 
 import java.io.Serializable;
 import java.util.List;
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DetailsPublicationsMeliGrid implements Serializable {
 
     private Integer id;
@@ -22,6 +23,8 @@ public class DetailsPublicationsMeliGrid implements Serializable {
     private String categoryMeli;
 
     private Integer pricePublication;
+
+    private Double priceCost;
 
     private String warrantyType;
 
@@ -195,5 +198,13 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     public void setSaleStatus(Integer saleStatus) {
         this.saleStatus = saleStatus;
+    }
+
+    public Double getPriceCost() {
+        return priceCost;
+    }
+
+    public void setPriceCost(Double priceCost) {
+        this.priceCost = priceCost;
     }
 }

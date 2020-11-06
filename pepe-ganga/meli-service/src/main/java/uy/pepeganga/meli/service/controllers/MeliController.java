@@ -71,7 +71,7 @@ public class MeliController {
     }
 
     @PutMapping("/republish-product")
-    public ResponseEntity<DetailsPublicationsMeliGrid> republishProduct(DetailsPublicationsMeliGrid product){
+    public ResponseEntity<DetailsPublicationsMeliGrid> republishProduct(@RequestBody DetailsPublicationsMeliGrid product){
         try {
             return new ResponseEntity<DetailsPublicationsMeliGrid>(meliService.republishProduct(product), HttpStatus.CREATED);
         }
