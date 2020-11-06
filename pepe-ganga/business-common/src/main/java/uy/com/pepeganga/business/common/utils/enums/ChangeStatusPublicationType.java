@@ -6,7 +6,8 @@ public enum  ChangeStatusPublicationType {
 
     NOT_CHANGED(-1, "error"),
     PAUSED(3, "paused"),
-    ACTIVE(4, "active");
+    ACTIVE(4, "active"),
+    CLOSED(5, "closed");
 
 
     private int code;
