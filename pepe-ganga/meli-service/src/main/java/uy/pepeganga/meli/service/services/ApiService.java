@@ -18,9 +18,7 @@ import uy.com.pepeganga.business.common.utils.enums.MeliStatusAccount;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.MeliResponseBodyException;
 import uy.pepeganga.meli.service.models.MeliUserAccount;
-import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
-import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
-import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
+import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
@@ -185,6 +183,11 @@ public class ApiService implements IApiService {
 
     @Override
     public Object updatePropertiesWithoutSales(PropertiesWithoutSalesRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
+    }
+
+    @Override
+    public Object changeStatusPublications(ChangeStatusPublicationRequest request, String token, String idPublicationMeli) throws ApiException {
         return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
     }
 

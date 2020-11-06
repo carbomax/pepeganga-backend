@@ -5,9 +5,7 @@ import meli.model.Item;
 import org.springframework.http.ResponseEntity;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
-import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
-import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
-import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
+import uy.pepeganga.meli.service.models.publications.*;
 
 import java.util.Map;
 
@@ -32,5 +30,9 @@ public interface IApiService {
     Object updatePropertiesWithSales(PropertiesWithSalesRequest request, String token, String idPublicationMeli) throws ApiException;
 
     Object updatePropertiesWithoutSales(PropertiesWithoutSalesRequest request, String token, String idPublicationMeli) throws ApiException;
+
+    Object changeStatusPublications(ChangeStatusPublicationRequest request, String token, String idPublicationMeli) throws ApiException;
+
+
 
 }

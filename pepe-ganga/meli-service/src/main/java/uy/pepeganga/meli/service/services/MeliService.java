@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.DetailsModelResponse;
@@ -389,6 +390,65 @@ public class MeliService  implements IMeliService{
             response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
             return response;
         }
+    }
+
+    @Override
+    public Map<String, Object> changeStatusPublication(Integer accountId, int status, String idPublication) {
+
+        Map<String, Object> response = new HashMap<>();
+        ChangeStatusPublicationRequest request = new ChangeStatusPublicationRequest();
+
+        try {
+            request.setStatus(ChangeStatusPublicationType.ofCode(status).getStatus());
+        } catch (IllegalArgumentException e){
+            logger.error("The status: {} you provide is not correct", status);
+             response.put(ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status: %d you provide is not correct", status)));
+            return response;
+        }
+
+
+        DetailsPublicationsMeli details = detailsPublicationRepository.findByIdPublicationMeli(idPublication);
+        if(Objects.isNull(details)){
+            logger.error("Detail Publication with id: {} not found", idPublication);
+            response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+        } else {
+            Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(accountId);
+            if (accountFounded.isEmpty()) {
+                logger.error("Account with id: {} not found", accountId);
+                response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+            } else {
+                try {
+                    Object result = apiService.changeStatusPublications(request, accountFounded.get().getAccessToken(), idPublication);
+                    if (!Objects.isNull(result)) {
+                        details.setStatus(ChangeStatusPublicationType.ofCode(status).getStatus());
+                        response.put("response", detailsPublicationRepository.save(details).getStatus().trim());
+                    } else {
+                        logger.error("Publication not changed: status to change: {}, publicationId: {}", status, idPublication);
+                        response.put(ERROR,  ChangeStatusPublicationType.ofCode(-1).getStatus());
+                    }
+                } catch (ApiException e) {
+                    if(e.getCode() == 401){
+                        try {
+                            SellerAccount newTokenAccount = apiService.getTokenByRefreshToken(accountFounded.get());
+                            Object result =  apiService.changeStatusPublications(request, newTokenAccount.getAccessToken(), idPublication);
+                            if (!Objects.isNull(result)) {
+                                details.setStatus(ChangeStatusPublicationType.ofCode(status).getStatus());
+                                response.put("response", detailsPublicationRepository.save(details).getStatus().trim());
+                            } else {
+                                logger.error("Publication not changed: status to change: {}, publicationId: {}", status, idPublication);
+                                response.put(ERROR,  ChangeStatusPublicationType.ofCode(-1));
+                            }
+                        } catch (ApiException ex) {
+                            logger.error(ex.getMessage(), ex);
+                            response.put(MELI_ERROR,  new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+                        }
+                    } else response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+                }
+
+            }
+        }
+
+        return response;
     }
 
 
