@@ -2,9 +2,11 @@ package uy.pepeganga.meli.service.models.publications;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Picture {
-    private String source;
+public class Source {
+    String source;
 
     public String getSource() {
         return source;

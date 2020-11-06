@@ -5,19 +5,20 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PropertiesWithoutSalesRequest {
     private String title;
     private Integer price;
-    private PicturesRequest pictures;
+    private List<Source> pictures;
 
-    public PicturesRequest getPictures() {
+    public List<Source> getPictures() {
         return pictures;
     }
 
-    public void setPictures(PicturesRequest pictures) {
+    public void setPictures(List<Source> pictures) {
         this.pictures = pictures;
     }
 

@@ -287,6 +287,7 @@ public class MeliService  implements IMeliService{
     }
 
 //implementar esto
+    @Override
     public DetailsPublicationsMeliGrid republishProduct(DetailsPublicationsMeliGrid product) throws ApiException {
         Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(product.getAccountMeli());
         Map<String, Object> response = new HashMap<>();
@@ -301,30 +302,28 @@ public class MeliService  implements IMeliService{
                 response.put("response", apiService.updateDescription(descriptionRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
 
                 //Para las imagenes
-                List<Picture> pictureList = new ArrayList<>();
-                Picture picture = new Picture();
+                Source source = new Source();
+                List<Source> sources = new ArrayList<>();
 
                 //Ordeno el arreglo segun orden de ubicacion de las imagenes
                 List<Image> newImageList= BurbbleSort.burbbleLowerToHigher(product.getImages());
                 for (Image image: newImageList) {
-                    picture.setSource(image.getPhotos());
-                    pictureList.add(picture);
+                    source.setSource(image.getPhotos());
+                    sources.add(source);
                 }
-                PicturesRequest pictureR = new PicturesRequest();
-                pictureR.setPictures(pictureList);
 
                 //Producto Con ventas
                 if (product.getSaleStatus() == 1) {
                     PropertiesWithSalesRequest withSaleRequest = new PropertiesWithSalesRequest();
                     withSaleRequest.setPrice(product.getPricePublication());
-                    withSaleRequest.setPictures(pictureR);
+                    withSaleRequest.setPictures(sources);
                     response.put("response", apiService.updatePropertiesWithSales(withSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
 
                  //Producto Sin ventas
                 } else if (product.getSaleStatus() == 0) {
                     PropertiesWithoutSalesRequest withoutSaleRequest = new PropertiesWithoutSalesRequest();
                     withoutSaleRequest.setPrice(product.getPricePublication());
-                    withoutSaleRequest.setPictures(pictureR);
+                    withoutSaleRequest.setPictures(sources);
                     withoutSaleRequest.setTitle(product.getTitle());
                     response.put("response", apiService.updatePropertiesWithoutSales(withoutSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
                 }

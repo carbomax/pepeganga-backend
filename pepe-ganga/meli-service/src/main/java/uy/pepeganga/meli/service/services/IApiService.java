@@ -7,7 +7,6 @@ import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
-import uy.pepeganga.meli.service.models.publications.PicturesRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
 
 import java.util.Map;

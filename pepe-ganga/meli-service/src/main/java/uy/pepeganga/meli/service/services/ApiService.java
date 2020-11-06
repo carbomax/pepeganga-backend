@@ -20,7 +20,6 @@ import uy.pepeganga.meli.service.models.MeliResponseBodyException;
 import uy.pepeganga.meli.service.models.MeliUserAccount;
 import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
-import uy.pepeganga.meli.service.models.publications.PicturesRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
