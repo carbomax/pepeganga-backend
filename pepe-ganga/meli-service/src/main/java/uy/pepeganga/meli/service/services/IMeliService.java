@@ -60,6 +60,6 @@ public interface IMeliService {
 
     Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
 
-    Boolean updateStock(List<Pair> pairs, UpdatesOfSystem data);
+    Boolean updateStock(List<Pair> pairs, Long idData);
 
 }

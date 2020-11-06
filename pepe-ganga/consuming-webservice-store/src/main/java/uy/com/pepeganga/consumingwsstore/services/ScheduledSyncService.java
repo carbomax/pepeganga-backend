@@ -567,7 +567,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     @Async
     public boolean updateStockOfPublicationsMeli(List<Pair> pairs){
         try {
-            boolean p1 = feign.updateStock(pairs, data);
+            boolean p1 = feign.updateStock(pairs, data.getId());
             return true;
         }catch (Exception e) {
             logger.error(String.format("Error calling meli service to update stock of publications {} Error: "), e.getMessage());

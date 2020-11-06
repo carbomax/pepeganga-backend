@@ -760,10 +760,19 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
-    public Boolean updateStock(List<Pair> pairs, UpdatesOfSystem data) {
+    public Boolean updateStock(List<Pair> pairs, Long idData) {
         logger.info(" Begin updating of stock in Mercado Libre");
         AtomicBoolean isGood = new AtomicBoolean(true);
         try {
+            UpdatesOfSystem data = new UpdatesOfSystem();
+            Optional<UpdatesOfSystem> optionalData = updateSysRepo.findById(idData);
+            if(optionalData.isPresent()) {
+                data.setId(optionalData.get().getId());
+                data.setStartDate(optionalData.get().getStartDate());
+                data.setEndDate(optionalData.get().getEndDate());
+                data.setFinishedSync(optionalData.get().isFinishedSync());
+                data.setMessage(optionalData.get().getMessage());
+            }
             pairs.forEach(pair -> {
                 List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
                 detailsList = detailsPublicationRepository.findAllBySku(pair.getSku());

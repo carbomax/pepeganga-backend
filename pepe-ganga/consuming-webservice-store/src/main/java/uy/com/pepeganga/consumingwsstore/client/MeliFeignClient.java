@@ -12,5 +12,5 @@ import java.util.List;
 public interface MeliFeignClient {
 
     @PostMapping("/api/accounts/update-stock")
-    Boolean updateStock(@RequestBody List<Pair> pairs, @RequestParam UpdatesOfSystem data);
+    Boolean updateStock(@RequestBody List<Pair> pairs, @RequestParam Long idData);
 }
