@@ -1,11 +1,6 @@
 package uy.pepeganga.meli.service.models.publications;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
-import io.swagger.annotations.ApiModelProperty;
-
-import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PropertiesWithoutSalesRequest {

@@ -40,4 +40,6 @@ public interface IMeliService {
     Map<String, Object> updatePropertiesWithSales(PropertiesWithSalesRequest product, String token, String idPublicationMeli);
 
     Map<String, Object> updateDescription(DescriptionRequest product, String token, String idPublicationMeli);
+
+    Map<String, Object> changeStatusPublication(Integer accountId, int status, String idPublication);
 }
