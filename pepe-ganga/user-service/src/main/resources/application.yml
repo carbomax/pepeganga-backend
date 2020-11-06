@@ -11,7 +11,7 @@ spring:
     url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
 eureka:
   instance:
     instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}

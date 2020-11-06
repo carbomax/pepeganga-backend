@@ -63,7 +63,7 @@ public class MeliController {
     @PostMapping("/publications-flow/{accountId}")
     public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin){
         try {
-            return new ResponseEntity<Boolean>(meliService.createPublicationsFlow(items, accountId, idMargin), HttpStatus.CREATED);
+            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin), HttpStatus.CREATED);
         }
         catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -73,10 +73,15 @@ public class MeliController {
     @PutMapping("/republish-product")
     public ResponseEntity<DetailsPublicationsMeliGrid> republishProduct(DetailsPublicationsMeliGrid product){
         try {
-            return new ResponseEntity<DetailsPublicationsMeliGrid>(meliService.republishProduct(product), HttpStatus.CREATED);
+            return new ResponseEntity<>(meliService.republishProduct(product), HttpStatus.CREATED);
         }
         catch (ApiException e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
+
+    @PostMapping("/changeStatusPublication/{accountId}/{publicationId}")
+    public ResponseEntity<Map<String, Object>> changeStatusPublication(@PathVariable Integer accountId, @PathVariable String publicationId, @RequestParam int status){
+        return new ResponseEntity<>(meliService.changeStatusPublication(accountId, status, publicationId), HttpStatus.OK);
+     }
 }
