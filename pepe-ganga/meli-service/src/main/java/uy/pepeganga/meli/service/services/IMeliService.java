@@ -4,6 +4,7 @@ import meli.ApiException;
 import meli.model.Item;
 import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
@@ -59,6 +60,6 @@ public interface IMeliService {
 
     Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
 
-    Boolean updateStock(List<Pair> pairs);
+    Boolean updateStock(List<Pair> pairs, UpdatesOfSystem data);
 
 }

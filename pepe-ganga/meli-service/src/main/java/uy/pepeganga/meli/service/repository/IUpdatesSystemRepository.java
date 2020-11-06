@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.repositories;
+package uy.pepeganga.meli.service.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

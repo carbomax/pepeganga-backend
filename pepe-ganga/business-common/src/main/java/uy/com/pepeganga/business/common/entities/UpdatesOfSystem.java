@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.entities;
+package uy.com.pepeganga.business.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;

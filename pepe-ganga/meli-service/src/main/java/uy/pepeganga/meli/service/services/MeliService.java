@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.exceptions.TokenException;
@@ -47,6 +48,9 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     ProfileRepository profileRepository;
+
+    @Autowired
+    IUpdatesSystemRepository updateSysRepo;
 
     @Autowired
     IApiService apiService;
@@ -756,7 +760,7 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
-    public Boolean updateStock(List<Pair> pairs) {
+    public Boolean updateStock(List<Pair> pairs, UpdatesOfSystem data) {
         logger.info(" Begin updating of stock in Mercado Libre");
         AtomicBoolean isGood = new AtomicBoolean(true);
         try {
@@ -785,10 +789,22 @@ public class MeliService  implements IMeliService{
                                 } catch (ApiException e) {
                                     logger.error(" Error updating stock in mercado libre, Methods: updateStock(), {}", e.getResponseBody());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error updating stock in mercado libre, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 } catch (TokenException e) {
                                     logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
                                     logger.error(" Code of the error: {}", e.getCode());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error getting token, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 }
                             } else {
                                 try {
@@ -805,10 +821,22 @@ public class MeliService  implements IMeliService{
                                 } catch (ApiException e) {
                                     logger.error(" Error updating stock in mercado libre, API: call to ML, Methods: updateStock(), {}", e.getResponseBody());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error updating stock in mercado libre, API: call to ML, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 } catch (TokenException e) {
                                     logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
                                     logger.error(" Code of the error: {}", e.getCode());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error getting token, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 }
                             }
 

@@ -16,6 +16,6 @@ public class ClientBrandController {
 	
 	@GetMapping("/store/brands")
 	public void getTrademarks() {
-		brands.storeBrand();
+		//brands.storeBrand();
 	}
 }

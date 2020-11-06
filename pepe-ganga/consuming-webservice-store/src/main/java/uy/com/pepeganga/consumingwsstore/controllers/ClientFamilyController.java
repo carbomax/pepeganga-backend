@@ -18,7 +18,7 @@ public class ClientFamilyController {
 	
 	@GetMapping("/store/families")
 	public void storeFamilies() {
-		family.storeFamilies();
+		//family.storeFamilies();
 	}
 	
 	@GetMapping("/familiesandsubfamilies")

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
@@ -128,7 +129,7 @@ public class MeliController {
     }
 
     @PostMapping("/update-stock")
-    public Boolean updateStock(@RequestBody List<Pair> pairs){
-        return meliService.updateStock(pairs);
+    public Boolean updateStock(@RequestBody List<Pair> pairs, @RequestParam UpdatesOfSystem data){
+        return meliService.updateStock(pairs, data);
     }
 }

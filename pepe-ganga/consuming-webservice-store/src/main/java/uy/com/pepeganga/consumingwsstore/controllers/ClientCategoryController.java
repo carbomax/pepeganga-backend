@@ -17,6 +17,6 @@ public class ClientCategoryController {
 	
 	@GetMapping("/store/categories")
 	public void storeCategories() {				
-		 category.storeCategories();
+		// category.storeCategories();
 	}
 }

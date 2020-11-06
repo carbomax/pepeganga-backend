@@ -20,7 +20,7 @@ public class ClientItemController {
 	
 	@GetMapping("/store/items")
 	public void storeItems() {
-		items.storeItems();
+		//items.storeItems();
 	}
 	
 	@GetMapping("/store/deleteitems")
