@@ -4,6 +4,7 @@ import meli.ApiException;
 import meli.model.Item;
 import org.springframework.http.ResponseEntity;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 import uy.pepeganga.meli.service.models.publications.*;
 
@@ -15,7 +16,7 @@ public interface IApiService {
 
     ResponseEntity<Map<String, Object>> updateAfterToken(Integer profileId, String code);
 
-    SellerAccount getTokenByRefreshToken(SellerAccount account) throws ApiException;
+    SellerAccount getTokenByRefreshToken(SellerAccount account) throws ApiException, TokenException;
 
     Map<String, Object> synchronizeAccount(Integer accountId);
 
