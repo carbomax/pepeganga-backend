@@ -54,6 +54,8 @@ public class SellerAccount implements Serializable {
 
     private Short marketplaceId = MarketplaceType.MERCADOLIBRE.getId();
 
+    private Long expirationDate = 0L;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     @JsonBackReference
@@ -201,5 +203,13 @@ public class SellerAccount implements Serializable {
 
     public void setMarketplaceId(Short marketplaceId) {
         this.marketplaceId = marketplaceId;
+    }
+
+    public Long getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Long expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }
