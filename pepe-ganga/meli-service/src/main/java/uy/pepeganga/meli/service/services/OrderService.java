@@ -7,24 +7,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
-import uy.pepeganga.meli.service.models.orders.DMOrderItem;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
+import uy.pepeganga.meli.service.utils.MeliUtils;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,6 +80,9 @@ public class OrderService implements IOrderService {
                 // check if exist a value for account
                 if (sellerAccountRepository.existsByUserId(notification.getUserId())) {
 
+                    if(!MeliUtils.validateTokenExpiration(sellerAccountRepository.findByUserId(notification.getUserId()).getExpirationDate())){
+                        apiService.getTokenByRefreshToken(sellerAccountRepository.findByUserId(notification.getUserId()));
+                    }
                     DMOrder order = mapper.convertValue(apiService.getOrderByNotificationResource(notification.getResource(),
                             sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrder.class);
                     if (ordersRepository.existsByOrderId(String.valueOf(order.getId()))) {
@@ -106,8 +105,8 @@ public class OrderService implements IOrderService {
                     notificationRepository.deleteById(notification.getId());
                 }
 
-            } catch (ApiException e) {
-                logger.error("Error meli api request: code {}, body: {}", e.getCode(), e.getResponseBody());
+            } catch (Exception e) {
+                logger.error(String.format("Error meli api request  message: %s", e.getMessage()), e);
                 if (notification.getBusinessAttempts() > 10) {
                     notificationRepository.deleteById(notification.getId());
                 }

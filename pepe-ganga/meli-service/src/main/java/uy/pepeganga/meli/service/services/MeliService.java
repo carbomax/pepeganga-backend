@@ -14,6 +14,7 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.DetailsModelResponse;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
@@ -425,7 +426,7 @@ public class MeliService  implements IMeliService{
                                 logger.error("Publication not changed: status to change: {}, publicationId: {}", status, idPublication);
                                 response.put(ERROR,  ChangeStatusPublicationType.ofCode(-1));
                             }
-                        } catch (ApiException ex) {
+                        } catch (ApiException | TokenException ex) {
                             logger.error(ex.getMessage(), ex);
                             response.put(MELI_ERROR,  new ApiMeliModelException(e.getCode(), e.getResponseBody()));
                         }
