@@ -2,6 +2,7 @@ package uy.pepeganga.meli.service.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import uy.com.pepeganga.business.common.entities.Image;
+import uy.com.pepeganga.business.common.entities.ImageDetailPublications;
 
 import java.io.Serializable;
 import java.util.List;
@@ -24,7 +25,11 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     private Integer pricePublication;
 
-    private Double priceCost;
+    private Double priceCostUYU;
+
+    private Double priceCostUSD;
+
+    private Double priceEditProduct;
 
     private String warrantyType;
 
@@ -40,7 +45,7 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     private String accountName;
 
-    private List<Image> images;
+    private List<ImageDetailPublications> images;
 
     private String description;
 
@@ -160,11 +165,11 @@ public class DetailsPublicationsMeliGrid implements Serializable {
         this.sku = sku;
     }
 
-    public List<Image> getImages() {
+    public List<ImageDetailPublications> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<ImageDetailPublications> images) {
         this.images = images;
     }
 
@@ -200,11 +205,27 @@ public class DetailsPublicationsMeliGrid implements Serializable {
         this.saleStatus = saleStatus;
     }
 
-    public Double getPriceCost() {
-        return priceCost;
+    public Double getPriceCostUYU() {
+        return priceCostUYU;
     }
 
-    public void setPriceCost(Double priceCost) {
-        this.priceCost = priceCost;
+    public void setPriceCostUYU(Double priceCostUYU) {
+        this.priceCostUYU = priceCostUYU;
+    }
+
+    public Double getPriceCostUSD() {
+        return priceCostUSD;
+    }
+
+    public void setPriceCostUSD(Double priceCostUSD) {
+        this.priceCostUSD = priceCostUSD;
+    }
+
+    public Double getPriceEditProduct() {
+        return priceEditProduct;
+    }
+
+    public void setPriceEditProduct(Double priceEditProduct) {
+        this.priceEditProduct = priceEditProduct;
     }
 }

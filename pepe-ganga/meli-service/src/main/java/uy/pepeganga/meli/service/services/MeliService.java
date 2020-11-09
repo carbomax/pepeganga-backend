@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
+import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.DetailsModelResponse;
@@ -159,6 +160,7 @@ public class MeliService  implements IMeliService{
 
     }
 
+    // (Verify to delete method if this is no used) OJO
     @Override
     public List<Map<String, Object>> createPublicationList(List<Item> items, Integer accountId ) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
@@ -196,30 +198,27 @@ public class MeliService  implements IMeliService{
         List<MercadoLibrePublications> meliPublicationsList = new ArrayList<>();
         for (ItemModel iter: items) {
             DetailsPublicationsMeli detail = new DetailsPublicationsMeli();
-            String valueName = "";
-            for (Attributes attr1: iter.getItem().getAttributes()) {
-                if(attr1.getId().equals("SELLER_SKU")){
-                    valueName = attr1.getValueName();
-                }
-            }
-            if(!valueName.isBlank()) {
-                DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(valueName, accountId);
+            if(!iter.getSku().isBlank()) {
+                DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(iter.getSku(), accountId);
                 if(detailP != null)
                     detail = detailP;
             }
-
 
             detail.setTitle(iter.getItem().getTitle());
             detail.setAccountMeli(accountId);
             detail.setCategoryMeli(iter.getItem().getCategoryId());
             detail.setMargin(idMargin);
             detail.setPricePublication(iter.getItem().getPrice());
+            detail.setPriceCostUSD(iter.getPriceCostUSD());
+            detail.setPriceCostUYU(iter.getPriceCostUYU());
+            detail.setPriceEditProduct(iter.getPriceEditProduct());
+            detail.setSku(iter.getSku());
+            detail.setImages(iter.getImages());
+            detail.setDescription(iter.getItem().getDescription());
 
-            Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdProduct());
+            Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdPublicationProduct());
             if(meli.isPresent()) {
                 detail.setMlPublication(meli.get());
-                var price = (double) iter.getItem().getPrice();
-                meli.get().setPrice(price);
                 meli.get().setStates((short)1);
                 meliPublicationsList.add(meli.get());
             }
@@ -233,7 +232,7 @@ public class MeliService  implements IMeliService{
                 Optional<SaleTerms> warrantyTime = iter.getItem().getSaleTerms().stream().filter(p -> p.getId().equals("WARRANTY_TIME")).findFirst();
                 detail.setWarrantyTime(warrantyTime.get().getValueName());
             }
-            detail.setStatus("in process");
+            detail.setStatus(MeliStatusPublications.IN_PROCESS.getValue());
             detailsMeli.add(detail);
         }
         detailsPublicationRepository.saveAll(detailsMeli);
@@ -241,6 +240,8 @@ public class MeliService  implements IMeliService{
         return true;
     }
 
+    //Global Method to that use "createOrUpdateDetailPublicationsMeli" and "createPublication" methods to store and publish
+    // one product in ML
     @Override
     public boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException {
         List<DetailsPublicationsMeli> detailsToUpdate = new ArrayList<>();
@@ -251,15 +252,8 @@ public class MeliService  implements IMeliService{
                 if(response.containsKey("response")){
                     Object obj = response.get("response");
                     DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
-                    String valueName="";
-                    for (Attributes attr1: item.getItem().getAttributes()) {
-                        if(attr1.getId().equals("SELLER_SKU")){
-                            valueName = attr1.getValueName();
-                        }
-                    }
-                    if(!valueName.isBlank()){
-                        String sku = valueName;
-                        DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, accountId);
+                    if(!item.getSku().isBlank()){
+                        DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(item.getSku(), accountId);
                         detailP.setStatus(detailM.getStatus());
                         detailP.setIdPublicationMeli(detailM.getIdPublication());
                         detailP.setLastUpgrade(detailM.getLastUpdated());
@@ -268,15 +262,8 @@ public class MeliService  implements IMeliService{
                     }
                 }
                 else{
-                    String valueName="";
-                    for (Attributes attr1: item.getItem().getAttributes()) {
-                        if(attr1.getId().equals("SELLER_SKU")){
-                            valueName = attr1.getValueName();
-                        }
-                    }
-                    if(!valueName.isBlank()){
-                        String sku = valueName;
-                        DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, accountId);
+                    if(!item.getSku().isBlank()){
+                        DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(item.getSku(), accountId);
                         detailP.setStatus("fail");
                         detailsToUpdate.add(detailP);
                     }
@@ -289,7 +276,7 @@ public class MeliService  implements IMeliService{
 
 //implementar esto
     @Override
-    public DetailsPublicationsMeliGrid republishProduct(DetailsPublicationsMeliGrid product) throws ApiException {
+    public DetailsPublicationsMeliGrid updateProductPublished(DetailsPublicationsMeliGrid product) throws ApiException {
         Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(product.getAccountMeli());
         Map<String, Object> response = new HashMap<>();
         DetailsPublicationsMeliGrid productResponse = new DetailsPublicationsMeliGrid();
@@ -307,8 +294,8 @@ public class MeliService  implements IMeliService{
                 List<Source> sources = new ArrayList<>();
 
                 //Ordeno el arreglo segun orden de ubicacion de las imagenes
-                List<Image> newImageList= BurbbleSort.burbbleLowerToHigher(product.getImages());
-                for (Image image: newImageList) {
+                List<ImageDetailPublications> newImageList= BurbbleSort.burbbleLowerToHigherByImagesDetails(product.getImages());
+                for (ImageDetailPublications image: newImageList) {
                     source.setSource(image.getPhotos());
                     sources.add(source);
                 }

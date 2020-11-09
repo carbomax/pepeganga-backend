@@ -46,8 +46,11 @@ public class MercadoLibrePublications implements Serializable {
 	@Column(name="states")
 	private short states;
 	
-	@Column(name="price")
-	private double price;
+	@Column(name="price_uyu")
+	private double priceUYU;
+
+	@Column(name="price_usd")
+	private double priceUSD;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "meli_id")
@@ -83,13 +86,20 @@ public class MercadoLibrePublications implements Serializable {
 	public void setStates(short states) {
 		this.states = states;
 	}
-	public double getPrice() {
-		return price;
+	public double getPriceUYU() {
+		return priceUYU;
 	}
-	public void setPrice(double price) {
-		this.price = price;
+	public void setPriceUYU(double priceUYU) {
+		this.priceUYU = priceUYU;
 	}
-		
+	public double getPriceUSD() {
+		return priceUSD;
+	}
+
+	public void setPriceUSD(double priceUSD) {
+		this.priceUSD = priceUSD;
+	}
+
 	public List<Image> getImages() {
 		return images;
 	}

@@ -21,7 +21,9 @@ public class EditableProductModel {
 	/* **No editable fields** */
 	private String sku;
 	
-	private double price_cost;
+	private double price_costUYU;
+
+	private double price_costUSD;
 	
 	private long currentStock;
 
@@ -81,12 +83,20 @@ public class EditableProductModel {
 		this.sku = sku;
 	}
 
-	public double getPrice_cost() {
-		return price_cost;
+	public double getPrice_costUYU() {
+		return price_costUYU;
 	}
 
-	public void setPrice_cost(double price_cost) {
-		this.price_cost = price_cost;
+	public void setPrice_costUYU(double price_costUYU) {
+		this.price_costUYU = price_costUYU;
+	}
+
+	public double getPrice_costUSD() {
+		return price_costUSD;
+	}
+
+	public void setPrice_costUSD(double price_costUSD) {
+		this.price_costUSD = price_costUSD;
 	}
 
 	public long getCurrentStock() {
