@@ -33,7 +33,7 @@ public interface IMeliService {
 
     boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin);
 
-    DetailsPublicationsMeliGrid republishProduct(DetailsPublicationsMeliGrid product) throws ApiException;
+    DetailsPublicationsMeliGrid updateProductPublished(DetailsPublicationsMeliGrid product) throws ApiException;
 
     Map<String, Object> updatePropertiesWithoutSales(PropertiesWithoutSalesRequest product, String token, String idPublicationMeli);
 

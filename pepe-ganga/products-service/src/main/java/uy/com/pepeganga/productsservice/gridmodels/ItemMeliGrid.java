@@ -20,6 +20,8 @@ public class ItemMeliGrid implements Serializable{
 	private String sku;
 
 	private double priceUYU;
+
+	private double priceUSD;
 	
 	private Family family;
 	
@@ -92,7 +94,12 @@ public class ItemMeliGrid implements Serializable{
 	public void setImages(List<Image> images) {
 		this.images = images;
 	}
-	
-	
-	
+
+	public double getPriceUSD() {
+		return priceUSD;
+	}
+
+	public void setPriceUSD(double priceUSD) {
+		this.priceUSD = priceUSD;
+	}
 }

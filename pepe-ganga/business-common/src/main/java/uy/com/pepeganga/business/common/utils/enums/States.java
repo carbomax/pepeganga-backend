@@ -2,8 +2,7 @@ package uy.com.pepeganga.business.common.utils.enums;
 
 public enum States {
 	    PUBLISHED("Publicado", (short) 1),
-	    NOPUBLISHED("No Publicado", (short) 2),
-	    PAUSED("Pausado", (short) 3);
+	    NOPUBLISHED("No Publicado", (short) 2);
 
 		private final String value;
 	    private final short id;
@@ -17,7 +16,7 @@ public enum States {
 		        return value;
 		    }
 
-		    public short getId() {
+		 public short getId() {
 		        return id;
 		    }
 }

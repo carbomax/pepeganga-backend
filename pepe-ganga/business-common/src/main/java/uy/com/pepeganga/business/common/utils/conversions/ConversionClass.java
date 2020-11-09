@@ -20,7 +20,7 @@ public class ConversionClass {
         for (int i = 0; i < imageList.length; i++) {
 			Image img = new Image();			
 			img.setPhotos(imageList[i]);
-			img.setOrder(-1);
+			img.setOrder(0);
 			img.setTitle("");
 			images.add(img);
 		}
