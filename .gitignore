@@ -1,0 +1,20 @@
+
+.metadata
+.sonarlint
+*.project
+pepe-ganga/.idea/vcs.xml
+pepe-ganga/.idea/sonarlint/issuestore/d/2/d2f5d1978e5f519100a679c4109f89296278badc
+pepe-ganga/.settings/org.eclipse.m2e.core.prefs
+
+### Eclipse ###
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders

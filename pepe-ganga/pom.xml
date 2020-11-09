@@ -8,10 +8,51 @@
     <artifactId>pepe-ganga</artifactId>
     <packaging>pom</packaging>
     <version>1.0</version>
-    <modules>
-        <module>eureka-service</module>
-        <module>user-service</module>
-    </modules>
 
 
+    <profiles>
+        <profile>
+            <id>ALL</id>
+            <modules>
+                <module>java-sdk-master</module>
+                <module>business-common</module>
+                <module>eureka-service</module>
+                <module>user-service</module>
+                <module>zuul-service</module>
+                <module>consuming-webservice-store</module>
+                <module>products-service</module>
+                <module>upload-file-service</module>
+                <module>meli-service</module>
+                <module>notification-service</module>
+                <module>oauth-service</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>ALL-WITHOUT-CONSUMING-SERVICE</id>
+            <modules>
+                <module>java-sdk-master</module>
+                <module>business-common</module>
+                <module>eureka-service</module>
+                <module>user-service</module>
+                <module>zuul-service</module>
+                <module>products-service</module>
+                <module>upload-file-service</module>
+                <module>meli-service</module>
+                <module>notification-service</module>
+            </modules>
+        </profile>
+
+        <profile>
+            <id>OAUTH-SERVICE</id>
+            <modules>
+                <module>java-sdk-master</module>
+                <module>business-common</module>
+                <module>eureka-service</module>
+                <module>user-service</module>
+                <module>oauth-service</module>
+                <module>zuul-service</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
