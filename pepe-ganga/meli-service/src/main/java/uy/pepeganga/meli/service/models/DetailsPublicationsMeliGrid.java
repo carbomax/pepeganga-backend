@@ -1,8 +1,7 @@
 package uy.pepeganga.meli.service.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import uy.com.pepeganga.business.common.entities.Image;
-import uy.com.pepeganga.business.common.entities.ImageDetailPublications;
+import uy.com.pepeganga.business.common.entities.ImagePublicationMeli;
 
 import java.io.Serializable;
 import java.util.List;
@@ -45,7 +44,7 @@ public class DetailsPublicationsMeliGrid implements Serializable {
 
     private String accountName;
 
-    private List<ImageDetailPublications> images;
+    private List<ImagePublicationMeli> images;
 
     private String description;
 
@@ -165,11 +164,11 @@ public class DetailsPublicationsMeliGrid implements Serializable {
         this.sku = sku;
     }
 
-    public List<ImageDetailPublications> getImages() {
+    public List<ImagePublicationMeli> getImages() {
         return images;
     }
 
-    public void setImages(List<ImageDetailPublications> images) {
+    public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
     }
 

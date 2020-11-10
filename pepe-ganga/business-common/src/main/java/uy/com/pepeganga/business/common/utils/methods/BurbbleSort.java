@@ -1,7 +1,7 @@
 package uy.com.pepeganga.business.common.utils.methods;
 
 import uy.com.pepeganga.business.common.entities.Image;
-import uy.com.pepeganga.business.common.entities.ImageDetailPublications;
+import uy.com.pepeganga.business.common.entities.ImagePublicationMeli;
 
 import java.util.List;
 
@@ -22,9 +22,9 @@ public class BurbbleSort {
         return A;
     }
 
-    public static List<ImageDetailPublications> burbbleLowerToHigherByImagesDetails(List<ImageDetailPublications> A) {
+    public static List<ImagePublicationMeli> burbbleLowerToHigherByImagesDetails(List<ImagePublicationMeli> A) {
         int i, j;
-        ImageDetailPublications ima;
+        ImagePublicationMeli ima;
         for (i = 0; i < A.size() - 1; i++) {
             for (j = 0; j < A.size() - i - 1; j++) {
                 if (A.get(j + 1).getOrder() < A.get(j).getOrder()) {

@@ -10,8 +10,13 @@ import java.util.Objects;
 @Entity
 @Table(name = "detailspublicationsmeli")
 public class DetailsPublicationsMeli implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
+   
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4061160109561062557L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -19,6 +24,10 @@ public class DetailsPublicationsMeli implements Serializable {
     @JoinColumn(name="mlpublication", nullable = true)
     @JsonBackReference
     private MercadoLibrePublications mlPublication;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "details_publication")
+    private List<ImagePublicationMeli> images;
 
     @Column(name="account_meli")
     private Integer accountMeli;
@@ -74,10 +83,6 @@ public class DetailsPublicationsMeli implements Serializable {
     private Integer saleStatus = 0;
 
     private Integer deleted = 0;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "details_publication_id")
-    private List<ImageDetailPublications> images;
 
     public void setId(Integer id) {
         this.id = id;
@@ -247,11 +252,11 @@ public class DetailsPublicationsMeli implements Serializable {
         this.priceEditProduct = priceEditProduct;
     }
 
-    public List<ImageDetailPublications> getImages() {
+    public List<ImagePublicationMeli> getImages() {
         return images;
     }
 
-    public void setImages(List<ImageDetailPublications> images) {
+    public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
     }
 

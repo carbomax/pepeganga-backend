@@ -20,10 +20,7 @@ import uy.pepeganga.meli.service.models.DetailsModelResponse;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.publications.*;
-import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
-import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
-import uy.pepeganga.meli.service.repository.SellerAccountRepository;
-import uy.pepeganga.meli.service.repository.ProfileRepository;
+import uy.pepeganga.meli.service.repository.*;
 
 import java.util.*;
 
@@ -37,6 +34,9 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     DetailsPublicationMeliRepository detailsPublicationRepository;
+
+    @Autowired
+    ImageDetailPublicationRepository imageDPRepository;
 
     @Autowired
     MercadoLibrePublishRepository mlPublishRepository;
@@ -295,8 +295,8 @@ public class MeliService  implements IMeliService{
                 List<Source> sources = new ArrayList<>();
 
                 //Ordeno el arreglo segun orden de ubicacion de las imagenes
-                List<ImageDetailPublications> newImageList= BurbbleSort.burbbleLowerToHigherByImagesDetails(product.getImages());
-                for (ImageDetailPublications image: newImageList) {
+                List<ImagePublicationMeli> newImageList= BurbbleSort.burbbleLowerToHigherByImagesDetails(product.getImages());
+                for (ImagePublicationMeli image: newImageList) {
                     source.setSource(image.getPhotos());
                     sources.add(source);
                 }
