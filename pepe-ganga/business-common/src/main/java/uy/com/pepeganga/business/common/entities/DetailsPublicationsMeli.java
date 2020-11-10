@@ -20,10 +20,8 @@ public class DetailsPublicationsMeli implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="mlpublication", nullable = true)
-    @JsonBackReference
-    private MercadoLibrePublications mlPublication;
+    private Integer idMLPublication;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "details_publication")
@@ -92,12 +90,12 @@ public class DetailsPublicationsMeli implements Serializable {
         return id;
     }
 
-    public MercadoLibrePublications getMlPublication() {
-        return mlPublication;
+    public Integer getMlPublication() {
+        return idMLPublication;
     }
 
-    public void setMlPublication(MercadoLibrePublications mlPublication) {
-        this.mlPublication = mlPublication;
+    public void setMlPublication(Integer idMLPublication) {
+        this.idMLPublication = idMLPublication;
     }
 
     public Integer getAccountMeli() {

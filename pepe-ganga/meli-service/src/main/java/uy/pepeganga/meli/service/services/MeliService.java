@@ -214,12 +214,13 @@ public class MeliService  implements IMeliService{
             detail.setPriceCostUYU(iter.getPriceCostUYU());
             detail.setPriceEditProduct(iter.getPriceEditProduct());
             detail.setSku(iter.getSku());
+            iter.getImages().forEach(i ->i.setId(null));
             detail.setImages(iter.getImages());
             detail.setDescription(iter.getItem().getDescription());
 
             Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdPublicationProduct());
             if(meli.isPresent()) {
-                detail.setMlPublication(meli.get());
+                detail.setMlPublication(meli.get().getId());
                 meli.get().setStates((short)1);
                 meliPublicationsList.add(meli.get());
             }
