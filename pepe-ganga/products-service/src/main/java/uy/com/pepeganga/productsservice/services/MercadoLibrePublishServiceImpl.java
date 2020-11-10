@@ -425,7 +425,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Override
 	public Boolean deleteProductOfStore(Integer product){
-		detailsPublicationsMeliRepository.updateMLPublicationsField(product);
+		//detailsPublicationsMeliRepository.updateMLPublicationsField(product);
 		mlPublishRepo.deleteById(product);
 		return true;
 	}
