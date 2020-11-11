@@ -13,12 +13,16 @@ import java.util.List;
 public interface DetailsPublicationsMeliRepository  extends JpaRepository<DetailsPublicationsMeli, Integer> {
 
     @Transactional(readOnly = true)
-    @Query(value = "select * from detailspublicationsmeli where account_meli in (:accountsId)",
-            countQuery = "select count(*) from detailspublicationsmeli where account_meli in (:accountsId)", nativeQuery = true)
-    Page<DetailsPublicationsMeli> findByProfileAccounts(List<Integer> accountsId, Pageable pageable);
+    @Query(value = "select * from detailspublicationsmeli where account_meli in (:accountsId) and sku like %:sku% " +
+                    "and id_publication_meli like %:idMeliPublication% and status like %:typeStateSearch%",
+            countQuery = "select count(*) from detailspublicationsmeli where account_meli in (:accountsId) and sku like %:sku% " +
+                    "and id_publication_meli like %:idMeliPublication% and status like %:typeStateSearch%", nativeQuery = true)
+    Page<DetailsPublicationsMeli> findDetailsPublicationByFilter(String sku, String idMeliPublication, List<Integer> accountsId, String typeStateSearch, Pageable pageable);
 
     @Transactional(readOnly = true)
     @Query(value = "select * from detailspublicationsmeli dt where dt.mlpublication = ?1", nativeQuery = true)
     DetailsPublicationsMeli findByPublications(Integer idMLPublication);
 
+    @Query(value = "update detailspublicationsmeli dt set dt.mlpublication= null where dt.mlpublication = ?1", nativeQuery = true)
+    DetailsPublicationsMeli updateMLPublicationsField(Integer idMLPublication);
 }

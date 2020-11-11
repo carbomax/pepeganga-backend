@@ -10,15 +10,22 @@ import java.util.Objects;
 @Entity
 @Table(name = "detailspublicationsmeli")
 public class DetailsPublicationsMeli implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
+   
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4061160109561062557L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="mlpublication", nullable = true)
-    @JsonBackReference
-    private MercadoLibrePublications mlPublication;
+    @JoinColumn(name="idmlpublication", nullable = true)
+    private Integer idMLPublication;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "details_publication")
+    private List<ImagePublicationMeli> images;
 
     @Column(name="account_meli")
     private Integer accountMeli;
@@ -75,10 +82,6 @@ public class DetailsPublicationsMeli implements Serializable {
 
     private Integer deleted = 0;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "details_publication_id")
-    private List<ImageDetailPublications> images;
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -87,12 +90,12 @@ public class DetailsPublicationsMeli implements Serializable {
         return id;
     }
 
-    public MercadoLibrePublications getMlPublication() {
-        return mlPublication;
+    public Integer getIdMLPublication() {
+        return idMLPublication;
     }
 
-    public void setMlPublication(MercadoLibrePublications mlPublication) {
-        this.mlPublication = mlPublication;
+    public void setIdMLPublication(Integer idMLPublication) {
+        this.idMLPublication = idMLPublication;
     }
 
     public Integer getAccountMeli() {
@@ -247,11 +250,11 @@ public class DetailsPublicationsMeli implements Serializable {
         this.priceEditProduct = priceEditProduct;
     }
 
-    public List<ImageDetailPublications> getImages() {
+    public List<ImagePublicationMeli> getImages() {
         return images;
     }
 
-    public void setImages(List<ImageDetailPublications> images) {
+    public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
     }
 

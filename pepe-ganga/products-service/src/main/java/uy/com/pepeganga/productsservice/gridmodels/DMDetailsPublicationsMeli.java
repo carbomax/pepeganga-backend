@@ -1,7 +1,6 @@
 package uy.com.pepeganga.productsservice.gridmodels;
 
-import uy.com.pepeganga.business.common.entities.Image;
-import uy.com.pepeganga.business.common.entities.ImageDetailPublications;
+import uy.com.pepeganga.business.common.entities.ImagePublicationMeli;
 
 import java.io.Serializable;
 import java.util.List;
@@ -42,7 +41,7 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     private String accountName;
 
-    private List<ImageDetailPublications> images;
+    private List<ImagePublicationMeli> images;
 
     private String description;
 
@@ -164,11 +163,11 @@ public class DMDetailsPublicationsMeli implements Serializable {
         this.sku = sku;
     }
 
-    public List<ImageDetailPublications> getImages() {
+    public List<ImagePublicationMeli> getImages() {
         return images;
     }
 
-    public void setImages(List<ImageDetailPublications> images) {
+    public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
     }
 

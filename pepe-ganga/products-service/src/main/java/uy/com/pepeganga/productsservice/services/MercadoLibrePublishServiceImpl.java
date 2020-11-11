@@ -367,19 +367,30 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	//Method to DetailPublication (product published) Table
 	@Override
 	public PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, String sku, String idMeliPublication, int meliAccount, String typeStateSearch, int page, int size) {
+		String mySKU = sku.isBlank() ? "" : sku.trim();
+		String myMeliPubl = idMeliPublication.isBlank() ? "" : idMeliPublication.trim();
+		String myTypeStatus = typeStateSearch.isBlank() ? "" : typeStateSearch.trim();
+
 		Optional<Profile> profile = profileRepository.findById(profileId);
 		if (profile.isPresent()) {
-			Page<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findByProfileAccounts(profile.get().getSellerAccounts().stream().map(SellerAccount::getId).collect(Collectors.toList()), PageRequest.of(page, size));
+			List<Integer> accountIdList = new ArrayList<>();
+			if(meliAccount == -1){
+				accountIdList = profile.get().getSellerAccounts().stream().map(SellerAccount::getId).collect(Collectors.toList());
+			}
+			else{
+				accountIdList.add(meliAccount);
+			}
+			Page<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findDetailsPublicationByFilter(mySKU, myMeliPubl, accountIdList, myTypeStatus, PageRequest.of(page, size));
 
 			List<DMDetailsPublicationsMeli> publicationsMeliGrids =  new ArrayList<>();
 			detailsPublication.getContent().forEach(details -> {
 				DMDetailsPublicationsMeli publicationsMeliGrid = new DMDetailsPublicationsMeli();
 				publicationsMeliGrid.setAccountName(
-						Objects.requireNonNull(details.getMlPublication().getProfile().getSellerAccounts()
+						Objects.requireNonNull(profile.get().getSellerAccounts()
 								.stream().filter(account -> account.getId().equals(details.getAccountMeli())).findFirst().orElse(null)).getBusinessName()
 				);
 				publicationsMeliGrid.setAccountMeli(details.getAccountMeli());
-				publicationsMeliGrid.setMlPublicationId(details.getMlPublication().getId());
+				publicationsMeliGrid.setMlPublicationId(details.getIdMLPublication());
 				publicationsMeliGrid.setCategoryMeli(details.getCategoryMeli());
 				publicationsMeliGrid.setId(details.getId());
 				publicationsMeliGrid.setIdPublicationMeli(details.getIdPublicationMeli());
@@ -394,7 +405,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setSku(details.getSku());
 				publicationsMeliGrid.setStatus(details.getStatus());
 				publicationsMeliGrid.setDescription(details.getDescription());
-				publicationsMeliGrid.setCurrentStock(details.getMlPublication().getItem().getStockActual());
+				publicationsMeliGrid.setCurrentStock(itemService.findItemById(details.getSku()).get().getStockActual());
 				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
 				publicationsMeliGrids.add(publicationsMeliGrid);
 
@@ -414,6 +425,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Override
 	public Boolean deleteProductOfStore(Integer product){
+		//detailsPublicationsMeliRepository.updateMLPublicationsField(product);
 		mlPublishRepo.deleteById(product);
 		return true;
 	}

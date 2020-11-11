@@ -1,16 +1,15 @@
 package uy.pepeganga.meli.service.models;
 
 import meli.model.Item;
-import uy.com.pepeganga.business.common.entities.ImageDetailPublications;
+import uy.com.pepeganga.business.common.entities.ImagePublicationMeli;
 
-import javax.persistence.Column;
 import java.util.List;
 
 public class ItemModel {
     private Item item;
     private Integer idPublicationProduct;
     private String sku;
-    private List<ImageDetailPublications> images;
+    private List<ImagePublicationMeli> images;
     private double priceCostUYU;
     private double priceCostUSD;
     private double priceEditProduct;
@@ -27,6 +26,9 @@ public class ItemModel {
         return idPublicationProduct;
     }
 
+    public void setIdPublicationProduct(Integer idPublicationProduct) {
+        this.idPublicationProduct = idPublicationProduct;
+    }
     public String getSku() {
         return sku;
     }
@@ -34,12 +36,11 @@ public class ItemModel {
     public void setSku(String sku) {
         this.sku = sku;
     }
-
-    public List<ImageDetailPublications> getImages() {
+    public List<ImagePublicationMeli> getImages() {
         return images;
     }
 
-    public void setImages(List<ImageDetailPublications> images) {
+    public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
     }
 
@@ -65,11 +66,5 @@ public class ItemModel {
 
     public void setPriceEditProduct(double priceEditProduct) {
         this.priceEditProduct = priceEditProduct;
-    }
-
-    public void setIdPublicationProduct(Integer idPublicationProduct) {
-        this.idPublicationProduct = idPublicationProduct;
-
-
     }
 }

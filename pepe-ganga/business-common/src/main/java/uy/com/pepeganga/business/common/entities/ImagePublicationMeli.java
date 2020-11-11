@@ -5,10 +5,15 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "imagedetailpublications")
-public class ImageDetailPublications implements Serializable {
+@Table(name = "imagepublicationmeli")
+public class ImagePublicationMeli implements Serializable {
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7916307326996610884L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
@@ -56,14 +61,13 @@ public class ImageDetailPublications implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ImageDetailPublications)) return false;
-        ImageDetailPublications that = (ImageDetailPublications) o;
-        return id.equals(that.id) &&
-                photos.equals(that.photos);
+        if (!(o instanceof ImagePublicationMeli)) return false;
+        ImagePublicationMeli that = (ImagePublicationMeli) o;
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, photos);
+        return Objects.hash(id);
     }
 }
