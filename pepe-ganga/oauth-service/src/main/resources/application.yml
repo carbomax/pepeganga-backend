@@ -22,3 +22,14 @@ logging:
     org:
       hibernate:
         SQL: debug
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 350000
+ribbon:
+  ConnectTimeout: 100000
+  ReadTimeout: 150000
