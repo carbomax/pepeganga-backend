@@ -17,4 +17,11 @@ public interface IOrderService {
     // Real implementation
     Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size);
 
+    boolean updateCarrier(Long orderId, int carrierId);
+
+    boolean updateDescription(Long orderId, String description);
+
+    boolean updateObservation(Long orderId, String observation);
+
+    boolean updateInvoice(Long id, Long orderId);
 }
