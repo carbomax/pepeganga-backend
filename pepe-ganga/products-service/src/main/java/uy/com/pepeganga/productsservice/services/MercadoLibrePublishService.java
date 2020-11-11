@@ -37,7 +37,7 @@ public interface MercadoLibrePublishService {
 
 	List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception;
 
-	PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, String sku, String idMeliPublication, int meliAccount, String typeStateSearch, int page, int size);
+	PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, String sku, String idMeliPublication, int meliAccount, String typeStateSearch, String title, int page, int size);
 
 	Boolean deleteProductsOfStore(List<Integer> product);
 
