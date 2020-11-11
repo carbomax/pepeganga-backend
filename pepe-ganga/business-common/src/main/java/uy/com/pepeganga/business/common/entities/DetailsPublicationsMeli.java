@@ -4,20 +4,28 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "detailspublicationsmeli")
 public class DetailsPublicationsMeli implements Serializable {
-    private static final long serialVersionUID = 1L;
-    @Id
+   
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -4061160109561062557L;
+
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="mlpublication", nullable = false)
-    @JsonBackReference
-    private MercadoLibrePublications mlPublication;
+    @JoinColumn(name="idmlpublication", nullable = true)
+    private Integer idMLPublication;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "details_publication")
+    private List<ImagePublicationMeli> images;
 
     @Column(name="account_meli")
     private Integer accountMeli;
@@ -25,8 +33,17 @@ public class DetailsPublicationsMeli implements Serializable {
     @Column(name="id_publication_meli")
     private String idPublicationMeli;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     @Column(name="title")
     private String title;
+
+    @Column(name="sku")
+    private String sku;
+
+    @Column(name="description", columnDefinition = "TEXT")
+    private String description;
 
     @Column(name="permalink")
     private String permalink;
@@ -36,6 +53,15 @@ public class DetailsPublicationsMeli implements Serializable {
 
     @Column(name="price_publication")
     private Integer pricePublication;
+
+    @Column(name="price_cost_uyu")
+    private double priceCostUYU;
+
+    @Column(name="price_cost_usd")
+    private double priceCostUSD;
+
+    @Column(name="price_edit_product")
+    private double priceEditProduct;
 
     @Column(name="warranty_type")
     private String warrantyType;
@@ -64,12 +90,12 @@ public class DetailsPublicationsMeli implements Serializable {
         return id;
     }
 
-    public MercadoLibrePublications getMlPublication() {
-        return mlPublication;
+    public Integer getIdMLPublication() {
+        return idMLPublication;
     }
 
-    public void setMlPublication(MercadoLibrePublications mlPublication) {
-        this.mlPublication = mlPublication;
+    public void setIdMLPublication(Integer idMLPublication) {
+        this.idMLPublication = idMLPublication;
     }
 
     public Integer getAccountMeli() {
@@ -174,6 +200,62 @@ public class DetailsPublicationsMeli implements Serializable {
 
     public void setDeleted(Integer deleted) {
         this.deleted = deleted;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public double getPriceCostUYU() {
+        return priceCostUYU;
+    }
+
+    public void setPriceCostUYU(double priceCostUYU) {
+        this.priceCostUYU = priceCostUYU;
+    }
+
+    public double getPriceCostUSD() {
+        return priceCostUSD;
+    }
+
+    public void setPriceCostUSD(double priceCostUSD) {
+        this.priceCostUSD = priceCostUSD;
+    }
+
+    public double getPriceEditProduct() {
+        return priceEditProduct;
+    }
+
+    public void setPriceEditProduct(double priceEditProduct) {
+        this.priceEditProduct = priceEditProduct;
+    }
+
+    public List<ImagePublicationMeli> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ImagePublicationMeli> images) {
+        this.images = images;
     }
 
     @Override

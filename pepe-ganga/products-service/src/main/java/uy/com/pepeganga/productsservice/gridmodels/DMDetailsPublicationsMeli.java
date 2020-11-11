@@ -1,6 +1,6 @@
 package uy.com.pepeganga.productsservice.gridmodels;
 
-import uy.com.pepeganga.business.common.entities.Image;
+import uy.com.pepeganga.business.common.entities.ImagePublicationMeli;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,7 +23,9 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     private Integer pricePublication;
 
-    private Double priceCost;
+    private Double priceCostUYU;
+
+    private double priceEditProduct;
 
     private String warrantyType;
 
@@ -39,7 +41,7 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     private String accountName;
 
-    private List<Image> images;
+    private List<ImagePublicationMeli> images;
 
     private String description;
 
@@ -161,11 +163,11 @@ public class DMDetailsPublicationsMeli implements Serializable {
         this.sku = sku;
     }
 
-    public List<Image> getImages() {
+    public List<ImagePublicationMeli> getImages() {
         return images;
     }
 
-    public void setImages(List<Image> images) {
+    public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
     }
 
@@ -209,11 +211,19 @@ public class DMDetailsPublicationsMeli implements Serializable {
         this.totalElements = totalElements;
     }
 
-    public Double getPriceCost() {
-        return priceCost;
+    public Double getPriceCostUYU() {
+        return priceCostUYU;
     }
 
-    public void setPriceCost(Double priceCost) {
-        this.priceCost = priceCost;
+    public void setPriceCostUYU(Double priceCostUYU) {
+        this.priceCostUYU = priceCostUYU;
+    }
+
+    public double getPriceEditProduct() {
+        return priceEditProduct;
+    }
+
+    public void setPriceEditProduct(double priceEditProduct) {
+        this.priceEditProduct = priceEditProduct;
     }
 }

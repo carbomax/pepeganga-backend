@@ -62,27 +62,24 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		List<Short> states = mlPublishRepo.findAllStatesByIdProfile(idProfile);
 		int nopublish = 0;
 		int publish = 0;
-		int pause = 0;
 		int total = states.size();
 
 		for (Short s : states) {
 			if (s.equals(States.NOPUBLISHED.getId()))
 				nopublish++;
-			else if (s.equals(States.PAUSED.getId()))
-				pause++;
 			else if (s.equals(States.PUBLISHED.getId()))
 				publish++;
 		}
 
 		marketplaces.setMarketplace(MarketplaceType.MERCADOLIBRE.getId());
-		marketplaces.setProdPaused(pause);
 		marketplaces.setProdPublished(publish);
 		marketplaces.setProdWithoutPublish(nopublish);
 		marketplaces.setProdTotal(total);
 		return marketplaces;
 	}
 
-	// Method to store the products to publish by user
+	// Method to store the products to publish by user.
+	// The products are stored in "Mercado Libre Publication" table.
 	@Override
 	public SelectedProducResponse storeProductToPublish(String profileEncode, Short marketplace, List<String> products) {
 		
@@ -122,7 +119,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setProfile(profile);
 					mlp.setProductName(product.get().getArtDescripCatalogo());
 					mlp.setDescription(product.get().getArtDescripML());
-					mlp.setPrice(product.get().getPrecioPesos());
+					mlp.setPriceUYU(product.get().getPrecioPesos());
+					mlp.setPriceUSD(product.get().getPrecioDolares());
 					mlp.setStates(States.NOPUBLISHED.getId());
 					mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
 					prodToStore.add(mlp);
@@ -158,7 +156,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				predicates.add(cb.equal(root.join("profile").get("id").as(Integer.class), idProfile));
 			}
 			if (minPrice != -1 && maxPrice != -1) {
-				predicates.add(cb.between(root.get("price"), minPrice, maxPrice));
+				predicates.add(cb.between(root.get("priceUYU"), minPrice, maxPrice));
 			}
 			if (StringUtils.isNotBlank(sku)) {
 				predicates.add(cb.like(root.join("item").get("sku").as(String.class), "%" + sku + "%"));
@@ -192,10 +190,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		result.getContent().forEach(p -> {
 			ItemMeliGrid itemMeliGrid = new ItemMeliGrid();
 			itemMeliGrid.setId(p.getId());
-			itemMeliGrid.setState(p.getStates() == States.NOPUBLISHED.getId() ? States.NOPUBLISHED.getValue() : p.getStates() == States.PUBLISHED.getId() ? States.PUBLISHED.getValue() : States.PAUSED.getValue());
+			itemMeliGrid.setState(p.getStates() == States.NOPUBLISHED.getId() ? States.NOPUBLISHED.getValue() : States.PUBLISHED.getValue() );
 			itemMeliGrid.setImages(p.getImages());
 			itemMeliGrid.setName(p.getProductName());			
-			itemMeliGrid.setPriceUYU(p.getPrice());
+			itemMeliGrid.setPriceUYU(p.getPriceUYU());
+			itemMeliGrid.setPriceUSD(p.getPriceUSD());
 			itemMeliGrid.setSku(p.getItem().getSku());
 			itemMeliGrid.setCurrentStock(p.getItem().getStockActual());
 			itemMeliGrid.setFamily(p.getItem().getFamily());
@@ -277,7 +276,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				store.setItem(prod.get().getItem());
 				store.setProfile(prod.get().getProfile());
 				store.setDescription(product.getDescription());
-				store.setPrice(product.getPrice());
+				store.setPriceUYU(product.getPrice());
 				store.setProductName(product.getProductName());
 				store.setStates(product.getStates());
 				
@@ -293,10 +292,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				productEditabled.setProductName(result.getProductName());
 				productEditabled.setDescription(result.getDescription());
 				productEditabled.setStates(result.getStates());
-				productEditabled.setPrice(result.getPrice());
+				productEditabled.setPrice(result.getPriceUYU());
 				productEditabled.setImages(result.getImages());
 				productEditabled.setSku(product.getSku());
-				productEditabled.setPrice_cost(product.getPrice_cost());
+				productEditabled.setPrice_costUYU(product.getPrice_costUYU());
+				productEditabled.setPrice_costUSD(product.getPrice_costUSD());
 				productEditabled.setCurrentStock(product.getCurrentStock());
 				return productEditabled;
 			}
@@ -321,8 +321,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			editP.setId(item.get().getId());
 			editP.setCurrentStock(item.get().getItem().getStockActual());
 			editP.setDescription(item.get().getDescription());
-			editP.setPrice(item.get().getPrice());
-			editP.setPrice_cost(item.get().getItem().getPrecioPesos());
+			editP.setPrice(item.get().getPriceUYU());
+			editP.setPrice_costUYU(item.get().getItem().getPrecioPesos());
+			editP.setPrice_costUSD(item.get().getItem().getPrecioDolares());
 			editP.setProductName(item.get().getProductName());
 			editP.setSku(item.get().getItem().getSku());
 			editP.setStates(item.get().getStates());
@@ -363,34 +364,48 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	}
 
+	//Method to DetailPublication (product published) Table
 	@Override
-	public PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, int page, int size) {
+	public PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, String sku, String idMeliPublication, int meliAccount, String typeStateSearch, int page, int size) {
+		String mySKU = sku.isBlank() ? "" : sku.trim();
+		String myMeliPubl = idMeliPublication.isBlank() ? "" : idMeliPublication.trim();
+		String myTypeStatus = typeStateSearch.isBlank() ? "" : typeStateSearch.trim();
+
 		Optional<Profile> profile = profileRepository.findById(profileId);
 		if (profile.isPresent()) {
-			Page<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findByProfileAccounts(profile.get().getSellerAccounts().stream().map(SellerAccount::getId).collect(Collectors.toList()), PageRequest.of(page, size));
+			List<Integer> accountIdList = new ArrayList<>();
+			if(meliAccount == -1){
+				accountIdList = profile.get().getSellerAccounts().stream().map(SellerAccount::getId).collect(Collectors.toList());
+			}
+			else{
+				accountIdList.add(meliAccount);
+			}
+			Page<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findDetailsPublicationByFilter(mySKU, myMeliPubl, accountIdList, myTypeStatus, PageRequest.of(page, size));
+
 			List<DMDetailsPublicationsMeli> publicationsMeliGrids =  new ArrayList<>();
 			detailsPublication.getContent().forEach(details -> {
 				DMDetailsPublicationsMeli publicationsMeliGrid = new DMDetailsPublicationsMeli();
 				publicationsMeliGrid.setAccountName(
-						Objects.requireNonNull(details.getMlPublication().getProfile().getSellerAccounts()
+						Objects.requireNonNull(profile.get().getSellerAccounts()
 								.stream().filter(account -> account.getId().equals(details.getAccountMeli())).findFirst().orElse(null)).getBusinessName()
 				);
 				publicationsMeliGrid.setAccountMeli(details.getAccountMeli());
-				publicationsMeliGrid.setMlPublicationId(details.getMlPublication().getId());
+				publicationsMeliGrid.setMlPublicationId(details.getIdMLPublication());
 				publicationsMeliGrid.setCategoryMeli(details.getCategoryMeli());
 				publicationsMeliGrid.setId(details.getId());
 				publicationsMeliGrid.setIdPublicationMeli(details.getIdPublicationMeli());
-				publicationsMeliGrid.setImages(details.getMlPublication().getImages());
+				publicationsMeliGrid.setImages(details.getImages());
 				publicationsMeliGrid.setMargin(details.getMargin());
 				publicationsMeliGrid.setLastUpgrade(details.getLastUpgrade());
 				publicationsMeliGrid.setPermalink(details.getPermalink());
-				publicationsMeliGrid.setPricePublication((int) details.getMlPublication().getPrice());
-				publicationsMeliGrid.setPriceCost(details.getMlPublication().getItem().getPrecioPesos());
-				publicationsMeliGrid.setTitle(details.getMlPublication().getProductName());
-				publicationsMeliGrid.setSku(details.getMlPublication().getItem().getSku());
+				publicationsMeliGrid.setPricePublication((int) details.getPricePublication());
+				publicationsMeliGrid.setPriceCostUYU(details.getPriceCostUYU());
+				publicationsMeliGrid.setPriceEditProduct(details.getPriceEditProduct());
+				publicationsMeliGrid.setTitle(details.getTitle());
+				publicationsMeliGrid.setSku(details.getSku());
 				publicationsMeliGrid.setStatus(details.getStatus());
-				publicationsMeliGrid.setDescription(details.getMlPublication().getDescription());
-				publicationsMeliGrid.setCurrentStock(details.getMlPublication().getItem().getStockActual());
+				publicationsMeliGrid.setDescription(details.getDescription());
+				publicationsMeliGrid.setCurrentStock(itemService.findItemById(details.getSku()).get().getStockActual());
 				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
 				publicationsMeliGrids.add(publicationsMeliGrid);
 
@@ -410,6 +425,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Override
 	public Boolean deleteProductOfStore(Integer product){
+		//detailsPublicationsMeliRepository.updateMLPublicationsField(product);
 		mlPublishRepo.deleteById(product);
 		return true;
 	}

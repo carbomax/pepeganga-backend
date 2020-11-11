@@ -30,6 +30,20 @@ public class MeliOrders implements Serializable {
 
     private Long businessDateCreated = 0L;
 
+    private Long invoiceNumberBss = 0L;
+
+    private String descriptionBss;
+
+    private String observationBss;
+
+    private Integer tagBss = 0;
+
+    private Integer stateBss = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private Carrier carrier;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private MeliOrderSeller seller;
@@ -148,5 +162,53 @@ public class MeliOrders implements Serializable {
 
     public void setBusinessDateCreated(Long businessDateCreated) {
         this.businessDateCreated = businessDateCreated;
+    }
+
+    public Long getInvoiceNumberBss() {
+        return invoiceNumberBss;
+    }
+
+    public void setInvoiceNumberBss(Long invoiceNumberBss) {
+        this.invoiceNumberBss = invoiceNumberBss;
+    }
+
+    public String getDescriptionBss() {
+        return descriptionBss;
+    }
+
+    public void setDescriptionBss(String descriptionBss) {
+        this.descriptionBss = descriptionBss;
+    }
+
+    public String getObservationBss() {
+        return observationBss;
+    }
+
+    public void setObservationBss(String observationBss) {
+        this.observationBss = observationBss;
+    }
+
+    public Integer getTagBss() {
+        return tagBss;
+    }
+
+    public void setTagBss(Integer tagBss) {
+        this.tagBss = tagBss;
+    }
+
+    public Integer getStateBss() {
+        return stateBss;
+    }
+
+    public void setStateBss(Integer stateBss) {
+        this.stateBss = stateBss;
+    }
+
+    public Carrier getCarrier() {
+        return carrier;
+    }
+
+    public void setCarrier(Carrier carrier) {
+        this.carrier = carrier;
     }
 }
