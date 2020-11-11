@@ -390,7 +390,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 								.stream().filter(account -> account.getId().equals(details.getAccountMeli())).findFirst().orElse(null)).getBusinessName()
 				);
 				publicationsMeliGrid.setAccountMeli(details.getAccountMeli());
-				publicationsMeliGrid.setMlPublicationId(details.getMlPublication());
+				publicationsMeliGrid.setMlPublicationId(details.getIdMLPublication());
 				publicationsMeliGrid.setCategoryMeli(details.getCategoryMeli());
 				publicationsMeliGrid.setId(details.getId());
 				publicationsMeliGrid.setIdPublicationMeli(details.getIdPublicationMeli());
