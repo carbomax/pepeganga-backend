@@ -31,7 +31,7 @@ public class DetailsPublicationsMeli implements Serializable {
     private Integer accountMeli;
 
     @Column(name="id_publication_meli")
-    private String idPublicationMeli;
+    private String idPublicationMeli = "";
 
     @Column(name = "user_id")
     private Long userId;
