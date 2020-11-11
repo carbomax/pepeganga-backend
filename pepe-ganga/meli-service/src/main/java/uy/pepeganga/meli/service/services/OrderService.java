@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
-import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
@@ -60,6 +59,9 @@ public class OrderService implements IOrderService {
 
     @Autowired
     DetailsPublicationMeliRepository detailsPublicationMeliRepository;
+
+    @Autowired
+    CarrierRepository carrierRepository;
 
     @Override
     @Transactional
@@ -228,6 +230,61 @@ public class OrderService implements IOrderService {
 
         }
 
+    }
+
+    @Override
+    public boolean updateCarrier(Long orderId, int carrierId) {
+        Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
+        if(orderToUpdate.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
+        Optional<Carrier> carrierFound = carrierRepository.findById(carrierId);
+        if(carrierFound.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Carrier with id: %d not found", carrierId));
+        }
+        orderToUpdate.get().setCarrier(carrierFound.get());
+        ordersRepository.save(orderToUpdate.get());
+        logger.info("Order : {} updated with carrier: {}", orderId, carrierId);
+        return true;
+    }
+
+    @Override
+    public boolean updateDescription(Long orderId, String description) {
+        Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
+        if(orderToUpdate.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
+
+        orderToUpdate.get().setDescriptionBss(description);
+        ordersRepository.save(orderToUpdate.get());
+        logger.info("Order : {} updated with description: {}", orderId, description);
+        return true;
+    }
+
+    @Override
+    public boolean updateObservation(Long orderId, String observation) {
+        Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
+        if(orderToUpdate.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
+
+        orderToUpdate.get().setObservationBss(observation);
+        ordersRepository.save(orderToUpdate.get());
+        logger.info("Order : {} updated with observation: {}", orderId, observation);
+        return true;
+    }
+
+    @Override
+    public boolean updateInvoice(Long orderId, Long invoice) {
+        Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
+        if(orderToUpdate.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
+
+        orderToUpdate.get().setInvoiceNumberBss(invoice);
+        ordersRepository.save(orderToUpdate.get());
+        logger.info("Order : {} updated with invoice: {}", orderId, invoice);
+        return true;
     }
 
 }

@@ -43,6 +43,24 @@ public class OrderController {
         return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, dateFrom, dateTo, page, size), HttpStatus.OK);
     }
 
-    
+    @PutMapping("/update-carrier/{orderId}/{carrierId}")
+    public ResponseEntity<Boolean> updateCarrier(@PathVariable Long orderId, @PathVariable int carrierId){
+            return new ResponseEntity<>(orderService.updateCarrier(orderId, carrierId), HttpStatus.OK);
+    }
 
+
+    @PutMapping("/update-description/{orderId}")
+    public ResponseEntity<Boolean> updateDescription(@PathVariable Long orderId, @RequestParam String description){
+        return new ResponseEntity<>(orderService.updateDescription(orderId, description), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-observation/{orderId}")
+    public ResponseEntity<Boolean> updateObservation(@PathVariable Long orderId, @RequestParam String observation){
+        return new ResponseEntity<>(orderService.updateObservation(orderId, observation), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-invoice/{orderId}")
+    public ResponseEntity<Boolean> updateInvoice(@PathVariable Long orderId, @RequestParam Long invoice){
+        return new ResponseEntity<>(orderService.updateInvoice(orderId, invoice), HttpStatus.OK);
+    }
 }

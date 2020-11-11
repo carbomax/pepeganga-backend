@@ -41,6 +41,7 @@ public class MeliOrders implements Serializable {
     private Integer stateBss = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Carrier carrier;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
