@@ -20,7 +20,7 @@ public class DetailsPublicationsMeli implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JoinColumn(name="mlpublication", nullable = true)
+    @JoinColumn(name="idmlpublication", nullable = true)
     private Integer idMLPublication;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -90,11 +90,11 @@ public class DetailsPublicationsMeli implements Serializable {
         return id;
     }
 
-    public Integer getMlPublication() {
+    public Integer getIdMLPublication() {
         return idMLPublication;
     }
 
-    public void setMlPublication(Integer idMLPublication) {
+    public void setIdMLPublication(Integer idMLPublication) {
         this.idMLPublication = idMLPublication;
     }
 

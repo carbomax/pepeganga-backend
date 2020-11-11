@@ -29,6 +29,7 @@ import java.util.*;
 public class MeliService  implements IMeliService{
 
     private static final Logger logger = LoggerFactory.getLogger(MeliService.class);
+    private static Optional<SellerAccount> accountMeli;
 
     @Autowired
     SellerAccountRepository sellerAccountRepository;
@@ -99,7 +100,7 @@ public class MeliService  implements IMeliService{
 
     @Override
     public Map<String, Object> createPublication(Item publicationRequest, Integer accountId) {
-        Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(accountId);
+        Optional<SellerAccount> accountFounded = getAccountMeli(accountId, false);
         Map<String, Object> response = new HashMap<>();
         try {
             if (accountFounded.isEmpty()) {
@@ -107,8 +108,8 @@ public class MeliService  implements IMeliService{
                 return response;
             }
             else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
-                apiService.getTokenByRefreshToken(accountFounded.get());
-                accountFounded = sellerAccountRepository.findById(accountId);
+                accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
+                accountMeli = accountFounded;
             }
 /*
             // Example to post an item in Argentina
@@ -224,10 +225,11 @@ public class MeliService  implements IMeliService{
             iter.getImages().forEach(i ->i.setId(null));
             detail.setImages(iter.getImages());
             detail.setDescription(iter.getItem().getDescription());
+            detail.setUserId(getAccountMeli(accountId, true).get().getUserId());
 
             Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdPublicationProduct());
             if(meli.isPresent()) {
-                detail.setMlPublication(meli.get().getId());
+                detail.setIdMLPublication(meli.get().getId());
                 meli.get().setStates((short)1);
                 meliPublicationsList.add(meli.get());
             }
@@ -428,8 +430,7 @@ public class MeliService  implements IMeliService{
             } else {
                 try {
                     if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
-                        apiService.getTokenByRefreshToken(accountFounded.get());
-                        accountFounded = sellerAccountRepository.findById(accountId);
+                        accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
                     Object result = apiService.changeStatusPublications(request, accountFounded.get().getAccessToken(), idPublication);
                     if (!Objects.isNull(result)) {
@@ -469,5 +470,14 @@ public class MeliService  implements IMeliService{
         return response;
     }
 
+    private Optional<SellerAccount> getAccountMeli(Integer accountId, boolean search){
+        if(accountMeli == null || search == true){
+            accountMeli = sellerAccountRepository.findById(accountId);
+        }
+        else if(!accountMeli.isPresent()){
+            accountMeli = sellerAccountRepository.findById(accountId);
+        }
+        return accountMeli;
+    }
 
 }
