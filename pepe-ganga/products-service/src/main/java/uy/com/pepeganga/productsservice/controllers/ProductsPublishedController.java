@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.productsservice.gridmodels.DMDetailsPublicationsMeli;
 import uy.com.pepeganga.productsservice.gridmodels.PageDeatilsPublicationMeli;
+import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.services.MercadoLibrePublishService;
 
 import java.util.List;
@@ -23,5 +24,17 @@ public class ProductsPublishedController {
                                                                                             @RequestParam String idMeliPublication, @RequestParam int meliAccount,
                                                                                             @RequestParam String typeStateSearch, @RequestParam int page, @RequestParam int size){
         return new ResponseEntity<>(publishService.getPublicationsDetailsBySellerProfile( profileId, sku, idMeliPublication, meliAccount, typeStateSearch, page, size), HttpStatus.OK);
+    }
+
+    @PutMapping("/edit-publication-info")
+    public ResponseEntity<DMDetailsPublicationsMeli> updateInfoOfPublication(@RequestBody DMDetailsPublicationsMeli product, @RequestParam List<Integer>imagesToDelete){
+        try {
+            return new ResponseEntity<>(publishService.editInfoOfPublication(product, imagesToDelete), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            // TODO: handle exception
+            return new ResponseEntity<>(product, HttpStatus.CONFLICT);
+        }
+
     }
 }

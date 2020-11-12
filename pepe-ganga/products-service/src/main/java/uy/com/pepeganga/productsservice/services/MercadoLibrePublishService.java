@@ -26,6 +26,8 @@ public interface MercadoLibrePublishService {
 	ReasonResponse storeCommonData(String profileEncode, String description,  List<String> skuList, List<Image> images);
 	
 	EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete )  throws Exception;
+
+	DMDetailsPublicationsMeli editInfoOfPublication(DMDetailsPublicationsMeli product, List<Integer>imagesToDelete ) throws Exception;
 	
 	EditableProductModel getCustomProduct(Integer id);
 
