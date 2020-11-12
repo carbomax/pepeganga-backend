@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.services.IMeliService;
 
 import java.util.List;
@@ -84,4 +85,9 @@ public class MeliController {
     public ResponseEntity<Map<String, Object>> changeStatusPublication(@PathVariable Integer accountId, @PathVariable String publicationId, @RequestParam int status){
         return new ResponseEntity<>(meliService.changeStatusPublication(accountId, status, publicationId), HttpStatus.OK);
      }
+
+    @PostMapping("/changeStatusMultiplePublications")
+    public ResponseEntity<Map<String, Object>> changeStatusMultiplePublications(@RequestBody List<ChangeMultipleStatusRequest> multiples, @RequestParam int status){
+        return new ResponseEntity<>(meliService.changeStatusMultiplePublications(multiples, status), HttpStatus.OK);
+    }
 }

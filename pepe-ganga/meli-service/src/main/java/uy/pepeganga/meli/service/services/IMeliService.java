@@ -6,6 +6,7 @@ import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
@@ -42,4 +43,6 @@ public interface IMeliService {
     Map<String, Object> updateDescription(DescriptionRequest product, String token, String idPublicationMeli);
 
     Map<String, Object> changeStatusPublication(Integer accountId, int status, String idPublication);
+
+    Map<String, Object> changeStatusMultiplePublications(List<ChangeMultipleStatusRequest> multiple, int status);
 }

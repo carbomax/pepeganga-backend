@@ -417,7 +417,6 @@ public class MeliService  implements IMeliService{
             return response;
         }
 
-
         DetailsPublicationsMeli details = detailsPublicationRepository.findByIdPublicationMeli(idPublication);
         if(Objects.isNull(details)){
             logger.error("Detail Publication with id: {} not found", idPublication);
@@ -470,6 +469,19 @@ public class MeliService  implements IMeliService{
         return response;
     }
 
+    public Map<String, Object> changeStatusMultiplePublications(List<ChangeMultipleStatusRequest> multiple, int status){
+        Map<String, Object> response = new HashMap<>();
+
+        for (ChangeMultipleStatusRequest one: multiple) {
+            for (String idPublication: one.getPublicationsIds()) {
+                var result = changeStatusPublication(one.getAccountId(), status, idPublication);
+                response.putAll(result);
+            }
+        }
+        return response;
+    }
+
+    /**** Metodos auxiliares ****/
     private Optional<SellerAccount> getAccountMeli(Integer accountId, boolean search){
         if(accountMeli == null || search == true){
             accountMeli = sellerAccountRepository.findById(accountId);
