@@ -493,6 +493,19 @@ public class MeliService  implements IMeliService{
         return response;
     }
 
+    @Override
+    public Map<String, Object> republishMultiplePublications(List<ChangeMultipleStatusRequest> multiple){
+        Map<String, Object> response = new HashMap<>();
+
+        for (ChangeMultipleStatusRequest one: multiple) {
+            for (String idPublication: one.getPublicationsIds()) {
+                var result = republishPublication(one.getAccountId(), idPublication);
+                response.putAll(result);
+            }
+        }
+        return response;
+    }
+
     public Map<String, Object> updatePropertiesWithoutSales(PropertiesWithoutSalesRequest product, String token, String idPublicationMeli){
         Map<String, Object> response = new HashMap<>();
         try {

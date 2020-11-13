@@ -100,4 +100,9 @@ public class MeliController {
     public ResponseEntity<Map<String, Object>> republishPublication(@PathVariable Integer accountId, @PathVariable String publicationId){
         return new ResponseEntity<>(meliService.republishPublication(accountId, publicationId), HttpStatus.OK);
     }
+
+    @PostMapping("/republish-multiple-publications")
+    public ResponseEntity<Map<String, Object>> republishMultiplePublications(@RequestBody List<ChangeMultipleStatusRequest> multiples){
+        return new ResponseEntity<>(meliService.republishMultiplePublications(multiples), HttpStatus.OK);
+    }
 }

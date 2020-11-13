@@ -49,4 +49,6 @@ public interface IMeliService {
     Map<String, Object> deletePublication(Integer accountId, String status, String idPublication);
 
     Map<String, Object> republishPublication(Integer accountId, String idPublication);
+
+    Map<String, Object> republishMultiplePublications(List<ChangeMultipleStatusRequest> multiple);
 }
