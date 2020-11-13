@@ -354,6 +354,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				detailPublication.setMargin(result.getMargin());
 				detailPublication.setMlPublicationId(result.getIdMLPublication());
 				detailPublication.setPermalink(result.getPermalink());
+				detailPublication.setStatus(result.getStatus());
 				detailPublication.setSaleStatus(result.getSaleStatus());
 				detailPublication.setTitle(result.getTitle());
 				detailPublication.setWarrantyTime(result.getWarrantyTime());

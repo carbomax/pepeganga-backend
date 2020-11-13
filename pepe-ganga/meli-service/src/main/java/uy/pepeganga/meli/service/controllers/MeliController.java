@@ -71,8 +71,8 @@ public class MeliController {
         }
     }
 
-    @PutMapping("/republish-product")
-    public ResponseEntity<DetailsPublicationsMeliGrid> republishProduct(@RequestBody DetailsPublicationsMeliGrid product){
+    @PutMapping("/update-publication")
+    public ResponseEntity<DetailsPublicationsMeliGrid> updatePublication(@RequestBody DetailsPublicationsMeliGrid product){
         try {
             return new ResponseEntity<>(meliService.updateProductPublished(product), HttpStatus.CREATED);
         }
@@ -89,5 +89,15 @@ public class MeliController {
     @PostMapping("/changeStatusMultiplePublications")
     public ResponseEntity<Map<String, Object>> changeStatusMultiplePublications(@RequestBody List<ChangeMultipleStatusRequest> multiples, @RequestParam int status){
         return new ResponseEntity<>(meliService.changeStatusMultiplePublications(multiples, status), HttpStatus.OK);
+    }
+
+    @PutMapping("/delete-publication/{accountId}/{publicationId}")
+    public ResponseEntity<Map<String, Object>> deletePublication(@PathVariable Integer accountId, @PathVariable String publicationId, @RequestParam String status){
+        return new ResponseEntity<>(meliService.deletePublication(accountId, status, publicationId), HttpStatus.OK);
+    }
+
+    @PostMapping("/republish-publication/{accountId}/{publicationId}")
+    public ResponseEntity<Map<String, Object>> republishPublication(@PathVariable Integer accountId, @PathVariable String publicationId){
+        return new ResponseEntity<>(meliService.republishPublication(accountId, publicationId), HttpStatus.OK);
     }
 }

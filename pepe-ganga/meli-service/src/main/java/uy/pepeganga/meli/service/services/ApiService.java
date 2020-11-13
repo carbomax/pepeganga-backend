@@ -23,10 +23,7 @@ import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 import uy.pepeganga.meli.service.models.MeliResponseBodyException;
 import uy.pepeganga.meli.service.models.MeliUserAccount;
-import uy.pepeganga.meli.service.models.publications.ChangeStatusPublicationRequest;
-import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
-import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
-import uy.pepeganga.meli.service.models.publications.PropertiesWithoutSalesRequest;
+import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.pepeganga.meli.service.utils.ApiResources;
@@ -223,6 +220,16 @@ public class ApiService implements IApiService {
     @Override
     public Object updateDescription(DescriptionRequest request, String token, String idPublicationMeli) throws ApiException {
         return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s" + "/description?api_version=2", idPublicationMeli), token, request);
+    }
+
+    @Override
+    public Object deletePublication(DeletePublicationRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
+    }
+
+    @Override
+    public Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePost(String.format(ApiResources.ITEMS + "/%s" + "/relist", idPublicationMeli), token, request);
     }
 }
 
