@@ -1,22 +1,3 @@
-server:
-  port: ${PORT:5000}
-  tomcat:
-    threads:
-      max: 1
-
 spring:
-  application:
-    name: notification-service
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: admin
-    password: 123456789.*dhl
-    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
-  jpa:
-    hibernate:
-      ddl-auto: none
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
+  profiles:
+    active: @spring.profiles.active@

@@ -1,0 +1,58 @@
+server:
+  port: 8443
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: pkcs12
+    key-alias: tomcat
+    key-password: password
+    trust-store: classpath:keystore.p12
+
+
+spring:
+  application:
+    name: zuul-service
+    
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
+  client:
+    service-url:
+        defaultZone: http://eureka-server:8761/eureka
+        
+        
+zuul:
+  routes:
+    user:
+      service-id: user-service
+      path: /pepeganga/user/**
+    products:
+        service-id: products-service
+        path: /pepeganga/products/**
+    oauth:
+        service-id: oauth-service
+        path: /pepeganga/security/**
+        sensitive-headers: Cookie,Set-Cookie
+    upload:
+        service-id: upload-file-service
+        path: /pepeganga/upload/**
+    consuming:
+        service-id: consuming-store-service
+        path: /pepeganga/consuming/**
+    meli:
+      service-id: meli-service
+      path: /pepeganga/meli/**
+
+
+hystrix:
+   command:
+     default:
+        execution:
+          isolation: 
+            thread:
+              timeoutInMilliseconds: 500000
+ribbon:
+   ConnectTimeout: 100000
+   ReadTimeout: 150000
+   IsSecure: true

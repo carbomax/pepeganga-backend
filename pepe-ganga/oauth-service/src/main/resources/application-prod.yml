@@ -1,0 +1,47 @@
+server:
+  port: ${PORT:0}
+  ssl:
+    key-store: classpath:keystore.p12
+    key-store-password: password
+    key-store-type: pkcs12
+    key-alias: tomcat
+    key-password: password
+    trust-store: classpath:keystore.p12
+ 
+spring:
+  application:
+    name: oauth-service
+feign:
+ client:
+   config:
+      default:
+         connectTimeout: 160000
+         readTimeout: 160000
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    securePort: ${server.port}
+    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
+    secureVirtualHostName: ${spring.application.name}
+  client:
+    service-url:
+        defaultZone: http://eureka-server:8761/eureka
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500000
+ribbon:
+  ConnectTimeout: 100000
+  ReadTimeout: 150000
