@@ -38,6 +38,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers( "/pepeganga/security/oauth/token").permitAll()
                 .antMatchers(HttpMethod.GET,"/pepeganga/upload/api/file/**").permitAll()
+                .antMatchers( "/pepeganga/notification/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/pepeganga/products/**", "/pepeganga/user/**", "/pepeganga/consuming/**")
                 .hasAnyRole(RoleType.ADMIN.name(),RoleType.INVITED.name(), RoleType.SELLER.name())
                 .antMatchers("*", "/pepeganga/meli/api/**")
