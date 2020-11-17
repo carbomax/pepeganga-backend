@@ -218,6 +218,11 @@ public class ApiService implements IApiService {
     }
 
     @Override
+    public Object updatePricePublication(ChangePriceRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
+    }
+
+    @Override
     public Object updateDescription(DescriptionRequest request, String token, String idPublicationMeli) throws ApiException {
         return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s" + "/description?api_version=2", idPublicationMeli), token, request);
     }
@@ -230,6 +235,12 @@ public class ApiService implements IApiService {
     @Override
     public Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException {
         return restClientApiUy.resourcePost(String.format(ApiResources.ITEMS + "/%s" + "/relist", idPublicationMeli), token, request);
+    }
+
+    //Servicios Publicos de Mercado Libre
+    @Override
+    public Object getStatusPublication(String idPublication) throws ApiException {
+        return new Object();
     }
 }
 

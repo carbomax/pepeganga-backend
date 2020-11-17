@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
@@ -104,5 +105,17 @@ public class MeliController {
     @PostMapping("/republish-multiple-publications")
     public ResponseEntity<Map<String, Object>> republishMultiplePublications(@RequestBody List<ChangeMultipleStatusRequest> multiples){
         return new ResponseEntity<>(meliService.republishMultiplePublications(multiples), HttpStatus.OK);
+    }
+
+    //@Async
+    @PostMapping("/update-price-async")
+    public void updatePricePublicationAsync(@RequestBody Margin margin, @RequestParam Integer idProfile){
+        meliService.updatePricePublication(margin, idProfile);
+    }
+
+    //@Async
+    @GetMapping("/synchronize-publications")
+    public ResponseEntity<Map<String, Object>> synchronizePublication(@RequestParam Integer idProfile, @RequestParam List<Integer> idDetailsPublicationsList){
+        return new ResponseEntity<>(meliService.synchronizePublication(idProfile, idDetailsPublicationsList), HttpStatus.OK);
     }
 }

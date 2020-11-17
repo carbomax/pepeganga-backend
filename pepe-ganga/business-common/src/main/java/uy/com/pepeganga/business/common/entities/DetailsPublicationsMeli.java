@@ -82,6 +82,9 @@ public class DetailsPublicationsMeli implements Serializable {
 
     private Integer deleted = 0;
 
+    @Column(name="pending_margin_update")
+    private Boolean pendingMarginUpdate = false;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -256,6 +259,14 @@ public class DetailsPublicationsMeli implements Serializable {
 
     public void setImages(List<ImagePublicationMeli> images) {
         this.images = images;
+    }
+
+    public Boolean getPendingMarginUpdate() {
+        return pendingMarginUpdate;
+    }
+
+    public void setPendingMarginUpdate(Boolean pendingMarginUpdate) {
+        this.pendingMarginUpdate = pendingMarginUpdate;
     }
 
     @Override

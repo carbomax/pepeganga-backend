@@ -19,10 +19,10 @@ public class Shipping {
     @SerializedName(SERIALIZED_NAME_FREE_SHIPPING)
     Boolean freeShipping;
 
-    public static final String SERIALIZED_NAME_METHODS = "methods";
-    @SerializedName(SERIALIZED_NAME_METHODS)
-    List<String> methods;
-
+    public static final String SERIALIZED_NAME_FREE_METHODS = "free_methods";
+    @SerializedName(SERIALIZED_NAME_FREE_METHODS)
+    List<String> freeMethods;
+/*
     public static final String SERIALIZED_NAME_DIMENSIONS = "dimensions";
     @SerializedName(SERIALIZED_NAME_DIMENSIONS)
     Object dimensions;
@@ -38,7 +38,7 @@ public class Shipping {
     public static final String SERIALIZED_NAME_STORE_PICK_UP = "store_pick_up";
     @SerializedName(SERIALIZED_NAME_STORE_PICK_UP)
     Boolean storePickUp;
-
+*/
 
     public Shipping(String mode) {
         this.mode = mode;
@@ -98,25 +98,25 @@ public class Shipping {
      **/
     @javax.annotation.Nullable
     @ApiModelProperty(value = "")
-    public Shipping methods(List<String> methods) {
+    public Shipping freeMethods(List<String> freeMethods) {
 
-        this.methods = methods;
+        this.freeMethods = freeMethods;
         return this;
     }
 
-    public List<String> getMethods() {
-        return methods;
+    public List<String> getFreeMethods() {
+        return freeMethods;
     }
 
-    public void setMethods(List<String> methods) {
-        this.methods = methods;
+    public void setFreeMethods(List<String> freeMethods) {
+        this.freeMethods = freeMethods;
     }
 
     /**
      * Get valueId
      * @return valueId
      **/
-    @javax.annotation.Nullable
+  /*  @javax.annotation.Nullable
     @ApiModelProperty(value = "")
     public Shipping dimensions(Object dimensions) {
 
@@ -136,7 +136,7 @@ public class Shipping {
      * Get valueId
      * @return valueId
      **/
-    @javax.annotation.Nullable
+   /* @javax.annotation.Nullable
     @ApiModelProperty(value = "")
     public Shipping tags(List<String> tags) {
 
@@ -156,7 +156,7 @@ public class Shipping {
      * Get valueId
      * @return valueId
      **/
-    @javax.annotation.Nullable
+  /*  @javax.annotation.Nullable
     @ApiModelProperty(value = "")
     public Shipping logisticType(String logisticType) {
 
@@ -176,7 +176,7 @@ public class Shipping {
      * Get valueId
      * @return valueId
      **/
-    @javax.annotation.Nullable
+ /*   @javax.annotation.Nullable
     @ApiModelProperty(value = "")
     public Shipping storePickUp(Boolean storePickUp) {
 
@@ -191,7 +191,7 @@ public class Shipping {
     public void setStorePickUp(Boolean storePickUp) {
         this.storePickUp = storePickUp;
     }
-
+*/
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -200,29 +200,29 @@ public class Shipping {
         return Objects.equals(mode, shipping.mode) &&
                 Objects.equals(localPickUp, shipping.localPickUp) &&
                 Objects.equals(freeShipping, shipping.freeShipping) &&
-                Objects.equals(methods, shipping.methods) &&
-                Objects.equals(dimensions, shipping.dimensions) &&
+                Objects.equals(freeMethods, shipping.freeMethods);
+               /* Objects.equals(dimensions, shipping.dimensions) &&
                 Objects.equals(tags, shipping.tags) &&
                 Objects.equals(logisticType, shipping.logisticType) &&
-                Objects.equals(storePickUp, shipping.storePickUp);
+                Objects.equals(storePickUp, shipping.storePickUp);*/
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mode, localPickUp, freeShipping, methods, dimensions, tags, logisticType, storePickUp);
+        return Objects.hash(mode, localPickUp, freeShipping, freeMethods/*, dimensions, tags, logisticType, storePickUp*/);
     }
 
     @Override
     public String toString() {
-        return "Shipping{" +
+        return "shipping{" +
                 "mode='" + mode + '\'' +
                 ", localPickUp=" + localPickUp +
                 ", freeShipping=" + freeShipping +
-                ", methods=" + methods +
-                ", dimensions=" + dimensions +
+                ", freeMethods=" + freeMethods + '}';
+                /* ", dimensions=" + dimensions +
                 ", tags=" + tags +
                 ", logisticType='" + logisticType + '\'' +
                 ", storePickUp=" + storePickUp +
-                '}';
+                '}';*/
     }
 }

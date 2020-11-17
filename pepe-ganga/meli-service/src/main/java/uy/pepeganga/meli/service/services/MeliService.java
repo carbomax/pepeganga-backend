@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
+import uy.com.pepeganga.business.common.utils.enums.MarginType;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
 import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
@@ -25,6 +26,7 @@ import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.MeliUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MeliService  implements IMeliService{
@@ -608,6 +610,89 @@ public class MeliService  implements IMeliService{
         return response;
     }
 
+    @Override
+    public void updatePricePublication(Margin margin, Integer idProfile){
+        List<SellerAccount> accountList = new ArrayList<>();
+        List<Integer> accountIdList = new ArrayList<>();
+        List<DetailsPublicationsMeli> detailsPublicationUpdatedList = new ArrayList<>();
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Optional<Profile> profileDb = profileRepository.findById(idProfile);
+            if(!profileDb.isPresent()){
+                logger.error(String.format("Error, the profile with id %s not found: {}: ", idProfile));
+                return;
+            }
+            accountList = profileDb.get().getSellerAccounts();
+            accountIdList = accountList.stream().map(SellerAccount::getId).collect(Collectors.toList());
+            List<DetailsPublicationsMeli> detailsPublicationList = detailsPublicationRepository.findByIdAccountsAndMargin(accountIdList, margin.getId(), 0);
+
+            //Update price and pending to all publications
+            for (DetailsPublicationsMeli detail: detailsPublicationList) {
+                Integer price;
+                if(margin.getType() == MarginType.PERCENT.getCode()){
+                    price = Math.toIntExact(Math.round((detail.getPriceEditProduct() * (margin.getValue() / 100)) + detail.getPriceEditProduct()));
+                }
+                else{
+                    price = Math.toIntExact(Math.round(detail.getPriceEditProduct() + margin.getValue()));
+                }
+                detail.setPendingMarginUpdate(true);
+                detail.setPricePublication(price);
+            }
+
+            detailsPublicationRepository.saveAll(detailsPublicationList);
+
+            //Update all publications in ML if these are in 'active' status
+            List<SellerAccount> finalAccountList = accountList;
+            for (DetailsPublicationsMeli detail: detailsPublicationList) {
+                if(detail.getStatus().equals(MeliStatusPublications.ACTIVE.getValue())){
+                    ChangePriceRequest changePrice = new ChangePriceRequest(detail.getPricePublication());
+                    Optional<SellerAccount> accountFounded = finalAccountList.stream().filter(a -> a.getId() == detail.getAccountMeli()).findFirst();
+                    try {
+                        if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                            accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
+                        }
+
+                        Object obj = apiService.updatePricePublication(changePrice, accountFounded.get().getAccessToken(), detail.getIdPublicationMeli());
+                        //comprobar codigo de actualizado -- 200 OK
+                        detail.setPendingMarginUpdate(false);
+                        detailsPublicationUpdatedList.add(detail);
+                    } catch (ApiException e) {
+                        logger.error(" Error de Mercado Libre: {}", e.getResponseBody());
+                    }catch (TokenException e) {
+                        logger.error(" Error getting token Meli Response: {}", e.getMessage());
+                    }
+                }
+            }
+
+            if(!detailsPublicationUpdatedList.isEmpty()) {
+                detailsPublicationRepository.saveAll(detailsPublicationUpdatedList);
+            }
+        }
+        catch (Exception e){
+            logger.error(" Error of the system: {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList) {
+        Map<String, Object> response = new HashMap<>();
+        List<DetailsPublicationsMeli> detailsList = detailsPublicationRepository.findAllById(idDetailsPublicationsList);
+        if(!detailsList.isEmpty()){
+            //Sincroniza los estados de las publicaciones en ML con la base datos
+            /****** Pendiente a Implementar *****/
+
+            //Actualiza las publicaciones con cambios pendientes
+            List<DetailsPublicationsMeli> toUpdateList = detailsList.stream().filter(d -> d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) && d.getPendingMarginUpdate()).collect(Collectors.toList());
+            if(!toUpdateList.isEmpty()){
+                response.putAll(updatePriceMeliOfActivePublications(idProfile, toUpdateList));
+            }
+            else{
+                response.put("response", "No existen publicaciones para actualizar");
+            }
+        }
+        return response;
+    }
+
     /**** Metodos auxiliares ****/
     private Optional<SellerAccount> getAccountMeli(Integer accountId, boolean search){
         if(accountMeli == null || search == true){
@@ -619,4 +704,43 @@ public class MeliService  implements IMeliService{
         return accountMeli;
     }
 
+    private Map<String, Object> updatePriceMeliOfActivePublications(Integer idProfile, List<DetailsPublicationsMeli> detailsPublicationList){
+        //Update all publications in ML if these are in 'active' status
+        Map<String, Object> response = new HashMap<>();
+        Optional<Profile> profileDb = profileRepository.findById(idProfile);
+        if(!profileDb.isPresent()){
+            logger.error(String.format("Not Found, the profile with id %s not found: {}: ", idProfile));
+            return (Map<String, Object>) response.put("Error", String.format("Error, the profile with id %s not found: {}: ", idProfile));
+        }
+        List<DetailsPublicationsMeli> listDetails = new ArrayList<>();
+        List<SellerAccount> finalAccountList = profileDb.get().getSellerAccounts();
+        for (DetailsPublicationsMeli detail: detailsPublicationList) {
+
+                ChangePriceRequest changePrice = new ChangePriceRequest(detail.getPricePublication());
+                Optional<SellerAccount> accountFounded = finalAccountList.stream().filter(a -> a.getId() == detail.getAccountMeli()).findFirst();
+                try {
+                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                        accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
+                    }
+
+                    Object obj = apiService.updatePricePublication(changePrice, accountFounded.get().getAccessToken(), detail.getIdPublicationMeli());
+                    //comprobar codigo de actualizado -- 200 OK
+                    detail.setPendingMarginUpdate(false);
+                    listDetails.add(detail);
+
+                } catch (ApiException e) {
+                    logger.error(" Error de Mercado Libre: {}", e.getResponseBody());
+                    return (Map<String, Object>) response.put("Error", String.format("Error de Mercado Libre: {}", e.getResponseBody()));
+                }catch (TokenException e) {
+                    logger.error(" Error getting token Meli Response: {}", e.getMessage());
+                     return (Map<String, Object>) response.put("Meli_Error", String.format("Error getting token Meli Response: {}", e.getMessage()));
+                }
+
+        }
+
+        if(!listDetails.isEmpty()) {
+            detailsPublicationRepository.saveAll(listDetails);
+        }
+        return (Map<String, Object>) response.put("response", String.format("All publications were updated"));
+    }
 }

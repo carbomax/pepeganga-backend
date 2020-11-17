@@ -2,8 +2,8 @@ package uy.pepeganga.meli.service.services;
 
 import meli.ApiException;
 import meli.model.Item;
+import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
-import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
@@ -51,4 +51,8 @@ public interface IMeliService {
     Map<String, Object> republishPublication(Integer accountId, String idPublication);
 
     Map<String, Object> republishMultiplePublications(List<ChangeMultipleStatusRequest> multiple);
+
+    void updatePricePublication(Margin margin, Integer idProfile);
+
+    Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
 }
