@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.utils.date.DateTimePlusType;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
@@ -28,10 +28,7 @@ import uy.pepeganga.meli.service.repository.ProfileRepository;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
 import uy.pepeganga.meli.service.utils.ApiResources;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ApiService implements IApiService {
@@ -66,6 +63,9 @@ public class ApiService implements IApiService {
     @Autowired
     @Qualifier("restClientApiUy")
     RestClientApi restClientApiUy;
+
+    //Para metodos publicos
+    static RestTemplate restTemplate = new RestTemplate();
 
     private static final String ERROR = "error";
     private static final String MELI_ERROR = "error_meli";
@@ -237,10 +237,18 @@ public class ApiService implements IApiService {
         return restClientApiUy.resourcePost(String.format(ApiResources.ITEMS + "/%s" + "/relist", idPublicationMeli), token, request);
     }
 
-    //Servicios Publicos de Mercado Libre
+    //Servicios Públicos de Mercado Libre
     @Override
-    public Object getStatusPublication(String idPublication) throws ApiException {
-        return new Object();
+    public Map<String, Object> getStatusPublication(String idPublication) {
+      Map<String, Object> response = new HashMap<>();
+        try{
+          Object obj = restTemplate.getForEntity(String.format(ApiResources.ROOT + "/" + ApiResources.ITEMS + "/%s", idPublication), Object.class);
+          response.put("response", obj);
+          return response;
+      }catch (Exception e){
+           response.put(MELI_ERROR, e.getCause());
+        }
+        return response;
     }
 }
 

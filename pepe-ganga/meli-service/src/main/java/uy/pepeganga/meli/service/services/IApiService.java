@@ -40,5 +40,5 @@ public interface IApiService {
 
     Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException;
 
-    Object getStatusPublication(String idPublication) throws ApiException;
+    Map<String, Object> getStatusPublication(String idPublication);
 }

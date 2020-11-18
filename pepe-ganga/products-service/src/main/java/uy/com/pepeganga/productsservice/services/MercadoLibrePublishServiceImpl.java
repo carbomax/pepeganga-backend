@@ -201,6 +201,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			itemMeliGrid.setSku(p.getItem().getSku());
 			itemMeliGrid.setCurrentStock(p.getItem().getStockActual());
 			itemMeliGrid.setFamily(p.getItem().getFamily());
+			itemMeliGrid.setDescription(p.getDescription());
+			itemMeliGrid.setPrice_costUSD(p.getItem().getPrecioDolares());
+			itemMeliGrid.setPrice_costUYU(p.getItem().getPrecioPesos());
 			itemMeliGridList.add(itemMeliGrid);
 		});
 		PageItemMeliGrid pageItemMeliGrid = new PageItemMeliGrid();
