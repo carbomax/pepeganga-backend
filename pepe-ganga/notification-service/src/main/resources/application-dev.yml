@@ -1,8 +1,5 @@
 server:
   port: ${PORT:0}
-  tomcat:
-    threads:
-      max: 20
 
 spring:
   application:

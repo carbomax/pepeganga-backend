@@ -1,13 +1,5 @@
 server:
   port: ${PORT:0}
-  ssl:
-    key-store: classpath:keystore.p12
-    key-store-password: password
-    key-store-type: pkcs12
-    key-alias: tomcat
-    key-password: password
-    trust-store: classpath:keystore.p12
- 
 spring:
   application:
     name: oauth-service
@@ -21,11 +13,6 @@ feign:
 eureka:
   instance:
     instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
-    nonSecurePortEnabled: false
-    securePortEnabled: true
-    securePort: ${server.port}
-    homePageUrl: https://${eureka.instance.hostname}:${server.port}/
-    secureVirtualHostName: ${spring.application.name}
   client:
     service-url:
         defaultZone: http://eureka-server:8761/eureka

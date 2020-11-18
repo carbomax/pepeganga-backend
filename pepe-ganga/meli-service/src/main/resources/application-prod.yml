@@ -26,11 +26,6 @@ logging:
       hibernate:
         SQL: debug
 
-  cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
-
 # Business properties
 meli:
   api:
