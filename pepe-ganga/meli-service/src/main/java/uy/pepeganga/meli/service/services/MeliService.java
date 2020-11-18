@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
-import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
-import uy.com.pepeganga.business.common.utils.enums.MarginType;
-import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
-import uy.com.pepeganga.business.common.utils.enums.States;
+import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
@@ -26,6 +23,7 @@ import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.MeliUtils;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -353,6 +351,8 @@ public class MeliService  implements IMeliService{
                 String sku = product.getSku();
                 DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, product.getAccountMeli());
                 detailP.setLastUpgrade(detailM.getLastUpdated());
+                detailP.setPricePublication(detailM.getPrice());
+                detailP.setMargin(product.getMargin());
                 detailsPublicationRepository.save(detailP);
                 productResponse = product;
                 productResponse.setLastUpgrade(detailM.getLastUpdated());
@@ -440,6 +440,26 @@ public class MeliService  implements IMeliService{
         }
     }
 
+    @Override
+    public Map<String, Object> deletePublicationFailed(Integer id){
+        Map<String, Object> response = new HashMap<>();
+        try{
+             Optional<DetailsPublicationsMeli> details = detailsPublicationRepository.findById(id);
+             if(details.isPresent()){
+                 details.get().setDeleted(1);
+                 detailsPublicationRepository.save(details.get());
+                 response.put("response", "deleted");
+             }else{
+                 logger.error("Publication not found");
+                 response.put(ActionResult.NOT_FOUND.getValue(), "Publication not found");
+             }
+            return response;
+         }catch (Exception e){
+             logger.error("Error storing in Data Base:", e.getStackTrace());
+             response.put(ActionResult.DATABASE_ERROR.getValue(), "Error storing in database");
+             return response;
+         }
+    }
     @Override
     public Map<String, Object> republishPublication(Integer accountId, String idPublication) {
         Map<String, Object> response = new HashMap<>();
@@ -675,22 +695,41 @@ public class MeliService  implements IMeliService{
 
     @Override
     public Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList) {
+        List<DetailsPublicationsMeli> toUpdate = new ArrayList<>();
         Map<String, Object> response = new HashMap<>();
-        List<DetailsPublicationsMeli> detailsList = detailsPublicationRepository.findAllById(idDetailsPublicationsList);
-        if(!detailsList.isEmpty()){
-            //Sincroniza los estados de las publicaciones en ML con la base datos
-            /****** Pendiente a Implementar *****/
+        try {
+            List<DetailsPublicationsMeli> detailsList = detailsPublicationRepository.findAllById(idDetailsPublicationsList);
+            if (!detailsList.isEmpty()) {
+                //Sincroniza los estados de las publicaciones en ML con la base datos
+                detailsList.forEach(d -> {
+                    Map<String, Object> status = apiService.getStatusPublication(d.getIdPublicationMeli());
+                    if (status.containsKey("response")) {
+                        Object obj = status.get("response");
+                        MeliCodeResponse detailM = mapper.convertValue(obj, MeliCodeResponse.class);
+                        if (!detailM.getBody().getStatus().equals(d.getStatus())) {
+                            d.setStatus(detailM.getBody().getStatus());
+                            toUpdate.add(d);
+                        }
+                    }
+                });
+                if (!toUpdate.isEmpty()) {
+                    detailsPublicationRepository.saveAll(toUpdate);
+                }
 
-            //Actualiza las publicaciones con cambios pendientes
-            List<DetailsPublicationsMeli> toUpdateList = detailsList.stream().filter(d -> d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) && d.getPendingMarginUpdate()).collect(Collectors.toList());
-            if(!toUpdateList.isEmpty()){
-                response.putAll(updatePriceMeliOfActivePublications(idProfile, toUpdateList));
+                //Actualiza las publicaciones con cambios pendientes
+                List<DetailsPublicationsMeli> toUpdateList = detailsList.stream().filter(d -> d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) && d.getPendingMarginUpdate()).collect(Collectors.toList());
+                if (!toUpdateList.isEmpty()) {
+                    response.putAll(updatePriceMeliOfActivePublications(idProfile, toUpdateList));
+                } else {
+                    response.put("response", "No existen publicaciones para actualizar");
+                }
             }
-            else{
-                response.put("response", "No existen publicaciones para actualizar");
-            }
+            return response;
+        }catch (Exception e){
+            logger.error(String.format("Error of systems "), e.getStackTrace());
+            response.put(ActionResult.ERROR.getValue(), String.format("Error of systems: {}: ", e.getMessage()));
+            return response;
         }
-        return response;
     }
 
     /**** Metodos auxiliares ****/

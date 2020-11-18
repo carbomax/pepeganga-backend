@@ -48,6 +48,8 @@ public interface IMeliService {
 
     Map<String, Object> deletePublication(Integer accountId, String status, String idPublication);
 
+    Map<String, Object> deletePublicationFailed(Integer id);
+
     Map<String, Object> republishPublication(Integer accountId, String idPublication);
 
     Map<String, Object> republishMultiplePublications(List<ChangeMultipleStatusRequest> multiple);
@@ -55,4 +57,5 @@ public interface IMeliService {
     void updatePricePublication(Margin margin, Integer idProfile);
 
     Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
+
 }

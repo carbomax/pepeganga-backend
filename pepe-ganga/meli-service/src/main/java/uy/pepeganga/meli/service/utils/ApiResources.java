@@ -10,5 +10,7 @@ public class ApiResources {
 
     public static final String MELI_ERROR = "error_meli";
 
+    public static final String ROOT = "https://api.mercadolibre.com";
+
 
 }

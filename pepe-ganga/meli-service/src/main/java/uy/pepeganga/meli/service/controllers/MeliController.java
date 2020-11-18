@@ -97,6 +97,11 @@ public class MeliController {
         return new ResponseEntity<>(meliService.deletePublication(accountId, status, publicationId), HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete-publication-failed/{id}")
+    public ResponseEntity<Map<String, Object>> deletePublicationFailed(@PathVariable Integer id){
+        return new ResponseEntity<>(meliService.deletePublicationFailed(id), HttpStatus.OK);
+    }
+
     @PostMapping("/republish-publication/{accountId}/{publicationId}")
     public ResponseEntity<Map<String, Object>> republishPublication(@PathVariable Integer accountId, @PathVariable String publicationId){
         return new ResponseEntity<>(meliService.republishPublication(accountId, publicationId), HttpStatus.OK);
