@@ -159,7 +159,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				predicates.add(cb.equal(root.join("profile").get("id").as(Integer.class), idProfile));
 			}
 			if (minPrice != -1 && maxPrice != -1) {
-				predicates.add(cb.between(root.get("priceUYU"), minPrice, maxPrice));
+				if(maxPrice == 20000){
+					predicates.add(cb.greaterThanOrEqualTo(root.get("priceUYU"), minPrice));
+				}
+				else{
+					predicates.add(cb.between(root.get("priceUYU"), minPrice, maxPrice));
+				}
 			}
 			if (StringUtils.isNotBlank(sku)) {
 				predicates.add(cb.like(root.join("item").get("sku").as(String.class), "%" + sku + "%"));

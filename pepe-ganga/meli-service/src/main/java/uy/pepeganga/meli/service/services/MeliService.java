@@ -228,9 +228,9 @@ public class MeliService  implements IMeliService{
             detail.setPriceEditProduct(iter.getPriceEditProduct());
             detail.setDescription(iter.getItem().getDescription());
             detail.setUserId(getAccountMeli(accountId, true).get().getUserId());
+            detail.setPriceCostUSD(iter.getPriceCostUSD());
+            detail.setPriceCostUYU(iter.getPriceCostUYU());
             if(detailP == null){
-                detail.setPriceCostUSD(iter.getPriceCostUSD());
-                detail.setPriceCostUYU(iter.getPriceCostUYU());
                 detail.setSku(iter.getSku());
                 iter.getImages().forEach(i ->i.setId(null));
                 detail.setImages(iter.getImages());
@@ -255,6 +255,7 @@ public class MeliService  implements IMeliService{
                 detail.setWarrantyTime(warrantyTime.get().getValueName());
             }
             detail.setStatus(MeliStatusPublications.IN_PROCESS.getValue());
+            detail.setDeleted(0);
             detailsMeli.add(detail);
         }
         detailsPublicationRepository.saveAll(detailsMeli);
@@ -412,9 +413,15 @@ public class MeliService  implements IMeliService{
             }
             Object result = apiService.deletePublication(request, accountFounded.get().getAccessToken(), idPublication);
             if (!Objects.isNull(result)) {
-                details.setDeleted(1);
-                detailsPublicationRepository.save(details);
-                response.put("response", "deleted");
+                Map<String, Object> map = setProductToNopublishedStatus(details.getIdMLPublication(), States.NOPUBLISHED.getId());
+                if(map.containsKey("response")) {
+                    details.setDeleted(1);
+                    details.setIdMLPublication(-1);
+                    detailsPublicationRepository.save(details);
+                    response.put("response", "deleted");
+                }else{
+                    response.putAll(map);
+                }
             } else {
                 logger.error("Publication cannot be deleted by Mercado Libre, publicationId: {}", idPublication);
                 response.put(MELI_ERROR, ChangeStatusPublicationType.ofCode(-1).getStatus());
@@ -447,8 +454,14 @@ public class MeliService  implements IMeliService{
              Optional<DetailsPublicationsMeli> details = detailsPublicationRepository.findById(id);
              if(details.isPresent()){
                  details.get().setDeleted(1);
+                 details.get().setIdMLPublication(-1);
                  detailsPublicationRepository.save(details.get());
-                 response.put("response", "deleted");
+                 Map<String, Object> map = setProductToNopublishedStatus(details.get().getIdMLPublication(), States.NOPUBLISHED.getId());
+                 if(map.containsKey("response")) {
+                     response.put("response", "deleted");
+                 }else{
+                     response.putAll(map);
+                 }
              }else{
                  logger.error("Publication not found");
                  response.put(ActionResult.NOT_FOUND.getValue(), "Publication not found");
@@ -781,5 +794,22 @@ public class MeliService  implements IMeliService{
             detailsPublicationRepository.saveAll(listDetails);
         }
         return (Map<String, Object>) response.put("response", String.format("All publications were updated"));
+    }
+
+    private Map<String, Object> setProductToNopublishedStatus(Integer idProduct, Short status){
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Optional<MercadoLibrePublications> product = mlPublishRepository.findById(idProduct);
+            if (product.isPresent()) {
+                product.get().setStates(status);
+                mlPublishRepository.save(product.get());
+                response.put("response", "Updated");
+                return response;
+            }
+        }catch (Exception e){
+            logger.error(ActionResult.DATABASE_ERROR.getValue(), e.getStackTrace());
+            response.put(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
+        }
+        return response;
     }
 }
