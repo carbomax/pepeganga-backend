@@ -35,7 +35,9 @@ zuul:
     meli:
       service-id: meli-service
       path: /pepeganga/meli/**
-
+    notification:
+      service-id: notification-service
+      path: /pepeganga/notification/**
 
 hystrix:
    command:
@@ -47,4 +49,3 @@ hystrix:
 ribbon:
    ConnectTimeout: 100000
    ReadTimeout: 150000
-   IsSecure: true
