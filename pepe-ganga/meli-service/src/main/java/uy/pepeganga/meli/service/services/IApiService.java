@@ -30,10 +30,15 @@ public interface IApiService {
 
     Object updatePropertiesWithSales(PropertiesWithSalesRequest request, String token, String idPublicationMeli) throws ApiException;
 
+    Object updatePricePublication(ChangePriceRequest request, String token, String idPublicationMeli) throws ApiException;
+
     Object updatePropertiesWithoutSales(PropertiesWithoutSalesRequest request, String token, String idPublicationMeli) throws ApiException;
 
     Object changeStatusPublications(ChangeStatusPublicationRequest request, String token, String idPublicationMeli) throws ApiException;
 
+    Object deletePublication(DeletePublicationRequest request, String token, String idPublicationMeli) throws ApiException;
 
+    Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException;
 
+    Map<String, Object> getStatusPublication(String idPublication);
 }

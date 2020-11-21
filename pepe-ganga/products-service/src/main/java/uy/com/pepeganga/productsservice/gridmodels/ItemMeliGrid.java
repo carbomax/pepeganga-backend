@@ -28,7 +28,15 @@ public class ItemMeliGrid implements Serializable{
 	private long currentStock;
 	
 	private String state;
-		
+
+	private List<Image> images;
+
+	private double price_costUYU;
+
+	private double price_costUSD;
+
+	private String description;
+
 	public Integer getId() {
 		return id;
 	}
@@ -36,8 +44,6 @@ public class ItemMeliGrid implements Serializable{
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-	private List<Image> images;
 
 	public String getName() {
 		return name;
@@ -101,5 +107,29 @@ public class ItemMeliGrid implements Serializable{
 
 	public void setPriceUSD(double priceUSD) {
 		this.priceUSD = priceUSD;
+	}
+
+	public double getPrice_costUYU() {
+		return price_costUYU;
+	}
+
+	public void setPrice_costUYU(double price_costUYU) {
+		this.price_costUYU = price_costUYU;
+	}
+
+	public double getPrice_costUSD() {
+		return price_costUSD;
+	}
+
+	public void setPrice_costUSD(double price_costUSD) {
+		this.price_costUSD = price_costUSD;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

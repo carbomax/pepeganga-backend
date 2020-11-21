@@ -14,9 +14,9 @@ public interface DetailsPublicationsMeliRepository  extends JpaRepository<Detail
 
     @Transactional(readOnly = true)
     @Query(value = "select * from detailspublicationsmeli where account_meli in (:accountsId) and sku like %:sku% " +
-                    "and id_publication_meli like %:idMeliPublication% and status like %:typeStateSearch%",
+                    "and id_publication_meli like %:idMeliPublication% and status like %:typeStateSearch% and deleted = 0",
             countQuery = "select count(*) from detailspublicationsmeli where account_meli in (:accountsId) and sku like %:sku% " +
-                    "and id_publication_meli like %:idMeliPublication% and status like %:typeStateSearch%", nativeQuery = true)
+                    "and id_publication_meli like %:idMeliPublication% and status like %:typeStateSearch% and deleted = 0 ", nativeQuery = true)
     Page<DetailsPublicationsMeli> findDetailsPublicationByFilter(String sku, String idMeliPublication, List<Integer> accountsId, String typeStateSearch, Pageable pageable);
 
     @Transactional(readOnly = true)

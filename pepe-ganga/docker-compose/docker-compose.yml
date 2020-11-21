@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+  eureka-server:
+    image: eureka-server:v1
+    ports:
+      - "8761:8761"
+    restart: always
+    networks:
+      - springcloud
+  oauth-service:
+    image: oauth-service:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+      - user-service
+  user-service:
+    image:  user-service:v1
+    restart: always
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+  zuul-service:
+    image:  zuul-service:v1
+    restart: always
+    ports:
+      - "80:9999"
+    networks:
+      - springcloud
+    depends_on:
+      - eureka-server
+networks:
+  springcloud:

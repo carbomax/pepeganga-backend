@@ -35,7 +35,12 @@ public class ItemServiceImpl implements ItemService {
 		return productsRepository.findAll((Root<Item> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
 			if (minPrice != -1 && maxPrice != -1) {
-				predicates.add(cb.between(root.get("precioPesos"), minPrice, maxPrice));
+				if(maxPrice == 20000){
+					predicates.add(cb.greaterThanOrEqualTo(root.get("precioPesos"), minPrice));
+				}
+				else{
+					predicates.add(cb.between(root.get("precioPesos"), minPrice, maxPrice));
+				}
 			}
 			if (StringUtils.isNotBlank(sku)) {
 				predicates.add(cb.like(root.get("sku").as(String.class), "%" + sku + "%"));

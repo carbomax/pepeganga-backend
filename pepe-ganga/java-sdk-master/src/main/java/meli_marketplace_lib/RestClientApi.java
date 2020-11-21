@@ -320,7 +320,7 @@ public class RestClientApi {
 
         // create path and map variables
         String localVarPath = "/{resource}"
-            .replaceAll("\\{" + "resource" + "\\}", localVarApiClient.escapeString(resource.toString()));
+            .replaceAll("\\{" + "resource" + "\\}", resource.trim());
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();

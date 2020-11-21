@@ -43,9 +43,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Autowired
 	UserRepository userRepo;
-	
+
 	@Autowired
 	ImageRepository imageRepo;
+
+	@Autowired
+	ImagePublicationRepository imagePublicationRepo;
 
 	@Autowired
 	ProfileRepository profileRepository;
@@ -82,17 +85,17 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	// The products are stored in "Mercado Libre Publication" table.
 	@Override
 	public SelectedProducResponse storeProductToPublish(String profileEncode, Short marketplace, List<String> products) {
-		
-		// Decode data on other side, by processing encoded data		
+
+		// Decode data on other side, by processing encoded data
 		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
-				
+
 		Item item;
 		MercadoLibrePublications meliPublication;
 		MercadoLibrePublications mlp;
-		
+
 		Profile profile = new Profile();
 		profile.setId(idProfile);
-		
+
 		if (marketplace == MarketplaceType.MERCADOLIBRE.getId())
 			itemService = new ItemServiceImpl(productsRepository);
 
@@ -156,7 +159,12 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				predicates.add(cb.equal(root.join("profile").get("id").as(Integer.class), idProfile));
 			}
 			if (minPrice != -1 && maxPrice != -1) {
-				predicates.add(cb.between(root.get("priceUYU"), minPrice, maxPrice));
+				if(maxPrice == 20000){
+					predicates.add(cb.greaterThanOrEqualTo(root.get("priceUYU"), minPrice));
+				}
+				else{
+					predicates.add(cb.between(root.get("priceUYU"), minPrice, maxPrice));
+				}
 			}
 			if (StringUtils.isNotBlank(sku)) {
 				predicates.add(cb.like(root.join("item").get("sku").as(String.class), "%" + sku + "%"));
@@ -181,7 +189,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	@Override
 	public PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String profileEncode, String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable) {
-		
+
 		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
 		Page<MercadoLibrePublications> result = this.findAll(idProfile, sku.trim(), nameProduct.trim(), state, familyId, minPrice, maxPrice,
 				pageable);
@@ -192,12 +200,15 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			itemMeliGrid.setId(p.getId());
 			itemMeliGrid.setState(p.getStates() == States.NOPUBLISHED.getId() ? States.NOPUBLISHED.getValue() : States.PUBLISHED.getValue() );
 			itemMeliGrid.setImages(p.getImages());
-			itemMeliGrid.setName(p.getProductName());			
+			itemMeliGrid.setName(p.getProductName());
 			itemMeliGrid.setPriceUYU(p.getPriceUYU());
 			itemMeliGrid.setPriceUSD(p.getPriceUSD());
 			itemMeliGrid.setSku(p.getItem().getSku());
 			itemMeliGrid.setCurrentStock(p.getItem().getStockActual());
 			itemMeliGrid.setFamily(p.getItem().getFamily());
+			itemMeliGrid.setDescription(p.getDescription());
+			itemMeliGrid.setPrice_costUSD(p.getItem().getPrecioDolares());
+			itemMeliGrid.setPrice_costUYU(p.getItem().getPrecioPesos());
 			itemMeliGridList.add(itemMeliGrid);
 		});
 		PageItemMeliGrid pageItemMeliGrid = new PageItemMeliGrid();
@@ -215,41 +226,41 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	public ReasonResponse storeCommonData(String profileEncode, String description,  List<String> skuList, List<Image> images) {
 		ReasonResponse reason = new ReasonResponse();
 		reason.setSuccess(false);
-		
+
 		if(description.isBlank() && images.isEmpty())
 		{
 			reason.setReason("Valores de entrada nulos o vacios");
 			return reason;
-		}			
-		
+		}
+
 		try {
 		List<MercadoLibrePublications> productsToUpdate = new ArrayList<>();
 		Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
-				
+
 		for (String sku : skuList) {
 			MercadoLibrePublications product = mlPublishRepo.findByItemAndProfile(sku, idProfile);
 			if(product != null)
 			{
 				if(!images.isEmpty()) {
 					List<Image> imagesList = product.getImages();
-					imagesList.addAll(images);						
+					imagesList.addAll(images);
 					product.setImages(imagesList);
 				}
 				if(!description.isBlank()) {
 					product.setDescription(product.getDescription() + "\n" + description);
 				}
-				
+
 				productsToUpdate.add(product);
-			}			
-		}		
-		
+			}
+		}
+
 			mlPublishRepo.saveAll(productsToUpdate);
-			reason.setSuccess(true);			
+			reason.setSuccess(true);
 		}
 		catch (Exception e) {
 			// TODO: handle exception
 			reason.setSuccess(false);
-			reason.setReason("error al almacenar valores");			
+			reason.setReason("error al almacenar valores");
 		}
 		return reason;
 	}
@@ -260,18 +271,18 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		MercadoLibrePublications result;
 		ReasonResponse reason = new ReasonResponse();
 		reason.setSuccess(false);
-		try {				
+		try {
 			Optional<MercadoLibrePublications> prod = mlPublishRepo.findById(product.getId());
 			if(prod.isPresent()) {
-				
+
 				if(imagesToDelete == null || imagesToDelete.isEmpty()) {}
 				else {
 					for (Integer ima : imagesToDelete) {
 						if(imageRepo.existsById(ima))
 							imageRepo.deleteById(ima);
-					}			
-				}	
-				
+					}
+				}
+
 				MercadoLibrePublications store = prod.get();
 				store.setItem(prod.get().getItem());
 				store.setProfile(prod.get().getProfile());
@@ -279,13 +290,13 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				store.setPriceUYU(product.getPrice());
 				store.setProductName(product.getProductName());
 				store.setStates(product.getStates());
-				
-				if(!product.getImages().isEmpty()) {			
+
+				if(!product.getImages().isEmpty()) {
 					store.setImages(product.getImages());
 				}
-				result = mlPublishRepo.save(store);	
+				result = mlPublishRepo.save(store);
 				reason.setSuccess(true);
-				
+
 				//Producto a devolver
 				EditableProductModel productEditabled = new EditableProductModel();
 				productEditabled.setId(result.getId());
@@ -300,8 +311,66 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				productEditabled.setCurrentStock(product.getCurrentStock());
 				return productEditabled;
 			}
-				//NO se encuntra el producto en base dato, devuelve exception				
-			throw new Exception();	
+				//NO se encuntra el producto en base dato, devuelve exception
+			throw new Exception();
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			throw new Exception(e);
+		}
+	}
+
+	public DMDetailsPublicationsMeli editInfoOfPublication(DMDetailsPublicationsMeli product, List<Integer>imagesToDelete ) throws Exception
+	{
+		DetailsPublicationsMeli result;
+		try {
+			Optional<DetailsPublicationsMeli> optionalDetail = detailsPublicationsMeliRepository.findById(product.getId());
+			if(optionalDetail.isPresent()) {
+				if(imagesToDelete == null || imagesToDelete.isEmpty()) {}
+				else {
+					for (Integer ima : imagesToDelete) {
+						if(imagePublicationRepo.existsById(ima))
+							imagePublicationRepo.deleteById(ima);
+					}
+				}
+				DetailsPublicationsMeli store = optionalDetail.get();
+				store.setDescription(product.getDescription());
+				store.setTitle(product.getTitle());
+				store.setImages(product.getImages());
+				if(product.getPriceEditProduct() != store.getPriceEditProduct()){
+					store.setPriceEditProduct(product.getPriceEditProduct());
+					store.setPricePublication((int) product.getPriceEditProduct());
+					store.setMargin(null);
+				}
+				result = detailsPublicationsMeliRepository.save(store);
+
+				//Producto a devolver
+				DMDetailsPublicationsMeli detailPublication = new DMDetailsPublicationsMeli();
+				detailPublication.setId(result.getId());
+				detailPublication.setPriceEditProduct(result.getPriceEditProduct());
+				detailPublication.setPriceCostUYU(result.getPriceCostUYU());
+				detailPublication.setPricePublication(result.getPricePublication());
+				detailPublication.setDescription(result.getDescription());
+				detailPublication.setImages(result.getImages());
+				detailPublication.setSku(result.getSku());
+				detailPublication.setAccountMeli(result.getAccountMeli());
+				detailPublication.setAccountName(product.getAccountName());
+				detailPublication.setCurrentStock(product.getCurrentStock());
+				detailPublication.setCategoryMeli(result.getCategoryMeli());
+				detailPublication.setIdPublicationMeli(result.getIdPublicationMeli());
+				detailPublication.setLastUpgrade(result.getLastUpgrade());
+				detailPublication.setMargin(result.getMargin());
+				detailPublication.setMlPublicationId(result.getIdMLPublication());
+				detailPublication.setPermalink(result.getPermalink());
+				detailPublication.setStatus(result.getStatus());
+				detailPublication.setSaleStatus(result.getSaleStatus());
+				detailPublication.setTitle(result.getTitle());
+				detailPublication.setWarrantyTime(result.getWarrantyTime());
+				detailPublication.setWarrantyType(result.getWarrantyType());
+				return detailPublication;
+			}
+			//NO se encuntra el producto en base dato, devuelve exception
+			throw new Exception();
 		}
 		catch (Exception e) {
 			// TODO: handle exception
@@ -313,10 +382,10 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	public EditableProductModel getCustomProduct(Integer id)
 	{
 		EditableProductModel editP= new EditableProductModel();
-		if(id == null) 
+		if(id == null)
 			return editP;
-		
-		Optional<MercadoLibrePublications> item = mlPublishRepo.findById(id);	
+
+		Optional<MercadoLibrePublications> item = mlPublishRepo.findById(id);
 		if(item.isPresent()) {
 			editP.setId(item.get().getId());
 			editP.setCurrentStock(item.get().getItem().getStockActual());
@@ -327,8 +396,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			editP.setProductName(item.get().getProductName());
 			editP.setSku(item.get().getItem().getSku());
 			editP.setStates(item.get().getStates());
-			editP.setImages(item.get().getImages());			
-		} 
+			editP.setImages(item.get().getImages());
+		}
 		return editP;
 	}
 

@@ -1,11 +1,13 @@
 
 spring:
   application:
-    name: pepeganga-eureca-service
+    name: eureka-service
 
 server:
   port: 8761
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     register-with-eureka: false
     fetch-registry: false
