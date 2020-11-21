@@ -33,4 +33,7 @@ meli:
     client: 5381382874135569
     secret: ach1Wz5swsZTrQVJ9UTdKcAkg1Rsc0UA
     redirect: https://localhost:4200/home/meli-accounts
-    expiration-token: 30
+    expiration:
+     token: 30
+  order:
+    attempts: 10

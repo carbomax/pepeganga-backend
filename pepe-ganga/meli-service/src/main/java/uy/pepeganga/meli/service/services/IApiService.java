@@ -24,6 +24,8 @@ public interface IApiService {
 
     Object getOrderByNotificationResource(String orderId, String token) throws ApiException;
 
+    Object getShipmentOfOrder(Long shipmentId, String token) throws ApiException;
+
     Object getOrdersBySeller(Long seller, String token) throws ApiException;
 
     Object updateDescription(DescriptionRequest request, String token, String idPublicationMeli) throws ApiException;

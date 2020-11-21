@@ -1,11 +1,15 @@
-package uy.pepeganga.meli.service.models.orders;
+package uy.com.pepeganga.business.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class DMOrderShipping {
+import javax.persistence.*;
+import java.io.Serializable;
 
+@Entity
+@Table(name = "meli_order_shipment")
+public class MeliOrderShipment implements Serializable {
+
+    @Id
     private Long id;
 
     private String mode;
@@ -14,9 +18,9 @@ public class DMOrderShipping {
 
     private Long orderId;
 
-    private Double orderCost = 0.0;
+    private Double orderCost;
 
-    private Double baseCost = 0.0;
+    private Double baseCost;
 
     private String siteId;
 
@@ -26,14 +30,19 @@ public class DMOrderShipping {
 
     private String lastUpdated;
 
-    private DMCostComponents costComponents;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "cost_components_id")
+    private MeliOrderShipmentCostComponents costComponents;
 
-    @JsonProperty("id")
     public Long getId() {
         return id;
     }
 
-    @JsonProperty("mode")
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getMode() {
         return mode;
     }
@@ -42,7 +51,6 @@ public class DMOrderShipping {
         this.mode = mode;
     }
 
-    @JsonProperty("created_by")
     public String getCreateBy() {
         return createBy;
     }
@@ -51,7 +59,6 @@ public class DMOrderShipping {
         this.createBy = createBy;
     }
 
-    @JsonProperty("order_id")
     public Long getOrderId() {
         return orderId;
     }
@@ -60,7 +67,6 @@ public class DMOrderShipping {
         this.orderId = orderId;
     }
 
-    @JsonProperty("order_cost")
     public Double getOrderCost() {
         return orderCost;
     }
@@ -69,7 +75,6 @@ public class DMOrderShipping {
         this.orderCost = orderCost;
     }
 
-    @JsonProperty("base_cost")
     public Double getBaseCost() {
         return baseCost;
     }
@@ -78,7 +83,6 @@ public class DMOrderShipping {
         this.baseCost = baseCost;
     }
 
-    @JsonProperty("site_id")
     public String getSiteId() {
         return siteId;
     }
@@ -87,7 +91,6 @@ public class DMOrderShipping {
         this.siteId = siteId;
     }
 
-    @JsonProperty("status")
     public String getStatus() {
         return status;
     }
@@ -96,11 +99,6 @@ public class DMOrderShipping {
         this.status = status;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @JsonProperty("date_created")
     public String getDateCreated() {
         return dateCreated;
     }
@@ -109,7 +107,6 @@ public class DMOrderShipping {
         this.dateCreated = dateCreated;
     }
 
-    @JsonProperty("last_updated")
     public String getLastUpdated() {
         return lastUpdated;
     }
@@ -118,12 +115,11 @@ public class DMOrderShipping {
         this.lastUpdated = lastUpdated;
     }
 
-    @JsonProperty("cost_components")
-    public DMCostComponents getCostComponents() {
+    public MeliOrderShipmentCostComponents getCostComponents() {
         return costComponents;
     }
 
-    public void setCostComponents(DMCostComponents costComponents) {
+    public void setCostComponents(MeliOrderShipmentCostComponents costComponents) {
         this.costComponents = costComponents;
     }
 }

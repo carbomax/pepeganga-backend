@@ -30,6 +30,8 @@ public class DMOrder {
 
     private DMOrderShipping shipping;
 
+    private DMOrderTaxes taxes;
+
     @JsonProperty("id")
     public Long getId() {
         return id;
@@ -83,5 +85,10 @@ public class DMOrder {
     @JsonProperty("shipping")
     public DMOrderShipping getShipping() {
         return shipping;
+    }
+
+    @JsonProperty("taxes")
+    public DMOrderTaxes getTaxes() {
+        return taxes;
     }
 }
