@@ -3,6 +3,7 @@ package uy.com.pepeganga.business.common.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,10 +29,9 @@ public class MercadoLibrePublications implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)	
 	private Integer id;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="item_id", nullable = false)
-	private Item item;
+
+	@Column(name="sku")
+	private String sku;
 			
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="profile_id", nullable = false)
@@ -54,7 +54,22 @@ public class MercadoLibrePublications implements Serializable {
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "meli_id")
-	private List<Image> images;		
+	private List<Image> images;
+
+	@Column(name="currentStock")
+	private long currentStock;
+
+	@Column(name="familyId")
+	private Short familyId;
+
+	@Column(name="familyDesc")
+	private String familyDesc;
+
+	@Column(name="priceCostUYU")
+	private double priceCostUYU;
+
+	@Column(name="priceCostUSD")
+	private double priceCostUSD;
 	
 	public Integer getId() {
 		return id;
@@ -62,11 +77,11 @@ public class MercadoLibrePublications implements Serializable {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public Item getItem() {
-		return item;
+	public String getSku() {
+		return sku;
 	}
-	public void setItem(Item item) {
-		this.item = item;
+	public void setSku(String sku) {
+		this.sku = sku;
 	}	
 	public String getDescription() {
 		return description;
@@ -95,11 +110,9 @@ public class MercadoLibrePublications implements Serializable {
 	public double getPriceUSD() {
 		return priceUSD;
 	}
-
 	public void setPriceUSD(double priceUSD) {
 		this.priceUSD = priceUSD;
 	}
-
 	public List<Image> getImages() {
 		return images;
 	}
@@ -112,36 +125,58 @@ public class MercadoLibrePublications implements Serializable {
 	public void setProfile(Profile profile) {
 		this.profile = profile;
 	}
+
+	public long getCurrentStock() {
+		return currentStock;
+	}
+
+	public void setCurrentStock(long currentStock) {
+		this.currentStock = currentStock;
+	}
+
+	public Short getFamilyId() {
+		return familyId;
+	}
+
+	public void setFamilyId(Short familyId) {
+		this.familyId = familyId;
+	}
+
+	public String getFamilyDesc() {
+		return familyDesc;
+	}
+
+	public void setFamilyDesc(String familyDesc) {
+		this.familyDesc = familyDesc;
+	}
+
+	public double getPriceCostUYU() {
+		return priceCostUYU;
+	}
+
+	public void setPriceCostUYU(double priceCostUYU) {
+		this.priceCostUYU = priceCostUYU;
+	}
+
+	public double getPriceCostUSD() {
+		return priceCostUSD;
+	}
+
+	public void setPriceCostUSD(double priceCostUSD) {
+		this.priceCostUSD = priceCostUSD;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof MercadoLibrePublications)) return false;
+		MercadoLibrePublications that = (MercadoLibrePublications) o;
+		return Objects.equals(sku, that.sku) &&
+				Objects.equals(profile, that.profile);
+	}
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((item == null) ? 0 : item.hashCode());
-		result = prime * result + ((profile == null) ? 0 : profile.hashCode());
-		return result;
+		return Objects.hash(sku, profile);
 	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		MercadoLibrePublications other = (MercadoLibrePublications) obj;
-		if (item == null) {
-			if (other.item != null)
-				return false;
-		} else if (!item.equals(other.item))
-			return false;
-		if (profile == null) {
-			if (other.profile != null)
-				return false;
-		} else if (!profile.equals(other.profile))
-			return false;
-		return true;
-	}
-	
-	
-	
 }

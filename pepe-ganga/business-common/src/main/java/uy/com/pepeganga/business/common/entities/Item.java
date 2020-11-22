@@ -97,10 +97,6 @@ public class Item implements Serializable {
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	private List<Category> categories;
-	
-	@OneToMany
-	@JoinColumn(name="item_id")
-	private List<MercadoLibrePublications> meliPublications;
 
 	public String getSku() {
 		return sku;
@@ -308,14 +304,6 @@ public class Item implements Serializable {
 
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
-	}	
-	
-	public List<MercadoLibrePublications> getMeliPublications() {
-		return meliPublications;
-	}
-
-	public void setMeliPublications(List<MercadoLibrePublications> meliPublications) {
-		this.meliPublications = meliPublications;
 	}
 
 	@Override
