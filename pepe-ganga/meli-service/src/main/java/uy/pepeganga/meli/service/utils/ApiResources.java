@@ -6,6 +6,8 @@ public class ApiResources {
 
     public  static final  String ORDERS = "orders";
 
+    public  static final  String SHIPMENTS = "shipments";
+
     public static final String ERROR = "error";
 
     public static final String MELI_ERROR = "error_meli";
