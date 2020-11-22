@@ -15,4 +15,8 @@ public interface AccountMeliRepository extends JpaRepository<SellerAccount, Inte
     @Transactional(readOnly = true)
     @Query(value = "select * from selleraccount sa where sa.profile_id = ?1", nativeQuery = true)
     List<SellerAccount> findByIdProfile(Integer idProfile);
+
+    @Transactional(readOnly = true)
+    @Query(value = "select * from selleraccount s where s.user_id = ?1", nativeQuery = true)
+    SellerAccount findByUserId(Long userId);
 }

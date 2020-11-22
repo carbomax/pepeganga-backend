@@ -25,12 +25,12 @@ public class UploadFileController {
 	FileUploadService fileService;
 
 	@PostMapping("/file/upload-file")
-	public ResponseEntity<ReasonResponse> uploadFile(@RequestBody MultipartFile image){
+	public ResponseEntity<ReasonResponse> uploadFile(@RequestBody MultipartFile image, @RequestParam String uri){
 		if(image == null || image.isEmpty()){
 			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, String.format("Archivo no válido"));
 		}		
 		try {
-			return new ResponseEntity<ReasonResponse>(fileService.uploadFile(image), HttpStatus.OK);
+			return new ResponseEntity<ReasonResponse>(fileService.uploadFile(image, uri), HttpStatus.OK);
 		}
 		catch (Exception e) {
 			// TODO: handle exception
