@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
+import uy.pepeganga.meli.service.exceptions.OrderCreateException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
@@ -23,9 +24,8 @@ import uy.pepeganga.meli.service.models.orders.DMOrderShipping;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
 import uy.pepeganga.meli.service.utils.MeliUtils;
+import uy.pepeganga.meli.service.utils.OrderStatusType;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -73,8 +73,11 @@ public class OrderService implements IOrderService {
     @Autowired
     MeliOrderShipmentCostComponentsRepository costComponentsRepository;
 
+    @Autowired
+    StockProcessorRepository stockProcessorRepository;
 
-    @Value("${meli.order.attempts}\"")
+
+    @Value("${meli.order.attempts}")
     private String orderAttempts;
 
     private static int ORDER_ATTEMPTS;
@@ -113,58 +116,8 @@ public class OrderService implements IOrderService {
                     DMOrderShipping orderShipping = mapper.convertValue(apiService.getShipmentOfOrder(order.getShipping().getId(),
                             sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrderShipping.class);
 
-                    MeliOrderShipment shipment = shipmentRepository.findMeliOrderShipmentById(orderShipping.getId());
-                    if(Objects.nonNull(shipment)){
-                        logger.info("Updating shipment id: {}", shipment.getId());
-                        shipment.setBaseCost(orderShipping.getBaseCost());
-                        shipment.setOrderCost(orderShipping.getOrderCost());
-                        shipment.setCreateBy(orderShipping.getCreateBy());
-                        shipment.setDateCreated(orderShipping.getDateCreated());
-                        shipment.setMode(orderShipping.getMode());
-                        shipment.setLastUpdated(orderShipping.getLastUpdated());
-                        shipment.setSiteId(orderShipping.getSiteId());
-                        shipment.setStatus(orderShipping.getStatus());
-                        shipment.setOrderId(orderShipping.getOrderId());
-                        Optional<MeliOrderShipmentCostComponents> costComponents = costComponentsRepository.findById(shipment.getCostComponents().getId());
-                        if(costComponents.isEmpty()){
-                            MeliOrderShipmentCostComponents components = new MeliOrderShipmentCostComponents();
-                            components.setCompensation(orderShipping.getCostComponents().getCompensation());
-                            components.setEspecialDiscount(orderShipping.getCostComponents().getEspecialDiscount());
-                            components.setGapDiscount(orderShipping.getCostComponents().getGapDiscount());
-                            components.setLoyalDiscount(orderShipping.getCostComponents().getLoyalDiscount());
-                            components.setRatio(orderShipping.getCostComponents().getRatio());
-                            shipment.setCostComponents(costComponentsRepository.save(components));
-                        } else {
-                            costComponents.get().setCompensation(orderShipping.getCostComponents().getCompensation());
-                            costComponents.get().setEspecialDiscount(orderShipping.getCostComponents().getEspecialDiscount());
-                            costComponents.get().setGapDiscount(orderShipping.getCostComponents().getGapDiscount());
-                            costComponents.get().setLoyalDiscount(orderShipping.getCostComponents().getLoyalDiscount());
-                            costComponents.get().setRatio(orderShipping.getCostComponents().getRatio());
-                            costComponentsRepository.save(costComponents.get());
-                        }
-
-                        shipmentRepository.save(shipment);
-                    } else {
-                        MeliOrderShipment shipmentToCreate =  new MeliOrderShipment();
-                        shipmentToCreate.setId(orderShipping.getId());
-                        shipmentToCreate.setBaseCost(orderShipping.getBaseCost());
-                        shipmentToCreate.setOrderCost(orderShipping.getOrderCost());
-                        shipmentToCreate.setCreateBy(orderShipping.getCreateBy());
-                        shipmentToCreate.setDateCreated(orderShipping.getDateCreated());
-                        shipmentToCreate.setMode(orderShipping.getMode());
-                        shipmentToCreate.setLastUpdated(orderShipping.getLastUpdated());
-                        shipmentToCreate.setSiteId(orderShipping.getSiteId());
-                        shipmentToCreate.setStatus(orderShipping.getStatus());
-                        shipmentToCreate.setOrderId(orderShipping.getOrderId());
-                        MeliOrderShipmentCostComponents componentsToCreate = new MeliOrderShipmentCostComponents();
-                        componentsToCreate.setCompensation(orderShipping.getCostComponents().getCompensation());
-                        componentsToCreate.setEspecialDiscount(orderShipping.getCostComponents().getEspecialDiscount());
-                        componentsToCreate.setGapDiscount(orderShipping.getCostComponents().getGapDiscount());
-                        componentsToCreate.setLoyalDiscount(orderShipping.getCostComponents().getLoyalDiscount());
-                        componentsToCreate.setRatio(orderShipping.getCostComponents().getRatio());
-                        shipmentToCreate.setCostComponents(costComponentsRepository.save(componentsToCreate));
-                        shipmentRepository.save(shipmentToCreate);
-                    }
+                    // Processing shipments
+                    processingShipment(orderShipping);
                     error = false;
                 } else {
                     // doing something
@@ -192,7 +145,62 @@ public class OrderService implements IOrderService {
         }
     }
 
-    private DMOrder processingOrderByNotification(Notification notification) throws ApiException {
+    private void processingShipment(DMOrderShipping orderShipping) {
+        MeliOrderShipment shipment = shipmentRepository.findMeliOrderShipmentById(orderShipping.getId());
+        if(Objects.nonNull(shipment)){
+            logger.info("Updating shipment id: {}", shipment.getId());
+            shipment.setBaseCost(orderShipping.getBaseCost());
+            shipment.setOrderCost(orderShipping.getOrderCost());
+            shipment.setCreateBy(orderShipping.getCreateBy());
+            shipment.setDateCreated(orderShipping.getDateCreated());
+            shipment.setMode(orderShipping.getMode());
+            shipment.setLastUpdated(orderShipping.getLastUpdated());
+            shipment.setSiteId(orderShipping.getSiteId());
+            shipment.setStatus(orderShipping.getStatus());
+            shipment.setOrderId(orderShipping.getOrderId());
+            Optional<MeliOrderShipmentCostComponents> costComponents = costComponentsRepository.findById(shipment.getCostComponents().getId());
+            if(costComponents.isEmpty()){
+                MeliOrderShipmentCostComponents components = new MeliOrderShipmentCostComponents();
+                components.setCompensation(orderShipping.getCostComponents().getCompensation());
+                components.setEspecialDiscount(orderShipping.getCostComponents().getEspecialDiscount());
+                components.setGapDiscount(orderShipping.getCostComponents().getGapDiscount());
+                components.setLoyalDiscount(orderShipping.getCostComponents().getLoyalDiscount());
+                components.setRatio(orderShipping.getCostComponents().getRatio());
+                shipment.setCostComponents(costComponentsRepository.save(components));
+            } else {
+                costComponents.get().setCompensation(orderShipping.getCostComponents().getCompensation());
+                costComponents.get().setEspecialDiscount(orderShipping.getCostComponents().getEspecialDiscount());
+                costComponents.get().setGapDiscount(orderShipping.getCostComponents().getGapDiscount());
+                costComponents.get().setLoyalDiscount(orderShipping.getCostComponents().getLoyalDiscount());
+                costComponents.get().setRatio(orderShipping.getCostComponents().getRatio());
+                costComponentsRepository.save(costComponents.get());
+            }
+
+            shipmentRepository.save(shipment);
+        } else {
+            MeliOrderShipment shipmentToCreate =  new MeliOrderShipment();
+            shipmentToCreate.setId(orderShipping.getId());
+            shipmentToCreate.setBaseCost(orderShipping.getBaseCost());
+            shipmentToCreate.setOrderCost(orderShipping.getOrderCost());
+            shipmentToCreate.setCreateBy(orderShipping.getCreateBy());
+            shipmentToCreate.setDateCreated(orderShipping.getDateCreated());
+            shipmentToCreate.setMode(orderShipping.getMode());
+            shipmentToCreate.setLastUpdated(orderShipping.getLastUpdated());
+            shipmentToCreate.setSiteId(orderShipping.getSiteId());
+            shipmentToCreate.setStatus(orderShipping.getStatus());
+            shipmentToCreate.setOrderId(orderShipping.getOrderId());
+            MeliOrderShipmentCostComponents componentsToCreate = new MeliOrderShipmentCostComponents();
+            componentsToCreate.setCompensation(orderShipping.getCostComponents().getCompensation());
+            componentsToCreate.setEspecialDiscount(orderShipping.getCostComponents().getEspecialDiscount());
+            componentsToCreate.setGapDiscount(orderShipping.getCostComponents().getGapDiscount());
+            componentsToCreate.setLoyalDiscount(orderShipping.getCostComponents().getLoyalDiscount());
+            componentsToCreate.setRatio(orderShipping.getCostComponents().getRatio());
+            shipmentToCreate.setCostComponents(costComponentsRepository.save(componentsToCreate));
+            shipmentRepository.save(shipmentToCreate);
+        }
+    }
+
+    private DMOrder processingOrderByNotification(Notification notification) throws ApiException, OrderCreateException {
         DMOrder order = mapper.convertValue(apiService.getOrderByNotificationResource(notification.getResource(),
                 sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrder.class);
 
@@ -225,51 +233,74 @@ public class OrderService implements IOrderService {
         return orderToUpdate;
     }
 
-    private void createMeliOrder(DMOrder order) {
-        MeliOrders orders = new MeliOrders();
+    private void createMeliOrder(DMOrder order) throws OrderCreateException {
+      try {
+          if(order.getStatus().equals(OrderStatusType.PAID.getStatus())){
+              MeliOrders orders = new MeliOrders();
 
-        // Buyer
-        if (order.getBuyer() != null) {
-            MeliOrderBuyer buyer = new MeliOrderBuyer(order.getBuyer().getId(), order.getBuyer().getNickname(), order.getBuyer().getEmail(), order.getBuyer().getFirstName(),
-                    order.getBuyer().getLastName(), billingInfoRepository.save(new MeliOrderBuyerBillingInfo(order.getBuyer().getBillingInfo().getDocType(), order.getBuyer().getBillingInfo().getDocNumber())));
-            orders.setBuyer(orderBuyerRepository.save(buyer));
-        }
+              // Buyer
+              if (order.getBuyer() != null) {
+                  MeliOrderBuyer buyer = new MeliOrderBuyer(order.getBuyer().getId(), order.getBuyer().getNickname(), order.getBuyer().getEmail(), order.getBuyer().getFirstName(),
+                          order.getBuyer().getLastName(), billingInfoRepository.save(new MeliOrderBuyerBillingInfo(order.getBuyer().getBillingInfo().getDocType(), order.getBuyer().getBillingInfo().getDocNumber())));
+                  orders.setBuyer(orderBuyerRepository.save(buyer));
+              }
 
-        if (order.getSeller() != null) {
-            MeliOrderSeller seller = new MeliOrderSeller(order.getSeller().getId(), order.getSeller().getNickname(), order.getSeller().getEmail(), order.getSeller().getFirtsName()
-                    , order.getSeller().getLastName());
-            orders.setSeller(orderSellerRepository.save(seller));
-        }
+              if (order.getSeller() != null) {
+                  MeliOrderSeller seller = new MeliOrderSeller(order.getSeller().getId(), order.getSeller().getNickname(), order.getSeller().getEmail(), order.getSeller().getFirtsName()
+                          , order.getSeller().getLastName());
+                  orders.setSeller(orderSellerRepository.save(seller));
+              }
 
 
-        // Items in order
-        if (order.getOrderItems() != null) {
-            List<MeliOrderItem> orderItems = new ArrayList<>();
-            order.getOrderItems().forEach(dmOrderItems -> orderItems.add(new MeliOrderItem(dmOrderItems.getItem().getId(), dmOrderItems.getItem().getTitle(),
-                    dmOrderItems.getItem().getCategoryId(), dmOrderItems.getItem().getSellerSku(), dmOrderItems.getQuantity(), dmOrderItems.getUnitPrice(), dmOrderItems.getCurrencyId())));
-            orders.setItems(orderItems);
-            this.updateItemPublished(order.getOrderItems());
-        }
+              // Items in order
+              if (order.getOrderItems() != null) {
+                  List<MeliOrderItem> orderItems = new ArrayList<>();
+                  order.getOrderItems().forEach(dmOrderItems -> orderItems.add(new MeliOrderItem(dmOrderItems.getItem().getId(), dmOrderItems.getItem().getTitle(),
+                          dmOrderItems.getItem().getCategoryId(), dmOrderItems.getItem().getSellerSku(), dmOrderItems.getQuantity(), dmOrderItems.getUnitPrice(), dmOrderItems.getCurrencyId())));
+                  orders.setItems(orderItems);
+                  this.updateItemPublished(order.getOrderItems());
+              }
 
-        // Payments in order
-        if (order.getPayments() != null) {
-            List<MeliOrderPayment> payments = new ArrayList<>();
-            order.getPayments().forEach(dmOrderPayment -> payments.add(new MeliOrderPayment(dmOrderPayment.getId(), dmOrderPayment.getTransactionAmount(), dmOrderPayment.getCurrencyId(), dmOrderPayment.getStatus())));
-            orders.setPayments(payments);
-        }
+              // Payments in order
+              if (order.getPayments() != null) {
+                  List<MeliOrderPayment> payments = new ArrayList<>();
+                  order.getPayments().forEach(dmOrderPayment -> payments.add(new MeliOrderPayment(dmOrderPayment.getId(), dmOrderPayment.getTransactionAmount(), dmOrderPayment.getCurrencyId(), dmOrderPayment.getStatus())));
+                  orders.setPayments(payments);
+              }
 
-        MeliOrders orderToCreate = transformDateOrderCreated(orders);
-        // private order values
-        orderToCreate.setCurrencyId(order.getCurrencyId());
-        orderToCreate.setDateClosed(order.getDateClosed());
-        orderToCreate.setOrderId(String.valueOf(order.getId()));
-        orderToCreate.setShippingId(order.getShipping().getId());
-        orderToCreate.setStatus(order.getStatus());
-        orderToCreate.setTotalAmount(order.getTotalAmount());
-        orderToCreate.setPaidAmount(order.getPaidAmount());
-        orderToCreate.setAmountTaxes(order.getTaxes().getAmount());
-        orderToCreate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
-        ordersRepository.save(orderToCreate);
+              MeliOrders orderToCreate = transformDateOrderCreated(orders);
+              // private order values
+              orderToCreate.setCurrencyId(order.getCurrencyId());
+              orderToCreate.setDateClosed(order.getDateClosed());
+              orderToCreate.setOrderId(String.valueOf(order.getId()));
+              orderToCreate.setShippingId(order.getShipping().getId());
+              orderToCreate.setStatus(order.getStatus());
+              orderToCreate.setTotalAmount(order.getTotalAmount());
+              orderToCreate.setPaidAmount(order.getPaidAmount());
+              orderToCreate.setAmountTaxes(order.getTaxes().getAmount());
+              orderToCreate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
+              ordersRepository.save(orderToCreate);
+
+              // Update stock
+              order.getOrderItems().forEach( dmOrderItems -> {
+                  StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(dmOrderItems.getItem().getSellerSku());
+                  if(Objects.isNull(stockProcessorFounded)){
+                      // Create new item to Stock Processor table
+                      StockProcessor stockProcessor = new StockProcessor();
+                      stockProcessor.setExpectedStock(1);
+                      stockProcessor.setSku(dmOrderItems.getItem().getSellerSku());
+                      stockProcessorRepository.save(stockProcessor);
+                  } else {
+                      // Add 1 to expected Stock.
+                      stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
+                      stockProcessorRepository.save(stockProcessorFounded);
+                  }
+              } );
+
+          } else throw new OrderCreateException(String.format("Order with status different to paid cannot be created. Order id: %d", order.getId()));
+      } catch (Exception e){
+          throw new OrderCreateException(e.getMessage(), e);
+      }
     }
 
     private void updateItemPublished(List<DMOrderItems> dmOrderItems){

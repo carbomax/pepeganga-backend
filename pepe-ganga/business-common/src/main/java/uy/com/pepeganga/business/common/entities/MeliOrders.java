@@ -46,6 +46,9 @@ public class MeliOrders implements Serializable {
 
     private String currencyIdTaxes;
 
+    @Column(columnDefinition = "0 - In process, 1 - Undelivered, 2 - Delivered")
+    private Integer operatorBusinessStatus = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Carrier carrier;
@@ -240,5 +243,13 @@ public class MeliOrders implements Serializable {
 
     public void setCurrencyIdTaxes(String currencyIdTaxes) {
         this.currencyIdTaxes = currencyIdTaxes;
+    }
+
+    public Integer getOperatorBusinessStatus() {
+        return operatorBusinessStatus;
+    }
+
+    public void setOperatorBusinessStatus(Integer operatorBusinessStatus) {
+        this.operatorBusinessStatus = operatorBusinessStatus;
     }
 }
