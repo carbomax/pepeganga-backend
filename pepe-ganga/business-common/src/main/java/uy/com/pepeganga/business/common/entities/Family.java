@@ -23,7 +23,7 @@ public class Family implements Serializable {
 
 	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name = "family_id")	
-	private List<SubFamily> subfamilies;
+	private List<SubFamily> subfamilies = null;
 	
 	public Short getId() {
 		return id;
