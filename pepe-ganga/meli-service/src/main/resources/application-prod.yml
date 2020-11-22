@@ -34,3 +34,5 @@ meli:
     secret: QjgI9XjbZEd7petHtAVnwFhKpLvnyK6l
     redirect: https://pepeganga-d4ce6.web.app/home/meli-accounts
     expiration-token: 30
+  order:
+    attempts: 10

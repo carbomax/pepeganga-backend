@@ -3,6 +3,8 @@ package uy.pepeganga.meli.service.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MeliUserAccount {
 
@@ -15,6 +17,9 @@ public class MeliUserAccount {
     private int points;
 
     private String siteId;
+
+    private List<String> shippingModes;
+
 
     @JsonProperty("email")
     public String getEmail() {
@@ -40,4 +45,10 @@ public class MeliUserAccount {
     public String getSiteId() {
         return siteId;
     }
+
+    @JsonProperty("shipping_modes")
+    public List<String> getShippingModes() {
+        return shippingModes;
+    }
+
 }
