@@ -39,6 +39,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	ProductsRepository productsRepository;
 
 	@Autowired
+	AccountMeliRepository accountRepository;
+
+	@Autowired
 	ItemService itemService;
 
 	@Autowired
@@ -399,6 +402,43 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			editP.setImages(item.get().getImages());
 		}
 		return editP;
+	}
+
+	public DMDetailsPublicationsMeli getDetailPublication(Integer id)
+	{
+		DMDetailsPublicationsMeli detailPublication = new DMDetailsPublicationsMeli();
+		if(id == null) {
+			return detailPublication;
+		}
+		Optional<DetailsPublicationsMeli> result = detailsPublicationsMeliRepository.findById(id);
+		if(result.isPresent()) {
+
+			Optional<SellerAccount> seller = Optional.ofNullable(accountRepository.findByUserId(result.get().getUserId()));
+
+			//Producto a devolver
+			detailPublication.setId(result.get().getId());
+			detailPublication.setPriceEditProduct(result.get().getPriceEditProduct());
+			detailPublication.setPriceCostUYU(result.get().getPriceCostUYU());
+			detailPublication.setPricePublication(result.get().getPricePublication());
+			detailPublication.setDescription(result.get().getDescription());
+			detailPublication.setImages(result.get().getImages());
+			detailPublication.setSku(result.get().getSku());
+			detailPublication.setAccountMeli(result.get().getAccountMeli());
+			detailPublication.setAccountName(seller.isPresent() ? seller.get().getBusinessName() : "");
+			detailPublication.setCurrentStock(itemService.findItemById(result.get().getSku()).get().getStockActual());
+			detailPublication.setCategoryMeli(result.get().getCategoryMeli());
+			detailPublication.setIdPublicationMeli(result.get().getIdPublicationMeli());
+			detailPublication.setLastUpgrade(result.get().getLastUpgrade());
+			detailPublication.setMargin(result.get().getMargin());
+			detailPublication.setMlPublicationId(result.get().getIdMLPublication());
+			detailPublication.setPermalink(result.get().getPermalink());
+			detailPublication.setStatus(result.get().getStatus());
+			detailPublication.setSaleStatus(result.get().getSaleStatus());
+			detailPublication.setTitle(result.get().getTitle());
+			detailPublication.setWarrantyTime(result.get().getWarrantyTime());
+			detailPublication.setWarrantyType(result.get().getWarrantyType());
+		}
+		return detailPublication;
 	}
 
 	@Override

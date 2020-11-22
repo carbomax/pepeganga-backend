@@ -8,7 +8,7 @@ import uy.com.pepeganga.business.common.models.ReasonResponse;
 
 public interface FileUploadService {
 
-	ReasonResponse uploadFile(MultipartFile file) throws IOException;
+	ReasonResponse uploadFile(MultipartFile file, String uri) throws IOException;
 
 	byte[] getImage(String nameImage) throws IOException;
 

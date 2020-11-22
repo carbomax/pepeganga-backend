@@ -19,7 +19,7 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 * * ? * *")
     public void processingOrdersNotification(){
         logger.info("Processing Orders V2 by Notification....");
-        orderService.schedulingOrdersV2();
+        //orderService.schedulingOrdersV2();
         logger.info("Finishing processing Orders V2 by Notification....");
     }
 }
