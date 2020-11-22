@@ -1,9 +1,8 @@
 package uy.com.pepeganga.business.common.utils.date;
 
-import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Instant;
-import org.joda.time.LocalDate;
+import org.joda.time.*;
+
+import java.util.TimeZone;
 
 
 public class DateTimeUtilsBss {
@@ -13,7 +12,7 @@ public class DateTimeUtilsBss {
     }
 
     public static DateTime getDateTimeAtCurrentTime(){
-        return LocalDate.now().toDateTimeAtCurrentTime();
+        return LocalDate.now(DateTimeZone.forTimeZone(TimeZone.getTimeZone("UYST"))).toDateTimeAtCurrentTime();
     }
 
     public static long plusCurrentTimeMilleSeconds(long plus, DateTimePlusType plusType){

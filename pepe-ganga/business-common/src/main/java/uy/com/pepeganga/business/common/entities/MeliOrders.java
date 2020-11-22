@@ -22,7 +22,9 @@ public class MeliOrders implements Serializable {
 
     private String dateClosed;
 
-    private double totalAmount;
+    private Double totalAmount;
+
+    private Double paidAmount;
 
     private String currencyId;
 
@@ -39,6 +41,10 @@ public class MeliOrders implements Serializable {
     private Integer tagBss = 0;
 
     private Integer stateBss = 0;
+
+    private Double amountTaxes = 0.0;
+
+    private String currencyIdTaxes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -132,12 +138,20 @@ public class MeliOrders implements Serializable {
         this.dateClosed = dateClosed;
     }
 
-    public double getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(Double paidAmount) {
+        this.paidAmount = paidAmount;
     }
 
     public String getCurrencyId() {
@@ -210,5 +224,21 @@ public class MeliOrders implements Serializable {
 
     public void setCarrier(Carrier carrier) {
         this.carrier = carrier;
+    }
+
+    public Double getAmountTaxes() {
+        return amountTaxes;
+    }
+
+    public void setAmountTaxes(Double amountTaxes) {
+        this.amountTaxes = amountTaxes;
+    }
+
+    public String getCurrencyIdTaxes() {
+        return currencyIdTaxes;
+    }
+
+    public void setCurrencyIdTaxes(String currencyIdTaxes) {
+        this.currencyIdTaxes = currencyIdTaxes;
     }
 }

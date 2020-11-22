@@ -20,6 +20,8 @@ public class DMOrder {
 
     private double totalAmount;
 
+    private double paidAmount;
+
     private String currencyId;
 
     private List<DMOrderPayment> payments;
@@ -90,5 +92,10 @@ public class DMOrder {
     @JsonProperty("taxes")
     public DMOrderTaxes getTaxes() {
         return taxes;
+    }
+
+    @JsonProperty("paid_amount")
+    public double getPaidAmount() {
+        return paidAmount;
     }
 }

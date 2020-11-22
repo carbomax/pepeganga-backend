@@ -2,6 +2,7 @@ package uy.pepeganga.meli.service.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
@@ -176,14 +178,14 @@ public class OrderService implements IOrderService {
 
             } finally {
                 if (notification.getBusinessAttempts() > ORDER_ATTEMPTS) {
-                    notificationRepository.deleteById(notification.getId());
+                    notificationRepository.deleteAllByResource(notification.getResource());
                     logger.info("Deleting notification for more  id: {}, resource: {}", notification.getId(), notification.getResource());
                 }  else if(error){
                     notification.setBusinessAttempts(notification.getBusinessAttempts() + 1);
                     notificationRepository.save(notification);
                     logger.info("Order notification set business attempts to: {} by meli request error before", notification.getBusinessAttempts() + 1);
                 } else {
-                    notificationRepository.deleteById(notification.getId());
+                    notificationRepository.deleteAllByResource(notification.getResource());
                     logger.info("Deleting notification by success id: {}, resource: {}", notification.getId(), notification.getResource());
                 }
             }
@@ -198,17 +200,29 @@ public class OrderService implements IOrderService {
             // update order
             MeliOrders orderToUpdate = ordersRepository.findByOrderId(String.valueOf(order.getId()));
             orderToUpdate.setStatus(order.getStatus());
+            orderToUpdate.setCurrencyId(order.getCurrencyId());
+            orderToUpdate.setAmountTaxes(order.getTaxes().getAmount());
+            orderToUpdate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
+            orderToUpdate.setPaidAmount(order.getPaidAmount());
             orderToUpdate.setPayments(order.getPayments().stream().map(dmOrderPayment -> new MeliOrderPayment(dmOrderPayment.getId(), dmOrderPayment.getTransactionAmount(),
                     dmOrderPayment.getCurrencyId(), dmOrderPayment.getStatus())
             ).collect(Collectors.toList()));
-            ordersRepository.save(orderToUpdate);
+            ordersRepository.save(transformDateOrderCreated(orderToUpdate));
 
         } else {
             // create order
             this.createMeliOrder(order);
-            notificationRepository.deleteById(notification.getId());
         }
         return order;
+    }
+
+    private MeliOrders transformDateOrderCreated(MeliOrders orderToUpdate) {
+        DateTime currentTime = DateTimeUtilsBss.getDateTimeAtCurrentTime();
+        if( orderToUpdate.getDateCreated() == null || orderToUpdate.getBusinessDateCreated() == null || orderToUpdate.getBusinessDateCreated() <= 0 || orderToUpdate.getDateCreated().equals("")){
+            orderToUpdate.setBusinessDateCreated(Long.parseLong(String.format("%d%d%d",currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth())));
+            orderToUpdate.setDateCreated(String.format("%d-%d-%d",currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth() ));
+        }
+        return orderToUpdate;
     }
 
     private void createMeliOrder(DMOrder order) {
@@ -244,31 +258,18 @@ public class OrderService implements IOrderService {
             orders.setPayments(payments);
         }
 
-        if(order.getDateCreated() != null){
-            Date date;
-            try {
-                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                date = formatter.parse(order.getDateCreated());
-            } catch (ParseException e) {
-                logger.info("");
-                date = new Date();
-            }
-
-            Calendar calendar = Calendar.getInstance(Locale.getDefault());
-            calendar.setTime(date);
-            String dateOrderBusiness = String.format("%d%d%d", Calendar.YEAR, Calendar.MONTH+1, Calendar.DAY_OF_MONTH);
-            String dateOrderMeli = String.format("%d-%d-%d", Calendar.YEAR, Calendar.MONTH+1, Calendar.DAY_OF_MONTH);
-            orders.setBusinessDateCreated(Long.getLong(dateOrderBusiness));
-            orders.setDateCreated(dateOrderMeli);
-        }
+        MeliOrders orderToCreate = transformDateOrderCreated(orders);
         // private order values
-        orders.setCurrencyId(order.getCurrencyId());
-        orders.setDateClosed(order.getDateClosed());
-        orders.setOrderId(String.valueOf(order.getId()));
-        orders.setShippingId(order.getShipping().getId());
-        orders.setStatus(order.getStatus());
-        orders.setTotalAmount(order.getTotalAmount());
-        ordersRepository.save(orders);
+        orderToCreate.setCurrencyId(order.getCurrencyId());
+        orderToCreate.setDateClosed(order.getDateClosed());
+        orderToCreate.setOrderId(String.valueOf(order.getId()));
+        orderToCreate.setShippingId(order.getShipping().getId());
+        orderToCreate.setStatus(order.getStatus());
+        orderToCreate.setTotalAmount(order.getTotalAmount());
+        orderToCreate.setPaidAmount(order.getPaidAmount());
+        orderToCreate.setAmountTaxes(order.getTaxes().getAmount());
+        orderToCreate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
+        ordersRepository.save(orderToCreate);
     }
 
     private void updateItemPublished(List<DMOrderItems> dmOrderItems){
