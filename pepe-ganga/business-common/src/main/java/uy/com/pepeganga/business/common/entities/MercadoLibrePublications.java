@@ -70,6 +70,9 @@ public class MercadoLibrePublications implements Serializable {
 
 	@Column(name="priceCostUSD")
 	private double priceCostUSD;
+
+	@Column(name="deleted")
+	private Integer deleted = 0;
 	
 	public Integer getId() {
 		return id;
@@ -164,6 +167,14 @@ public class MercadoLibrePublications implements Serializable {
 
 	public void setPriceCostUSD(double priceCostUSD) {
 		this.priceCostUSD = priceCostUSD;
+	}
+
+	public Integer getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Integer deleted) {
+		this.deleted = deleted;
 	}
 
 	@Override

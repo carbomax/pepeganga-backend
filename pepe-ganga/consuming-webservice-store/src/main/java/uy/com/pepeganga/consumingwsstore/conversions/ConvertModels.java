@@ -101,8 +101,10 @@ public class ConvertModels {
 		if(!artList.isEmpty())
 		{
 			for (SDTArticulosWebPaginaArticulo variable : artList) {
-				if(variable != null)
-					itemList.add(convetToItemEntity(variable));
+				if(variable != null) {
+					if("S".equals(variable.getArtVendibleMercadoLibre().trim().toUpperCase()))
+						itemList.add(convetToItemEntity(variable));
+				}
 			}
 		}
 		return itemList;

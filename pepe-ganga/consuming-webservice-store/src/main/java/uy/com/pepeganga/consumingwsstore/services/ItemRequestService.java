@@ -70,7 +70,6 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 	public void storeItems() {		
 		try{
 			List<Item> itemList = getItems();
-			itemList.removeIf(item -> item == null || !"S".equalsIgnoreCase(item.getArtVendibleMercadoLibre().trim()));
 			itemClient.saveAll(itemList);
 			logger.info("Items saved successfully: {}", itemList.size());
 		}catch (Exception e){
