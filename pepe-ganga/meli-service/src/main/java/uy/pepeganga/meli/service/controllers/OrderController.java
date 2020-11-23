@@ -49,10 +49,16 @@ public class OrderController {
     }
 
 
-    @PutMapping("/update-description/{orderId}")
-    public ResponseEntity<Boolean> updateDescription(@PathVariable Long orderId, @RequestParam String description){
-        return new ResponseEntity<>(orderService.updateDescription(orderId, description), HttpStatus.OK);
+    @PutMapping("/update-operator-name/{orderId}")
+    public ResponseEntity<Boolean> updateOperatorName(@PathVariable Long orderId, @RequestParam String name){
+        return new ResponseEntity<>(orderService.updateOperatorName(orderId, name), HttpStatus.OK);
     }
+
+    @PutMapping("/update-tag/{orderId}")
+    public ResponseEntity<Boolean> updateDescription(@PathVariable Long orderId, @RequestParam Integer tagBss){
+        return new ResponseEntity<>(orderService.updateTag(orderId, tagBss), HttpStatus.OK);
+    }
+
 
     @PutMapping("/update-observation/{orderId}")
     public ResponseEntity<Boolean> updateObservation(@PathVariable Long orderId, @RequestParam String observation){
