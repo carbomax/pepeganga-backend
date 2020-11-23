@@ -353,8 +353,22 @@ public class OrderService implements IOrderService {
                     accounts.add(String.valueOf(sellerAccount.getUserId()));
                 }
             });
+            Page<MeliOrders> orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient, dateFrom, dateTo, PageRequest.of(page, size));
 
-            return ordersRepository.findBySellerId(accounts, statusFilter, nameClient, dateFrom, dateTo, PageRequest.of(page, size));
+            List<Long> shipments  = new ArrayList<>();
+            orders.getContent().forEach(order -> {
+                if(order.getShippingId() != null && order.getShippingId() > 0){
+                    shipments.add(order.getShippingId());
+                }
+            });
+
+            List<MeliOrderShipment> shipmentsFounded = shipmentRepository.findAllById(shipments);
+            orders.getContent().forEach(order -> shipmentsFounded.forEach(shipment -> {
+                if(shipment.getId() != null && shipment.getId() > 0 && shipment.getId().equals(order.getShippingId())){
+                    order.setShipment(shipment);
+                }
+            }));
+            return orders;
 
         }
 
@@ -377,15 +391,31 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public boolean updateDescription(Long orderId, String description) {
+    public boolean updateOperatorName(Long orderId, String name) {
         Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
         if(orderToUpdate.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
         }
 
-        orderToUpdate.get().setDescriptionBss(description);
+        orderToUpdate.get().setOperatorNameBss(name);
         ordersRepository.save(orderToUpdate.get());
-        logger.info("Order : {} updated with description: {}", orderId, description);
+        logger.info("Order : {} updated with operator name: {}", orderId, name);
+        return true;
+    }
+
+    @Override
+    public boolean updateTag(Long orderId, Integer tagBss) {
+        Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
+        if( tagBss < 0 || tagBss > 1){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Tag: %d not allowed. Only accept values: 0 and 1", tagBss));
+        }
+        if(orderToUpdate.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
+
+        orderToUpdate.get().setTagBss(tagBss);
+        ordersRepository.save(orderToUpdate.get());
+        logger.info("Order : {} updated with tag: {}", orderId, tagBss);
         return true;
     }
 

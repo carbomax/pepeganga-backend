@@ -46,8 +46,10 @@ public class MeliOrders implements Serializable {
 
     private String currencyIdTaxes;
 
-    @Column(columnDefinition = "0 - In process, 1 - Undelivered, 2 - Delivered")
+    // 0 - In process, 1 - Undelivered, 2 - Delivered
     private Integer operatorBusinessStatus = 0;
+
+    private String operatorNameBss;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -68,6 +70,9 @@ public class MeliOrders implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "meli_orders_id")
     private List<MeliOrderItem> items;
+
+    @Transient
+    private MeliOrderShipment shipment;
 
     public Long getId() {
         return id;
@@ -251,5 +256,21 @@ public class MeliOrders implements Serializable {
 
     public void setOperatorBusinessStatus(Integer operatorBusinessStatus) {
         this.operatorBusinessStatus = operatorBusinessStatus;
+    }
+
+    public MeliOrderShipment getShipment() {
+        return shipment;
+    }
+
+    public void setShipment(MeliOrderShipment shipment) {
+        this.shipment = shipment;
+    }
+
+    public String getOperatorNameBss() {
+        return operatorNameBss;
+    }
+
+    public void setOperatorNameBss(String operatorNameBss) {
+        this.operatorNameBss = operatorNameBss;
     }
 }
