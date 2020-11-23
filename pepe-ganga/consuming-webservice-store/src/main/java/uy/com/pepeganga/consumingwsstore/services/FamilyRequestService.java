@@ -7,11 +7,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import uy.com.pepeganga.business.common.entities.Family;
-import uy.com.pepeganga.business.common.entities.SubFamily;
+import uy.com.pepeganga.consumingwsstore.Entities.TempFamily;
+import uy.com.pepeganga.consumingwsstore.Entities.TempSubFamily;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.repositories.IFamilyRepository;
-import uy.com.pepeganga.consumingwsstore.repositories.ISubFamilyRepository;
+import uy.com.pepeganga.consumingwsstore.repositories.ITempFamilyRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.CargaFamiliasExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.CargaFamiliasExecuteResponse;
 
@@ -19,28 +18,27 @@ import uy.com.pepeganga.consumingwsstore.wsdl.families.CargaFamiliasExecuteRespo
 public class FamilyRequestService extends WebServiceGatewaySupport{
 
 	@Autowired
-	IFamilyRepository familyClient;
-	ISubFamilyRepository subfamilyClient;
+	ITempFamilyRepository tempFamilyClient;
 	
-	 public List<Family> getFamilies() {
+	 public List<TempFamily> getFamilies() {
 
 		 CargaFamiliasExecute request = new CargaFamiliasExecute();
 		 
 		 CargaFamiliasExecuteResponse response = (CargaFamiliasExecuteResponse) getWebServiceTemplate()
 		        .marshalSendAndReceive("http://201.217.140.35/agile/acargafamilias.aspx", request);
 		 
-		 List<Family> familyList = ConvertModels.convetToFamilyEntityList(response.getSdtlineassubflias().getSdtLineasSubFliasSdtLineaSubFlias());
+		 List<TempFamily> familyList = ConvertModels.convetToFamilyEntityList(response.getSdtlineassubflias().getSdtLineasSubFliasSdtLineaSubFlias());
 		 return familyList;
 	}
 	 
 	 /*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
 		public void storeFamilies() {
 			boolean perfect = true;
-			List<Family> familyList = getFamilies();
+			List<TempFamily> familyList = getFamilies();
 			
-			for (Family family : familyList) {			
-				if(familyClient.save(family) == null)
-					perfect = false;			
+			for (TempFamily family : familyList) {
+				if(tempFamilyClient.save(family) == null)
+					perfect = false;
 			}		
 			// Logear si todo fue almacenado correctamente	
 		}
@@ -49,17 +47,17 @@ public class FamilyRequestService extends WebServiceGatewaySupport{
  	 public Map<String, String> getFamiliesSubFamilies()
 	 {
 		 Map<String, String> families = new HashMap<String, String>();
-		 List<Family> familyList = getFamilies();		 
+		 List<TempFamily> familyList = getFamilies();
 		
 		 if(!familyList.isEmpty())
 		 {		 
-			 for (Family element : familyList) {
+			 for (TempFamily element : familyList) {
 				 if(element == null)
 					 continue;
 				 families.put(Short.toString(element.getId()) , element.getDescription()); 
 				 
 				 if(!element.getSubfamilies().isEmpty()) {	
-					 for (SubFamily subelement : element.getSubfamilies()) {
+					 for (TempSubFamily subelement : element.getSubfamilies()) {
 						 if(subelement == null)
 							 continue;
 						 families.put(Short.toString(element.getId()) + "-" + Short.toString(subelement.getId()), subelement.getDescription()); 
