@@ -19,7 +19,9 @@ public interface IOrderService {
 
     boolean updateCarrier(Long orderId, int carrierId);
 
-    boolean updateDescription(Long orderId, String description);
+    boolean updateOperatorName(Long orderId, String name);
+
+    boolean updateTag(Long orderId, Integer tagBss);
 
     boolean updateObservation(Long orderId, String observation);
 
