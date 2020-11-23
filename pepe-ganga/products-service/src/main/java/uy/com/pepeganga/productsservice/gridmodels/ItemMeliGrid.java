@@ -37,6 +37,8 @@ public class ItemMeliGrid implements Serializable{
 
 	private String description;
 
+	private Integer deleted;
+
 	public Integer getId() {
 		return id;
 	}
@@ -131,5 +133,13 @@ public class ItemMeliGrid implements Serializable{
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Integer getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Integer deleted) {
+		this.deleted = deleted;
 	}
 }

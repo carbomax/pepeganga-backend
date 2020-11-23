@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import org.springframework.transaction.annotation.Transactional;
+import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 
 @Repository
@@ -20,17 +21,17 @@ public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibr
 	List<Short> findAllStatesByIdProfile(int profile_id);
 
 	@Transactional(readOnly = true)
-	@Query(value = "select ml.item_id from mercadolibrepublications ml where ml.profile_id = ?1 and ml.item_id = ?2", nativeQuery = true)
-	String findIdItemForeignByProfileAndItem(int profile_id, String item_id);
+	@Query(value = "select ml.sku from mercadolibrepublications ml where ml.profile_id = ?1 and ml.sku = ?2", nativeQuery = true)
+	String findIdItemForeignByProfileAndItem(int profile_id, String sku);
 
 	@Transactional(readOnly = true)
-	@Query(value = "select COUNT(ml.item_id) from mercadolibrepublications ml where ml.profile_id = ?1 and ml.item_id = ?2", nativeQuery = true)
-	Integer cantProductSelectedByProfile(int profile_id, String item_id);
+	@Query(value = "select COUNT(ml.sku) from mercadolibrepublications ml where ml.profile_id = ?1 and ml.sku = ?2", nativeQuery = true)
+	Integer cantProductSelectedByProfile(int profile_id, String sku);
 
 	Page<MercadoLibrePublications> findAll(Specification<MercadoLibrePublications> specification, Pageable pageable);
 
 	@Transactional(readOnly = true)
-	@Query(value = "select * from mercadolibrepublications ml where ml.item_id = ?1 and ml.profile_id = ?2", nativeQuery = true)
-	MercadoLibrePublications findByItemAndProfile(String item, Integer profile);
-		
+	@Query(value = "select * from mercadolibrepublications ml where ml.sku = ?1 and ml.profile_id = ?2", nativeQuery = true)
+	MercadoLibrePublications findByItemAndProfile(String sku, Integer profile);
+
 }
