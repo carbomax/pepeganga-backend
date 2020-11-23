@@ -65,7 +65,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             UpdatesOfSystem updatesSystem = new UpdatesOfSystem();
             updatesSystem.setStartDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
             data = updateSysRepo.save(updatesSystem);
-/*
+
             //Empty temporals table
             if(!deleteTemporalData())
                 return;
@@ -79,7 +79,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                     return;
                 }
             }
-*/
+
             //Update the system tables from temporal data
             if(!synchronizeDatas()){
                 return;
@@ -359,7 +359,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 StockProcessor stockUpdated = new StockProcessor();
 
                 while (count.get() < finalItemsU.size() && !exit){
-                    //Existe el SKU en la tabla
+                    //Si existe el SKU en la tabla?
                     if(finalItemsU.get(count.get()).getSku().equals(stock.getSku())){
                         exit = true;
                         stockUpdated.setId(stock.getId());
@@ -404,6 +404,10 @@ public class ScheduledSyncService implements IScheduledSyncService{
                         checking.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
                         checkingList.add(checking);
                     }
+                    stockToAddOrUpdate.add(stockUpdated);
+                }
+                else{
+                    //Actualizo el stock del articulo en la tabla Stock Processor si existe
                     stockToAddOrUpdate.add(stockUpdated);
                 }
             });
