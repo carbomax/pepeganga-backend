@@ -70,6 +70,11 @@ public class OrderController {
         return new ResponseEntity<>(orderService.updateInvoice(orderId, invoice), HttpStatus.OK);
     }
 
+    @PutMapping("/update-operator-business-status/{orderId}")
+    public ResponseEntity<Boolean> updateOperatorBusinessStatus(@PathVariable Long orderId, @RequestParam Integer status){
+        return new ResponseEntity<>(orderService.updateOperatorBusinessStatus(orderId, status), HttpStatus.OK);
+    }
+
     @GetMapping("/url-invoice/{orderId}")
     public ResponseEntity<Map<String, Object>> getInvoiceUrl(@PathVariable  Long orderId){
         return new ResponseEntity<>(orderService.getInvoiceUrl(orderId), HttpStatus.OK);

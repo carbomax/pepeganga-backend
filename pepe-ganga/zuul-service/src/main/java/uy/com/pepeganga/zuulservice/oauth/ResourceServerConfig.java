@@ -49,7 +49,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                                     )
                 .hasAnyRole(RoleType.ADMIN.name(),RoleType.INVITED.name(), RoleType.SELLER.name())
                 .antMatchers("*", "/pepeganga/meli/api/**")
-                .hasAnyRole(RoleType.ADMIN.name(),RoleType.SELLER.name())
+                .hasAnyRole(RoleType.ADMIN.name(),RoleType.SELLER.name(), RoleType.OPERATOR.name())
                 .antMatchers(HttpMethod.POST, "/**")
                 .hasAnyRole(RoleType.ADMIN.name(),RoleType.INVITED.name(), RoleType.SELLER.name())
                 .antMatchers(HttpMethod.PUT, "/**")
