@@ -28,4 +28,6 @@ public interface IOrderService {
     boolean updateInvoice(Long id, Long orderId);
 
     Map<String, Object> getInvoiceUrl(Long orderId);
+
+    boolean updateOperatorBusinessStatus(Long orderId, Integer status);
 }

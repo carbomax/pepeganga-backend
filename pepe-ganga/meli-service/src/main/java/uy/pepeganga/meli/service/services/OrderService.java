@@ -482,6 +482,19 @@ public class OrderService implements IOrderService {
         }
     }
 
+    @Override
+    public boolean updateOperatorBusinessStatus(Long orderId, Integer status) {
+        Optional<MeliOrders> orderToUpdate = ordersRepository.findById(orderId);
+        if(orderToUpdate.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
+
+        orderToUpdate.get().setOperatorBusinessStatus(status);
+        ordersRepository.save(orderToUpdate.get());
+        logger.info("Order : {} updated with operator business status: {}", orderId, status);
+        return true;
+    }
+
     private boolean isTokenExpiration(SellerAccount sellerAccount) throws TokenException, ApiException {
         // Verify  token expiration
         boolean tokenExpiration = false;
