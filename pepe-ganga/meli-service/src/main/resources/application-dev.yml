@@ -30,6 +30,8 @@ logging:
 meli:
   api:
     url: https://api.mercadolibre.com
+    invoice:
+      url: https://api.mercadolibre.com/shipment_labels?shipment_ids=XXX&response_type=pdf&access_token=
     client: 5381382874135569
     secret: ach1Wz5swsZTrQVJ9UTdKcAkg1Rsc0UA
     redirect: https://localhost:4200/home/meli-accounts

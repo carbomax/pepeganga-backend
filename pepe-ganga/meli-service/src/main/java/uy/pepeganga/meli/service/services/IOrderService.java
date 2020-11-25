@@ -26,4 +26,6 @@ public interface IOrderService {
     boolean updateObservation(Long orderId, String observation);
 
     boolean updateInvoice(Long id, Long orderId);
+
+    Map<String, Object> getInvoiceUrl(Long orderId);
 }

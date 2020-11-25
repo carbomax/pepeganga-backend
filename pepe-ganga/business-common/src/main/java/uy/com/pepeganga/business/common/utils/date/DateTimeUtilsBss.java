@@ -41,6 +41,10 @@ public class DateTimeUtilsBss {
         return duration;
     }
 
+    public static Long getLongDateTimeAtCurrentTime(){
+        return Long.parseLong(String.format("%d%d%d", DateTimeUtilsBss.getDateTimeAtCurrentTime().getYear(), DateTimeUtilsBss.getDateTimeAtCurrentTime().getMonthOfYear(), DateTimeUtilsBss.getDateTimeAtCurrentTime().getDayOfMonth()));
+    }
+
 
 }
 

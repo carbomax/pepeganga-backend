@@ -17,6 +17,7 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
 import uy.pepeganga.meli.service.exceptions.OrderCreateException;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
@@ -33,6 +34,9 @@ import java.util.stream.Collectors;
 public class OrderService implements IOrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+
+    @Value("${meli.api.invoice.url}")
+    private String invoiceUrl;
 
     @Autowired
     ObjectMapper mapper;
@@ -107,8 +111,8 @@ public class OrderService implements IOrderService {
                 // check if exist a value for account
                 if (sellerAccountRepository.existsByUserId(notification.getUserId())) {
 
-
-                    if(!MeliUtils.validateTokenExpiration(sellerAccountRepository.findByUserId(notification.getUserId()).getExpirationDate())){
+                    SellerAccount sellerFounded = sellerAccountRepository.findByUserId(notification.getUserId());
+                    if(MeliUtils.isExpiredToken(sellerFounded)){
                         apiService.getTokenByRefreshToken(sellerAccountRepository.findByUserId(notification.getUserId()));
                     }
                     DMOrder order = processingOrderByNotification(notification);
@@ -445,7 +449,48 @@ public class OrderService implements IOrderService {
         return true;
     }
 
+    @Override
+    public Map<String, Object> getInvoiceUrl(Long orderId) {
+        Optional<MeliOrders> order = ordersRepository.findById(orderId);
+        if(order.isEmpty()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Order with id: %d not found", orderId));
+        }
 
+        if(order.get().getShippingId() != null && order.get().getShippingId() > 0){
+            SellerAccount sellerAccount = sellerAccountRepository.findByUserId(order.get().getSeller().getSellerId());
+            if(Objects.isNull(sellerAccount)){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("Not exist a seller to order %s", orderId));
+            } else {
+
+                boolean tokenExpiration;
+                try {
+                    tokenExpiration = isTokenExpiration(sellerAccount);
+                } catch (TokenException | ApiException e) {
+                    throw new ResponseStatusException(HttpStatus.FAILED_DEPENDENCY, String.format("Refresh token cannot be obtained. Exception: %s ", e.getMessage()));
+                }
+                String url = this.invoiceUrl.replace("XXX", String.valueOf(order.get().getShippingId()));
+                if(tokenExpiration){
+                    url = url.concat(sellerAccountRepository.findByUserId(order.get().getSeller().getSellerId()).getAccessToken());
+                } else url = url.concat(sellerAccount.getAccessToken());
+                Map<String, Object> map = new HashMap<>();
+                map.put("response", url);
+                return map;
+
+            }
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format("ShippingId to order: %d not exist", orderId));
+        }
+    }
+
+    private boolean isTokenExpiration(SellerAccount sellerAccount) throws TokenException, ApiException {
+        // Verify  token expiration
+        boolean tokenExpiration = false;
+        if(MeliUtils.isExpiredToken(sellerAccount)){
+                apiService.getTokenByRefreshToken(sellerAccountRepository.findByUserId(sellerAccount.getUserId()));
+                tokenExpiration = true;
+        }
+        return tokenExpiration;
+    }
 
 
 }
