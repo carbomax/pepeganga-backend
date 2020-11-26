@@ -4,10 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uy.com.pepeganga.business.common.entities.Brand;
-import uy.com.pepeganga.business.common.entities.Category;
-import uy.com.pepeganga.business.common.entities.Family;
-import uy.com.pepeganga.business.common.entities.Item;
+import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.consumingwsstore.entities.*;
 import uy.com.pepeganga.consumingwsstore.repositories.*;
@@ -15,6 +12,7 @@ import uy.com.pepeganga.consumingwsstore.repositories.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ScheduledSyncService implements IScheduledSyncService{
@@ -42,6 +40,10 @@ public class ScheduledSyncService implements IScheduledSyncService{
     ICategoryRepository categoryRepo;
     @Autowired
     IBrandRepository brandRepo;
+    @Autowired
+    CheckingStockProcessorRepository checkStockRepo;
+    @Autowired
+    StockProcessorRepository stockProcRepo;
 
     //Services
     @Autowired
@@ -86,6 +88,9 @@ public class ScheduledSyncService implements IScheduledSyncService{
             //If this is execute then the synchronization was Ok, for that reason Empty temporals table
             if(!deleteTemporalData())
                 return;
+
+            //Update Stock table
+            updateStock();
 
         }catch (Exception e) {
             logger.error(String.format("Error synchronizing Tables {General method}, Error: %s"), e.getStackTrace());
@@ -333,6 +338,100 @@ public class ScheduledSyncService implements IScheduledSyncService{
         }
         /** *********  All OK  ************** **/
         updateTableLogs("Synchronization completed...", false);
+        return true;
+    }
+
+    private boolean updateStock(){
+        List<StockProcessor> stockList = new ArrayList<>();
+        stockList = stockProcRepo.findAll();
+        List<Item> itemsU = new ArrayList<>();
+        itemsU = itemRepo.findAll();
+
+        List<CheckingStockProcessor> checkingList = new ArrayList<>();
+        List<StockProcessor> stockToAddOrUpdate = new ArrayList<>();
+
+        if(!stockList.isEmpty()){
+            List<Item> finalItemsU = itemsU;
+            stockList.forEach(stock -> {
+                boolean exit = false;
+                AtomicInteger count = new AtomicInteger();
+                CheckingStockProcessor checking = new CheckingStockProcessor();
+                StockProcessor stockUpdated = new StockProcessor();
+
+                while (count.get() < finalItemsU.size() && !exit){
+                    //Existe el SKU en la tabla
+                    if(finalItemsU.get(count.get()).getSku().equals(stock.getSku())){
+                        exit = true;
+                        stockUpdated.setId(stock.getId());
+                        stockUpdated.setSku(stock.getSku());
+                        stockUpdated.setExpectedStock(stock.getExpectedStock());
+                        stockUpdated.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+
+                        //el articulo esta pausado por stock
+                        if((stock.getRealStock() - stock.getExpectedStock()) <= 10){
+                            //Verifico si continua sin stock al actualizar
+                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() > 10){
+                                checking.setSku(stock.getSku());
+                                checking.setExpectedStock(stock.getExpectedStock());
+                                int value = (int) finalItemsU.get(count.get()).getStockActual();
+                                checking.setRealStock(value);
+                                checkingList.add(checking);
+                            }
+                        }
+                        //Articulo no pausado por stock -- Verifico si se pausa al actualizar
+                        else{
+                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() <= 10){
+                                checking.setSku(stock.getSku());
+                                checking.setExpectedStock(stock.getExpectedStock());
+                                int value = (int) finalItemsU.get(count.get()).getStockActual();
+                                checking.setRealStock(value);
+                                checkingList.add(checking);
+                            }
+                        }
+                    }
+                    count.getAndIncrement();
+                }
+                if(!exit) {
+                    //No existe el articulo con SKU en la tabla -- adiciono a StockProcessor Table
+                    stockUpdated.setSku(finalItemsU.get(count.get()).getSku());
+                    stockUpdated.setExpectedStock(0);
+                    stockUpdated.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+
+                    //Verifico si cumple condicion de stock
+                    if ((int) finalItemsU.get(count.get()).getStockActual() - 0 <= 10) {
+                        checking.setSku(stockUpdated.getSku());
+                        checking.setExpectedStock(0);
+                        checking.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+                        checkingList.add(checking);
+                    }
+                    stockToAddOrUpdate.add(stockUpdated);
+                }
+            });
+        }
+        //El stock está vacio -- Sistema nuevo
+        else{
+            itemsU.forEach(i -> {
+                StockProcessor stockNew = new StockProcessor();
+                CheckingStockProcessor checkingNew = new CheckingStockProcessor();
+                //adiciono a StockProcessor Table
+                stockNew.setSku(i.getSku());
+                stockNew.setExpectedStock(0);
+                stockNew.setRealStock((int) i.getStockActual());
+
+                //Verifico si cumple condicion de stock
+                if ((int) i.getStockActual() - 0 <= 10) {
+                    checkingNew.setSku(i.getSku());
+                    checkingNew.setExpectedStock(0);
+                    checkingNew.setRealStock((int) i.getStockActual());
+                    checkingList.add(checkingNew);
+                }
+                stockToAddOrUpdate.add(stockNew);
+            });
+        }
+
+        //Actualizar ambas tablas en la base datos
+        checkStockRepo.saveAll(checkingList);
+        stockProcRepo.saveAll(stockToAddOrUpdate);
         return true;
     }
 
