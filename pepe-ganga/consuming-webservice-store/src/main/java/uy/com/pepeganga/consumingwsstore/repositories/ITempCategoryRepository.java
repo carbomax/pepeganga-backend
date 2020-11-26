@@ -1,7 +1,9 @@
 package uy.com.pepeganga.consumingwsstore.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import uy.com.pepeganga.consumingwsstore.Entities.TempCategory;
+import org.springframework.stereotype.Repository;
+import uy.com.pepeganga.consumingwsstore.entities.TempCategory;
 
-public interface ITempCategoryRepository extends JpaRepository<TempCategory, Integer> {
+@Repository
+public interface ITempCategoryRepository extends JpaRepository<TempCategory, Short> {
 }

@@ -7,8 +7,8 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import uy.com.pepeganga.consumingwsstore.Entities.TempFamily;
-import uy.com.pepeganga.consumingwsstore.Entities.TempSubFamily;
+import uy.com.pepeganga.consumingwsstore.entities.TempFamily;
+import uy.com.pepeganga.consumingwsstore.entities.TempSubFamily;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.consumingwsstore.repositories.ITempFamilyRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.CargaFamiliasExecute;

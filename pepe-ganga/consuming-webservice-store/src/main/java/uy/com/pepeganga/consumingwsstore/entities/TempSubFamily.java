@@ -1,17 +1,26 @@
-package uy.com.pepeganga.consumingwsstore.Entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class TempSubFamilyPK implements Serializable {
+@Entity
+@IdClass(TempSubFamilyPK.class)
+@Table(name = "tempsubfamily")
+public class TempSubFamily implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @Id
+    @Column(name="id")
     private Short id;
+
+    @Id
+    @Column(name="description")
     private String description;
 
 
     public Short getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Short id) {
@@ -19,7 +28,7 @@ public class TempSubFamilyPK implements Serializable {
     }
 
     public String getDescription() {
-        return description;
+        return this.description;
     }
 
     public void setDescription(String description) {
@@ -29,8 +38,8 @@ public class TempSubFamilyPK implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TempSubFamilyPK)) return false;
-        TempSubFamilyPK that = (TempSubFamilyPK) o;
+        if (!(o instanceof TempSubFamily)) return false;
+        TempSubFamily that = (TempSubFamily) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(description, that.description);
     }

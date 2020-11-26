@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.Entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "temp_family")
+@Table(name = "tempfamily")
 public class TempFamily implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +44,7 @@ public class TempFamily implements Serializable {
     public void setSubfamilies(List<TempSubFamily> subfamilies) {
         this.subfamilies = subfamilies;
     }
+
 
     @Override
     public boolean equals(Object o) {

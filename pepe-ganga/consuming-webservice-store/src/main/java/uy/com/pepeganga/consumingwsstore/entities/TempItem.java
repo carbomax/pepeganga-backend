@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.Entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "temp_item")
+@Table(name = "tempitem")
 public class TempItem implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -90,6 +90,7 @@ public class TempItem implements Serializable {
 
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="tempitem_tempcategory")
     private List<TempCategory> categories;
 
     public String getSku() {

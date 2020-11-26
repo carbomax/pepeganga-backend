@@ -1,29 +1,20 @@
-package uy.com.pepeganga.consumingwsstore.Entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "temp_category")
-public class TempCategory implements Serializable {
+public class TempSubFamilyPK implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @Column(name="id")
     private Short id;
-
-    @Column(name="description")
     private String description;
+
 
     public Short getId() {
         return id;
     }
 
-    public void setId(short id) {
+    public void setId(Short id) {
         this.id = id;
     }
 
@@ -38,13 +29,14 @@ public class TempCategory implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TempCategory)) return false;
-        TempCategory that = (TempCategory) o;
-        return Objects.equals(id, that.id);
+        if (!(o instanceof TempSubFamilyPK)) return false;
+        TempSubFamilyPK that = (TempSubFamilyPK) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, description);
     }
 }

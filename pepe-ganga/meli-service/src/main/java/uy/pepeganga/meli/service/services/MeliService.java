@@ -453,10 +453,11 @@ public class MeliService  implements IMeliService{
         try{
              Optional<DetailsPublicationsMeli> details = detailsPublicationRepository.findById(id);
              if(details.isPresent()){
+                 Map<String, Object> map = setProductToNopublishedStatus(details.get().getIdMLPublication(), States.NOPUBLISHED.getId());
                  details.get().setDeleted(1);
                  details.get().setIdMLPublication(-1);
                  detailsPublicationRepository.save(details.get());
-                 Map<String, Object> map = setProductToNopublishedStatus(details.get().getIdMLPublication(), States.NOPUBLISHED.getId());
+
                  if(map.containsKey("response")) {
                      response.put("response", "deleted");
                  }else{

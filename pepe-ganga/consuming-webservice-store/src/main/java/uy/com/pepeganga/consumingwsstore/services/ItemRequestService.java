@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
 import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
-import uy.com.pepeganga.consumingwsstore.Entities.TempItem;
+import uy.com.pepeganga.consumingwsstore.entities.TempItem;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.consumingwsstore.repositories.ITempItemRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecute;
@@ -57,8 +57,8 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 			 List<TempItem> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
 			 responseList.addAll(partialList);
 			 part++;
-			 
-			 if(partialList.size() < 100 || partialList.isEmpty())
+
+			 if(response.getSdtarticuloswebpagina().getArticulos().getArticulo().size() < 100 )
 				 finish = true;
 			 
 		} while (!finish);

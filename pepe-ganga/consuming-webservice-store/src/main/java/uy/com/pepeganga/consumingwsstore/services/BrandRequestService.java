@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import uy.com.pepeganga.consumingwsstore.Entities.TempBrand;
+import uy.com.pepeganga.consumingwsstore.entities.TempBrand;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.consumingwsstore.repositories.ITempBrandRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.marcas.CargaMarcasExecute;

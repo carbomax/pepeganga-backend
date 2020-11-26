@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@EntityScan({"uy.com.pepeganga.business.common.entities"})
+@EntityScan({"uy.com.pepeganga.business.common.entities", "uy.com.pepeganga.consumingwsstore.entities"})
 public class ConsumingWebserviceStoreApplication {
 
 	

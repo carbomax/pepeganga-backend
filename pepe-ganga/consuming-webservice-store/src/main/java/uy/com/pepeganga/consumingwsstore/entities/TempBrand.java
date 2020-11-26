@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.Entities;
+package uy.com.pepeganga.consumingwsstore.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "temp_brand")
+@Table(name = "tempbrand")
 public class TempBrand implements Serializable {
     private static final long serialVersionUID = 1L;
 

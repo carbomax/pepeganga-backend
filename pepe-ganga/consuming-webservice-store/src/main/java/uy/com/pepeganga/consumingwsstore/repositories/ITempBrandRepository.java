@@ -1,7 +1,10 @@
 package uy.com.pepeganga.consumingwsstore.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import uy.com.pepeganga.consumingwsstore.Entities.TempBrand;
+import org.springframework.stereotype.Repository;
+import uy.com.pepeganga.consumingwsstore.entities.TempBrand;
 
-public interface ITempBrandRepository extends JpaRepository<TempBrand, Integer> {
+@Repository
+public interface ITempBrandRepository extends JpaRepository<TempBrand, Short> {
+
 }
