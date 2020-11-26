@@ -73,6 +73,9 @@ public class MercadoLibrePublications implements Serializable {
 
 	@Column(name="deleted")
 	private Integer deleted = 0;
+
+	// 0 - Not paused, 1 - Paused
+	private Integer specialPaused = 0;
 	
 	public Integer getId() {
 		return id;
@@ -175,6 +178,14 @@ public class MercadoLibrePublications implements Serializable {
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
+	}
+
+	public Integer getSpecialPaused() {
+		return specialPaused;
+	}
+
+	public void setSpecialPaused(Integer specialPaused) {
+		this.specialPaused = specialPaused;
 	}
 
 	@Override
