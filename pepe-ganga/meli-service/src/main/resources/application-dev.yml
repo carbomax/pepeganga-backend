@@ -28,6 +28,7 @@ logging:
 
 # Business properties
 meli:
+  risk: 10
   api:
     url: https://api.mercadolibre.com
     invoice:
