@@ -1,6 +1,7 @@
 package uy.com.pepeganga.business.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 
 import javax.persistence.*;
@@ -53,7 +54,15 @@ public class SellerAccount implements Serializable {
 
     private Short marketplaceId = MarketplaceType.MERCADOLIBRE.getId();
 
+    private Long dateLastSynchronization;
+
+    @PreUpdate
+    public void preSynchronization(){
+        this.dateLastSynchronization = DateTimeUtilsBss.getLongDateTimeAtCurrentTime();
+    }
+
     private Long expirationDate = 0L;
+
 
     // 0 - No,  1 - Si,  2 - Undefined
     private Integer me2 = 0;
@@ -221,5 +230,13 @@ public class SellerAccount implements Serializable {
 
     public void setMe2(Integer me2) {
         this.me2 = me2;
+    }
+
+    public Long getDateLastSynchronization() {
+        return dateLastSynchronization;
+    }
+
+    public void setDateLastSynchronization(Long dateLastSynchronization) {
+        this.dateLastSynchronization = dateLastSynchronization;
     }
 }

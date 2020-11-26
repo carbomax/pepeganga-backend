@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import uy.pepeganga.meli.service.services.IOrderService;
+import uy.pepeganga.meli.service.services.IStockProcessorService;
 
 @Component
 public class ScheduledTasks {
@@ -15,6 +16,10 @@ public class ScheduledTasks {
 
      @Autowired
      private IOrderService orderService;
+
+     @Autowired
+     private IStockProcessorService stockProcessorService;
+
 
     @Scheduled(cron = "0 * * ? * *")
     public void processingOrdersNotification(){
