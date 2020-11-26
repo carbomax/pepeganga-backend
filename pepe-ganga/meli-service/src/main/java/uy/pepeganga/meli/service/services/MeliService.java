@@ -604,7 +604,7 @@ public class MeliService  implements IMeliService{
                 response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
             } else {
                 try {
-                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                    if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
                     Object result = apiService.changeStatusPublications(request, accountFounded.get().getAccessToken(), idPublication);

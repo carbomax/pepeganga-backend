@@ -18,6 +18,9 @@ public class CheckingStockProcessor implements Serializable {
 
     private Integer realStock;
 
+    // 0 - to paused, 1 - to delete
+    private Integer action;
+
     public CheckingStockProcessor(String sku, Integer expectedStock, Integer realStock) {
         this.sku = sku;
         this.expectedStock = expectedStock;
@@ -60,6 +63,14 @@ public class CheckingStockProcessor implements Serializable {
         this.realStock = realStock;
     }
 
+    public Integer getAction() {
+        return action;
+    }
+
+    public void setAction(Integer action) {
+        this.action = action;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,7 +82,8 @@ public class CheckingStockProcessor implements Serializable {
         if (!Objects.equals(sku, that.sku)) return false;
         if (!Objects.equals(expectedStock, that.expectedStock))
             return false;
-        return Objects.equals(realStock, that.realStock);
+        if (!Objects.equals(realStock, that.realStock)) return false;
+        return Objects.equals(action, that.action);
     }
 
     @Override
@@ -80,6 +92,7 @@ public class CheckingStockProcessor implements Serializable {
         result = 31 * result + (sku != null ? sku.hashCode() : 0);
         result = 31 * result + (expectedStock != null ? expectedStock.hashCode() : 0);
         result = 31 * result + (realStock != null ? realStock.hashCode() : 0);
+        result = 31 * result + (action != null ? action.hashCode() : 0);
         return result;
     }
 }
