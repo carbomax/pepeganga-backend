@@ -28,7 +28,7 @@ public class ScheduledTasks {
         logger.info("Finishing processing Orders V2 by Notification scheduler....");
     }
 
-    @Scheduled(fixedRate = 50000, initialDelay = 1000)
+    @Scheduled(cron = "${scheduler.cron.stock}")
     public void schedulingStockProcessor(){
         logger.info("Processing Stock processor scheduler....");
         stockProcessorService.schedulingStockProcessor();
