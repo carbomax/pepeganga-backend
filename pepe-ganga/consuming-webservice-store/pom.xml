@@ -106,7 +106,7 @@
 			</properties>
 		</profile>
 	</profiles>
-
+  
 	<build>
 		<plugins>
 			<plugin>
@@ -123,8 +123,8 @@
 	</build>
 
 	<!-- end::profile[] -->
-<!--
-	<build>
+<!-- 
+ 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -148,7 +148,7 @@
 						<schema>
 							<url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>
 						</schema>
-					</schemas>
+					</schemas>  
 					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
 					<schemas>
 						<schema>
@@ -166,12 +166,12 @@
 						<schema>
 							<url>http://201.217.140.35/agile/aCargaArticulosPaginado.aspx?wsdl</url>
 						</schema>
-					</schemas>
+					</schemas> 
 				</configuration>
 </plugin>
 </plugins>
 </build>
--->
+ -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
