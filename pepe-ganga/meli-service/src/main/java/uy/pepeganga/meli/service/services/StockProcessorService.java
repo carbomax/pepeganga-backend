@@ -157,12 +157,19 @@ public class StockProcessorService implements IStockProcessorService {
                         meliPublications) {
                     try {
                         logger.info("Unlocking unpublished product for special paused or to delete with sku: {} ", mercadoLibrePublications.getSku());
-                        mercadoLibrePublications.setSpecialPaused(0);
+
                         if (checkingStockProcessor.getAction() == 1) {
+                            mercadoLibrePublications.setDeleted(1);
+                            mercadoLibrePublications.setSpecialPaused(1);
+                            logger.info("Marking unpublished product to delete with sku: {} ", mercadoLibrePublications.getSku());
+                        } else {
                             mercadoLibrePublications.setDeleted(0);
+                            mercadoLibrePublications.setSpecialPaused(0);
+                            logger.info("Marking unpublished product to unlocking with sku: {} ", mercadoLibrePublications.getSku());
                         }
+
                         mercadoLibrePublishRepository.save(mercadoLibrePublications);
-                        logger.info("Unlocking unpublished product successfully with sku: {} ", mercadoLibrePublications.getSku());
+                        logger.info("Unpublished product updated successfully with sku: {} ", mercadoLibrePublications.getSku());
                     } catch (Exception e) {
                         logger.error("Unlocking unpublished product not successfully with sku: {} ", mercadoLibrePublications.getSku());
                         checkingProcessed.set(checkingProcessed.get() + 1);
