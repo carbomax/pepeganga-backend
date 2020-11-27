@@ -1,25 +1,18 @@
 server:
   port: ${PORT:0}
-  error:
-    include-message: always
-    include-binding-errors: always
   
 spring:
   application:
-    name: products-service 
+    name: consuming-store-service   
+    
   datasource:
+    driver-class-name: com.mysql.jdbc.Driver
     username: admin
-    password: 123456789.*dhl  
+    password: 123456789.*dhl
     url: jdbc:mysql://db-pepeganga-prod.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
       ddl-auto: none
-
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: debug
 
 eureka:
   instance:
@@ -27,4 +20,6 @@ eureka:
   client:
     service-url:
         defaultZone: http://localhost:8761/eureka
-        
+
+#El directorio debe crearse en el home del usuario o sección
+risk_time: 5
