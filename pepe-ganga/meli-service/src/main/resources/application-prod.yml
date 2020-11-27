@@ -26,6 +26,11 @@ logging:
       hibernate:
         SQL: debug
 
+scheduler:
+  cron:
+    stock: 0 */5 * ? * *
+    notification: 0 */3 * ? * *
+
 # Business properties
 meli:
   risk: 10
@@ -36,6 +41,7 @@ meli:
     client: 3756313271086728
     secret: QjgI9XjbZEd7petHtAVnwFhKpLvnyK6l
     redirect: https://pepeganga-d4ce6.web.app/home/meli-accounts
-    expiration-token: 30
+    expiration:
+      token: 30
   order:
     attempts: 10

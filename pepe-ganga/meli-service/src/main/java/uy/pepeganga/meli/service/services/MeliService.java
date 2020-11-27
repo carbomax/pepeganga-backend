@@ -390,7 +390,7 @@ public class MeliService  implements IMeliService{
                 response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            if (statusPublication != ChangeStatusPublicationType.CLOSED.getStatus()) {
+            if (!statusPublication.equals(ChangeStatusPublicationType.CLOSED.getStatus())) {
                 var result = changeStatusPublication(accountId, 5, idPublication);
                 if(!result.containsKey("response")){
                     //Hubo un error que ya fue registrado en el metodo que se llamó
