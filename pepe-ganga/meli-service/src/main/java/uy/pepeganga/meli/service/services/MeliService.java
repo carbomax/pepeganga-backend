@@ -390,7 +390,7 @@ public class MeliService  implements IMeliService{
                 response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            if (statusPublication != ChangeStatusPublicationType.CLOSED.getStatus()) {
+            if (!statusPublication.equals(ChangeStatusPublicationType.CLOSED.getStatus())) {
                 var result = changeStatusPublication(accountId, 5, idPublication);
                 if(!result.containsKey("response")){
                     //Hubo un error que ya fue registrado en el metodo que se llamó
@@ -406,7 +406,7 @@ public class MeliService  implements IMeliService{
                 response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+            else if(MeliUtils.isExpiredToken(accountFounded.get())){
                 accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
             }
             Object result = apiService.deletePublication(request, accountFounded.get().getAccessToken(), idPublication);

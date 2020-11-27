@@ -26,6 +26,12 @@ logging:
       hibernate:
         SQL: debug
 
+scheduler:
+  cron:
+    stock: 0 */5 * ? * *
+    notification: 0 */5 * ? * *
+
+
 # Business properties
 meli:
   risk: 10
