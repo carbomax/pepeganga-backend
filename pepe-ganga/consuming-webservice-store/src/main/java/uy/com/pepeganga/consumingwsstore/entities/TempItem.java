@@ -2,6 +2,7 @@ package uy.com.pepeganga.consumingwsstore.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -88,10 +89,9 @@ public class TempItem implements Serializable {
     @JoinColumn(name = "tempbrand_id")
     private TempBrand brand;
 
-
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="tempitem_tempcategory")
-    private List<TempCategory> categories;
+    private List<TempCategory> categories = new ArrayList<>();
 
     public String getSku() {
         return sku;

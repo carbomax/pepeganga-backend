@@ -104,7 +104,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             //Update Stock table
             updateStockProvided();
         }catch (Exception e) {
-            logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getStackTrace());
+            logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getMessage());
             updateTableLogs(String.format("Error synchronizing Tables {General method}, Error: %s", e.getMessage()), true);
             return;
         }
