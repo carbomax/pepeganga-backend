@@ -24,7 +24,7 @@ import uy.pepeganga.meli.service.utils.MapResponseConstants;
 import uy.pepeganga.meli.service.utils.MeliUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -745,56 +745,70 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
-    public boolean updateStock(Integer stock, String sku) {
-
-            List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
-            detailsList = detailsPublicationRepository.findAllBySku(sku);
-            List<SellerAccount> accountsMeli = new ArrayList<>();
-
-            detailsList.forEach(d -> {
-                if (d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) || d.getStatus().equals(MeliStatusPublications.PAUSED.getValue())) {
-                    if (accountsMeli.isEmpty() || !accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst().isPresent()) {
-                        try {
-                            Optional<SellerAccount> seller = sellerAccountRepository.findById(d.getAccountMeli());
-                            if (seller.isPresent()) {
-                                if (MeliUtils.isExpiredToken(seller.get())) {
-                                    seller = Optional.ofNullable(apiService.getTokenByRefreshToken(seller.get()));
+    public boolean updateStock(List<uy.com.pepeganga.business.common.entities.Item> items) {
+        AtomicBoolean isGood = new AtomicBoolean(true);
+        try {
+            items.forEach(prod -> {
+                List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
+                detailsList = detailsPublicationRepository.findAllBySku(prod.getSku());
+                List<SellerAccount> accountsMeli = new ArrayList<>();
+                if(detailsList != null) {
+                    detailsList.forEach(d -> {
+                        if (d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) || d.getStatus().equals(MeliStatusPublications.PAUSED.getValue())) {
+                            if (accountsMeli.isEmpty() || !accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst().isPresent()) {
+                                try {
+                                    Optional<SellerAccount> seller = sellerAccountRepository.findById(d.getAccountMeli());
+                                    if (seller.isPresent()) {
+                                        if (MeliUtils.isExpiredToken(seller.get())) {
+                                            seller = Optional.ofNullable(apiService.getTokenByRefreshToken(seller.get()));
+                                        }
+                                        accountsMeli.add(seller.get());
+                                        //Actualizo stock en ML
+                                        ChangeStockRequest request = new ChangeStockRequest();
+                                        request.setAvailable_quantity((int) prod.getStockActual());
+                                        apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
+                                    }
+                                } catch (ApiException e) {
+                                    logger.error(" Error updating stock in mercado libre, Methods: updateStock(), {}", e.getResponseBody());
+                                    isGood.set(false);
+                                } catch (TokenException e) {
+                                    logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
+                                    logger.error(" Code of the error: {}", e.getCode());
+                                    isGood.set(false);
                                 }
-                                accountsMeli.add(seller.get());
-                                //Actualizo stock en ML
-                                ChangeStockRequest request = new ChangeStockRequest();
-                                request.setAvailable_quantity(stock);
-                                apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
-                            }
-                        }catch (ApiException e) {
-                            logger.error(" Error of the system: {}", e.getResponseBody());
-                        } catch (TokenException e) {
-                            logger.error(" Error of the system: {}", e.getMessage());
-                            logger.error(" Error of the system: {}", e.getCode());
-                        }
-                    } else {
-                        try {
-                            Optional<SellerAccount> seller = accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst();
-                            if (MeliUtils.isExpiredToken(seller.get())) {
-                                seller = Optional.ofNullable(apiService.getTokenByRefreshToken(seller.get()));
+                            } else {
+                                try {
+                                    Optional<SellerAccount> seller1 = accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst();
+                                    if (MeliUtils.isExpiredToken(seller1.get())) {
+                                        seller1 = Optional.ofNullable(apiService.getTokenByRefreshToken(seller1.get()));
 
+                                    }
+                                    accountsMeli.add(seller1.get());
+                                    //Actualizo stock en ML
+                                    ChangeStockRequest request = new ChangeStockRequest();
+                                    request.setAvailable_quantity((int) prod.getStockActual());
+                                    apiService.updateStock(request, seller1.get().getAccessToken(), d.getIdPublicationMeli());
+                                } catch (ApiException e) {
+                                    logger.error(" Error updating stock in mercado libre, API: call to ML, Methods: updateStock(), {}", e.getResponseBody());
+                                    isGood.set(false);
+                                } catch (TokenException e) {
+                                    logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
+                                    logger.error(" Code of the error: {}", e.getCode());
+                                    isGood.set(false);
+                                }
                             }
-                            accountsMeli.add(seller.get());
-                            //Actualizo stock en ML
-                            ChangeStockRequest request = new ChangeStockRequest();
-                            request.setAvailable_quantity(stock);
-                            apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
-                        }catch (ApiException e) {
-                            logger.error(" Error of the system: {}", e.getResponseBody());
-                        } catch (TokenException e) {
-                            logger.error(" Error of the system: {}", e.getMessage());
-                            logger.error(" Error of the system: {}", e.getCode());
-                        }
-                    }
 
+                        }
+                    });
                 }
             });
-            return  true;
+        }catch (Exception e){
+            logger.error(" Error getting publications of Database in the Detail Publications Meli table, Methods: updateStock(), {}", e.getStackTrace());
+            isGood.set(false);
+        }
+        if(isGood.get())
+            return true;
+        return false;
     }
 
     /**** Metodos auxiliares ****/

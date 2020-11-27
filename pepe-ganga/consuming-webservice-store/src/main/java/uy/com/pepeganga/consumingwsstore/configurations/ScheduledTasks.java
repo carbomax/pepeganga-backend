@@ -15,7 +15,7 @@ public class ScheduledTasks {
 
     @Scheduled(initialDelay = 5000, fixedRate = 10800000)
     public void syncDataBase(){
-        //@Scheduled(cron = "0 */ * ? * *")
+        //@Scheduled(cron = "0 * * ? * *")
         schedulesService.syncDataBase();
     }
 }

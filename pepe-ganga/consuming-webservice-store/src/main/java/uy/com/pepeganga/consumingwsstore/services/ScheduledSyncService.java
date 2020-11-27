@@ -103,7 +103,6 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
             //Update Stock table
             updateStockProvided();
-
         }catch (Exception e) {
             logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getStackTrace());
             updateTableLogs(String.format("Error synchronizing Tables {General method}, Error: %s", e.getMessage()), true);
@@ -355,49 +354,47 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
     private boolean updateStockProvided(){
         List<StockProcessor> stockList = new ArrayList<>();
-        stockList = stockProcRepo.findAll();
+        stockList.addAll(stockProcRepo.findAll());
         List<Item> itemsU = new ArrayList<>();
         itemsU = itemRepo.findAll();
+        boolean initialStockEmpty = false;
 
         List<CheckingStockProcessor> checkingList = new ArrayList<>();
         List<StockProcessor> stockToAddOrUpdate = new ArrayList<>();
 
         if(!stockList.isEmpty()){
-            List<Item> finalItemsU = itemsU;
-            stockList.forEach(stock -> {
+            itemsU.forEach(newItem -> {
                 boolean exit = false;
                 AtomicInteger count = new AtomicInteger();
                 CheckingStockProcessor checking = new CheckingStockProcessor();
                 StockProcessor stockUpdated = new StockProcessor();
 
-                while (count.get() < finalItemsU.size() && !exit){
+                while (count.get() < stockList.size() && !exit){
                     //Si existe el SKU en la tabla?
-                    if(finalItemsU.get(count.get()).getSku().equals(stock.getSku())){
+                    if(stockList.get(count.get()).getSku().equals(newItem.getSku())){
                         exit = true;
-                        stockUpdated.setId(stock.getId());
-                        stockUpdated.setSku(stock.getSku());
-                        stockUpdated.setExpectedStock(stock.getExpectedStock());
-                        stockUpdated.setRealStock(Math.toIntExact(finalItemsU.get(count.get()).getStockActual()));
+                        stockUpdated.setId(stockList.get(count.get()).getId());
+                        stockUpdated.setSku(stockList.get(count.get()).getSku());
+                        stockUpdated.setExpectedStock(stockList.get(count.get()).getExpectedStock());
+                        stockUpdated.setRealStock(Math.toIntExact(newItem.getStockActual()));
 
                         //el articulo esta pausado por stock
-                        if((stock.getRealStock() - stock.getExpectedStock()) <= property.getRiskTime()){
+                        if((stockList.get(count.get()).getRealStock() - stockList.get(count.get()).getExpectedStock()) <= property.getRiskTime()){
                             //Verifico si continua sin stock al actualizar
-                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() > property.getRiskTime()){
-                                checking.setSku(stock.getSku());
-                                checking.setExpectedStock(stock.getExpectedStock());
-                                int value = (int) finalItemsU.get(count.get()).getStockActual();
-                                checking.setRealStock(value);
+                            if((int) newItem.getStockActual() - stockList.get(count.get()).getExpectedStock() > property.getRiskTime()){
+                                checking.setSku(stockList.get(count.get()).getSku());
+                                checking.setExpectedStock(stockList.get(count.get()).getExpectedStock());
+                                checking.setRealStock((int) newItem.getStockActual());
                                 checking.setAction(0);
                                 checkingList.add(checking);
                             }
                         }
                         //Articulo no pausado por stock -- Verifico si se pausa al actualizar
                         else{
-                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() <= property.getRiskTime()){
-                                checking.setSku(stock.getSku());
-                                checking.setExpectedStock(stock.getExpectedStock());
-                                int value = (int) finalItemsU.get(count.get()).getStockActual();
-                                checking.setRealStock(value);
+                            if((int) newItem.getStockActual() - stockList.get(count.get()).getExpectedStock() <= property.getRiskTime()){
+                                checking.setSku(stockList.get(count.get()).getSku());
+                                checking.setExpectedStock(stockList.get(count.get()).getExpectedStock());
+                                checking.setRealStock((int) newItem.getStockActual());
                                 checking.setAction(0);
                                 checkingList.add(checking);
                             }
@@ -407,24 +404,23 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 }
                 if(!exit) {
                     //No existe el articulo con SKU en la tabla -- adiciono a StockProcessor Table
-                    stockUpdated.setSku(finalItemsU.get(count.get()).getSku());
+                    stockUpdated.setSku(newItem.getSku());
                     stockUpdated.setExpectedStock(0);
-                    stockUpdated.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+                    stockUpdated.setRealStock((int) newItem.getStockActual());
 
                     //Verifico si cumple condicion de stock
-                    if ((int) finalItemsU.get(count.get()).getStockActual() - 0 <= property.getRiskTime()) {
-                        checking.setSku(stockUpdated.getSku());
+                    if ((int) newItem.getStockActual() - 0 <= property.getRiskTime()) {
+                        checking.setSku(newItem.getSku());
                         checking.setExpectedStock(0);
-                        checking.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+                        checking.setRealStock((int) newItem.getStockActual());
                         checking.setAction(0);
                         checkingList.add(checking);
                     }
-                    stockToAddOrUpdate.add(stockUpdated);
                 }
-                else{
-                    //Actualizo el stock del articulo en la tabla Stock Processor si existe
-                    stockToAddOrUpdate.add(stockUpdated);
-                }
+
+                //si existe articulo: Actualizo el stock del articulo en la tabla Stock Processor, sino existe: lo adiciono
+                stockToAddOrUpdate.add(stockUpdated);
+
             });
         }
         //El stock está vacio -- Sistema nuevo
@@ -447,6 +443,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 }
                 stockToAddOrUpdate.add(stockNew);
             });
+            initialStockEmpty = true;
         }
 
         //Productos a eliminar por no existir
@@ -454,19 +451,19 @@ public class ScheduledSyncService implements IScheduledSyncService{
         List<StockProcessor> deleteStockList = new ArrayList<>();
         finalItemsU1.addAll(itemsU);
 
-
-        stockList.forEach(s -> {
-            boolean exit = false;
+        if(!initialStockEmpty)
+            stockList.forEach(s -> {
+            boolean exit1 = false;
             boolean delete = true;
             int j = 0;
-            while (j < finalItemsU1.size() && !exit){
+            while (j < finalItemsU1.size() && !exit1){
                 if(finalItemsU1.get(j).getSku().equals(s.getSku())){
                     delete = false;
-                    exit = true;
+                    exit1 = true;
                 }
                 j++;
             }
-            if(exit) {
+            if(exit1) {
                 j--;
                 finalItemsU1.remove(j);
             }
@@ -482,13 +479,19 @@ public class ScheduledSyncService implements IScheduledSyncService{
         });
 
         //Actualizar ambas tablas en la base datos
-        checkStockRepo.saveAll(checkingList);
-        stockProcRepo.deleteAll(deleteStockList);
-        stockProcRepo.saveAll(stockToAddOrUpdate);
+        if(!checkingList.isEmpty())
+            checkStockRepo.saveAll(checkingList);
+        if(!deleteStockList.isEmpty())
+            stockProcRepo.deleteAll(deleteStockList);
+        if(!stockToAddOrUpdate.isEmpty())
+            stockProcRepo.saveAll(stockToAddOrUpdate);
 
         //Actualiza stock en el sistema y en Mercado Libre
-        updateStockOfPublicationsMeli(itemsU);
-        updateStockOfProductsMeli(itemsU);
+        if(!updateStockOfPublicationsMeli(itemsU))
+            return false;
+        if(!updateStockOfProductsMeli(itemsU))
+            return false;
+
         return true;
     }
 
@@ -499,17 +502,22 @@ public class ScheduledSyncService implements IScheduledSyncService{
             });
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error updating stock of mercadolibrepublications table {} Error: "), e.getStackTrace());
+            logger.error(String.format("Error updating stock in mercadolibrepublications table {} Error: "), e.getStackTrace());
             return false;
         }
 
     }
 
     private boolean updateStockOfPublicationsMeli(List<Item> itemsU){
-        itemsU.forEach(item -> {
-            feign.updateStock(Math.toIntExact(item.getStockActual()), item.getSku());
-        });
-        return true;
+        try {
+            itemsU.forEach(item -> {
+                feign.updateStock(itemsU);
+            });
+            return true;
+        }catch (Exception e) {
+            logger.error(String.format("Error calling meli service to update stock of publications {} Error: "), e.getStackTrace());
+            return false;
+        }
     }
 
     private Item addItem(TempItem ti) {

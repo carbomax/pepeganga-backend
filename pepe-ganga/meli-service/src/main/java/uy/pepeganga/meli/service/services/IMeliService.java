@@ -58,6 +58,6 @@ public interface IMeliService {
 
     Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
 
-    boolean updateStock(Integer stock, String sku);
+    boolean updateStock(List<uy.com.pepeganga.business.common.entities.Item> items);
 
 }

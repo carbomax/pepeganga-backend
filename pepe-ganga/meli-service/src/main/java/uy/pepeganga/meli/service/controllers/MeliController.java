@@ -124,8 +124,8 @@ public class MeliController {
         return new ResponseEntity<>(meliService.synchronizePublication(idProfile, idDetailsPublicationsList), HttpStatus.OK);
     }
 
-    @GetMapping("/updateStock")
-    public boolean updateStock(@RequestParam Integer stock, @RequestParam String sku){
-        return meliService.updateStock(stock, sku);
+    @PostMapping("/updateStock")
+    public boolean updateStock(@RequestBody List<uy.com.pepeganga.business.common.entities.Item> items){
+        return meliService.updateStock(items);
     }
 }
