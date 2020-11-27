@@ -4,9 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
+import uy.com.pepeganga.consumingwsstore.client.MeliFeignClient;
 import uy.com.pepeganga.consumingwsstore.entities.*;
+import uy.com.pepeganga.consumingwsstore.models.RiskTime;
 import uy.com.pepeganga.consumingwsstore.repositories.*;
 
 import java.util.ArrayList;
@@ -18,6 +21,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ScheduledSyncService implements IScheduledSyncService{
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduledSyncService.class);
+    static RestTemplate restTemplate = new RestTemplate();
+
+    @Autowired
+    MeliFeignClient feign;
+    @Autowired
+    RiskTime property;
+
+    @Autowired
+    ProductsRepository productRepo;
 
     //Repositories of temporal Tables
     @Autowired
@@ -90,10 +102,10 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 return;
 
             //Update Stock table
-            updateStock();
+            updateStockProvided();
 
         }catch (Exception e) {
-            logger.error(String.format("Error synchronizing Tables {General method}, Error: %s"), e.getStackTrace());
+            logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getStackTrace());
             updateTableLogs(String.format("Error synchronizing Tables {General method}, Error: %s", e.getMessage()), true);
             return;
         }
@@ -341,7 +353,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
         return true;
     }
 
-    private boolean updateStock(){
+    private boolean updateStockProvided(){
         List<StockProcessor> stockList = new ArrayList<>();
         stockList = stockProcRepo.findAll();
         List<Item> itemsU = new ArrayList<>();
@@ -365,26 +377,28 @@ public class ScheduledSyncService implements IScheduledSyncService{
                         stockUpdated.setId(stock.getId());
                         stockUpdated.setSku(stock.getSku());
                         stockUpdated.setExpectedStock(stock.getExpectedStock());
-                        stockUpdated.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+                        stockUpdated.setRealStock(Math.toIntExact(finalItemsU.get(count.get()).getStockActual()));
 
                         //el articulo esta pausado por stock
-                        if((stock.getRealStock() - stock.getExpectedStock()) <= 10){
+                        if((stock.getRealStock() - stock.getExpectedStock()) <= property.getRiskTime()){
                             //Verifico si continua sin stock al actualizar
-                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() > 10){
+                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() > property.getRiskTime()){
                                 checking.setSku(stock.getSku());
                                 checking.setExpectedStock(stock.getExpectedStock());
                                 int value = (int) finalItemsU.get(count.get()).getStockActual();
                                 checking.setRealStock(value);
+                                checking.setAction(0);
                                 checkingList.add(checking);
                             }
                         }
                         //Articulo no pausado por stock -- Verifico si se pausa al actualizar
                         else{
-                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() <= 10){
+                            if((int) finalItemsU.get(count.get()).getStockActual() - stock.getExpectedStock() <= property.getRiskTime()){
                                 checking.setSku(stock.getSku());
                                 checking.setExpectedStock(stock.getExpectedStock());
                                 int value = (int) finalItemsU.get(count.get()).getStockActual();
                                 checking.setRealStock(value);
+                                checking.setAction(0);
                                 checkingList.add(checking);
                             }
                         }
@@ -398,10 +412,11 @@ public class ScheduledSyncService implements IScheduledSyncService{
                     stockUpdated.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
 
                     //Verifico si cumple condicion de stock
-                    if ((int) finalItemsU.get(count.get()).getStockActual() - 0 <= 10) {
+                    if ((int) finalItemsU.get(count.get()).getStockActual() - 0 <= property.getRiskTime()) {
                         checking.setSku(stockUpdated.getSku());
                         checking.setExpectedStock(0);
                         checking.setRealStock((int) finalItemsU.get(count.get()).getStockActual());
+                        checking.setAction(0);
                         checkingList.add(checking);
                     }
                     stockToAddOrUpdate.add(stockUpdated);
@@ -423,19 +438,77 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 stockNew.setRealStock((int) i.getStockActual());
 
                 //Verifico si cumple condicion de stock
-                if ((int) i.getStockActual() - 0 <= 10) {
+                if ((int) i.getStockActual() - 0 <= property.getRiskTime()) {
                     checkingNew.setSku(i.getSku());
                     checkingNew.setExpectedStock(0);
                     checkingNew.setRealStock((int) i.getStockActual());
+                    checkingNew.setAction(0);
                     checkingList.add(checkingNew);
                 }
                 stockToAddOrUpdate.add(stockNew);
             });
         }
 
+        //Productos a eliminar por no existir
+        List<Item> finalItemsU1 = new ArrayList<>();
+        List<StockProcessor> deleteStockList = new ArrayList<>();
+        finalItemsU1.addAll(itemsU);
+
+
+        stockList.forEach(s -> {
+            boolean exit = false;
+            boolean delete = true;
+            int j = 0;
+            while (j < finalItemsU1.size() && !exit){
+                if(finalItemsU1.get(j).getSku().equals(s.getSku())){
+                    delete = false;
+                    exit = true;
+                }
+                j++;
+            }
+            if(exit) {
+                j--;
+                finalItemsU1.remove(j);
+            }
+            if(delete) {
+                CheckingStockProcessor check = new CheckingStockProcessor();
+                check.setSku(s.getSku());
+                check.setExpectedStock(0);
+                check.setRealStock(0);
+                check.setAction(1);
+                checkingList.add(check);
+                deleteStockList.add(s);
+            }
+        });
+
         //Actualizar ambas tablas en la base datos
         checkStockRepo.saveAll(checkingList);
+        stockProcRepo.deleteAll(deleteStockList);
         stockProcRepo.saveAll(stockToAddOrUpdate);
+
+        //Actualiza stock en el sistema y en Mercado Libre
+        updateStockOfPublicationsMeli(itemsU);
+        updateStockOfProductsMeli(itemsU);
+        return true;
+    }
+
+    private boolean updateStockOfProductsMeli(List<Item> itemsU){
+        try {
+            itemsU.forEach( i -> {
+                productRepo.updateStockBySKU(Math.toIntExact(i.getStockActual()), i.getSku());
+            });
+            return true;
+        }catch (Exception e){
+            logger.error(String.format("Error updating stock of mercadolibrepublications table {} Error: "), e.getStackTrace());
+            return false;
+        }
+
+    }
+
+    private boolean updateStockOfPublicationsMeli(List<Item> itemsU){
+        itemsU.forEach(item -> {
+            feign.updateStock(Math.toIntExact(item.getStockActual()), item.getSku());
+        });
         return true;
     }
 

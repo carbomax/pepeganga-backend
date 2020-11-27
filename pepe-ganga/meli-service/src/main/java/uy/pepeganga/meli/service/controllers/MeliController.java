@@ -123,4 +123,9 @@ public class MeliController {
     public ResponseEntity<Map<String, Object>> synchronizePublication(@RequestParam Integer idProfile, @RequestParam List<Integer> idDetailsPublicationsList){
         return new ResponseEntity<>(meliService.synchronizePublication(idProfile, idDetailsPublicationsList), HttpStatus.OK);
     }
+
+    @GetMapping("/updateStock")
+    public boolean updateStock(@RequestParam Integer stock, @RequestParam String sku){
+        return meliService.updateStock(stock, sku);
+    }
 }

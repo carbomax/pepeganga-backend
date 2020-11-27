@@ -241,6 +241,11 @@ public class ApiService implements IApiService {
     }
 
     @Override
+    public Object updateStock(ChangeStockRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
+    }
+
+    @Override
     public Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException {
         return restClientApiUy.resourcePost(String.format(ApiResources.ITEMS + "/%s" + "/relist", idPublicationMeli), token, request);
     }

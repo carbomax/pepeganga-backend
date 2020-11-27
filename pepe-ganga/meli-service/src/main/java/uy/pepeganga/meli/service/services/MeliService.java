@@ -109,7 +109,7 @@ public class MeliService  implements IMeliService{
                 response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+            else if(MeliUtils.isExpiredToken(accountFounded.get())){
                 accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                 accountMeli = accountFounded;
             }
@@ -307,7 +307,7 @@ public class MeliService  implements IMeliService{
         if (accountFounded.isEmpty()) {
             throw new ApiException(HttpStatus.NOT_FOUND.value(), String.format("No se encontro la cuenta: %s", product.getAccountName()));
         }
-        else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+        else if(MeliUtils.isExpiredToken(accountFounded.get())){
             apiService.getTokenByRefreshToken(accountFounded.get());
             accountFounded = sellerAccountRepository.findById(product.getAccountMeli());
         }
@@ -406,7 +406,7 @@ public class MeliService  implements IMeliService{
                 response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+            else if(MeliUtils.isExpiredToken(accountFounded.get())){
                 accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
             }
             Object result = apiService.deletePublication(request, accountFounded.get().getAccessToken(), idPublication);
@@ -488,7 +488,7 @@ public class MeliService  implements IMeliService{
                     logger.error("Account with id: {} not found", accountId);
                     response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 } else {
-                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                    if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
                     request.setListing_type_id("bronze");
@@ -680,7 +680,7 @@ public class MeliService  implements IMeliService{
                     ChangePriceRequest changePrice = new ChangePriceRequest(detail.getPricePublication());
                     Optional<SellerAccount> accountFounded = finalAccountList.stream().filter(a -> a.getId() == detail.getAccountMeli()).findFirst();
                     try {
-                        if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                        if(MeliUtils.isExpiredToken(accountFounded.get())){
                             accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                         }
 
@@ -744,6 +744,59 @@ public class MeliService  implements IMeliService{
         }
     }
 
+    @Override
+    public boolean updateStock(Integer stock, String sku) {
+
+            List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
+            detailsList = detailsPublicationRepository.findAllBySku(sku);
+            List<SellerAccount> accountsMeli = new ArrayList<>();
+
+            detailsList.forEach(d -> {
+                if (d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) || d.getStatus().equals(MeliStatusPublications.PAUSED.getValue())) {
+                    if (accountsMeli.isEmpty() || !accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst().isPresent()) {
+                        try {
+                            Optional<SellerAccount> seller = sellerAccountRepository.findById(d.getAccountMeli());
+                            if (seller.isPresent()) {
+                                if (MeliUtils.isExpiredToken(seller.get())) {
+                                    seller = Optional.ofNullable(apiService.getTokenByRefreshToken(seller.get()));
+                                }
+                                accountsMeli.add(seller.get());
+                                //Actualizo stock en ML
+                                ChangeStockRequest request = new ChangeStockRequest();
+                                request.setAvailable_quantity(stock);
+                                apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
+                            }
+                        }catch (ApiException e) {
+                            logger.error(" Error of the system: {}", e.getResponseBody());
+                        } catch (TokenException e) {
+                            logger.error(" Error of the system: {}", e.getMessage());
+                            logger.error(" Error of the system: {}", e.getCode());
+                        }
+                    } else {
+                        try {
+                            Optional<SellerAccount> seller = accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst();
+                            if (MeliUtils.isExpiredToken(seller.get())) {
+                                seller = Optional.ofNullable(apiService.getTokenByRefreshToken(seller.get()));
+
+                            }
+                            accountsMeli.add(seller.get());
+                            //Actualizo stock en ML
+                            ChangeStockRequest request = new ChangeStockRequest();
+                            request.setAvailable_quantity(stock);
+                            apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
+                        }catch (ApiException e) {
+                            logger.error(" Error of the system: {}", e.getResponseBody());
+                        } catch (TokenException e) {
+                            logger.error(" Error of the system: {}", e.getMessage());
+                            logger.error(" Error of the system: {}", e.getCode());
+                        }
+                    }
+
+                }
+            });
+            return  true;
+    }
+
     /**** Metodos auxiliares ****/
     private Optional<SellerAccount> getAccountMeli(Integer accountId, boolean search){
         if(accountMeli == null || search == true){
@@ -770,7 +823,7 @@ public class MeliService  implements IMeliService{
                 ChangePriceRequest changePrice = new ChangePriceRequest(detail.getPricePublication());
                 Optional<SellerAccount> accountFounded = finalAccountList.stream().filter(a -> a.getId() == detail.getAccountMeli()).findFirst();
                 try {
-                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                    if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
 
