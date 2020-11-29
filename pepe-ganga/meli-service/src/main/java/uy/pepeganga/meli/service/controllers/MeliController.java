@@ -131,12 +131,4 @@ public class MeliController {
     public Boolean updateStock(@RequestBody List<Pair> pairs){
         return meliService.updateStock(pairs);
     }
-
-    @PostMapping("/update-string")
-    Boolean updateString(@RequestBody List<String> pairs) throws JsonProcessingException {
-        String value = pairs.get(0);
-        ObjectMapper mapper= new ObjectMapper();
-        Pair obj = mapper.readValue(value, Pair.class);
-        return  true;
-    }
 }

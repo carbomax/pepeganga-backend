@@ -85,7 +85,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             updatesSystem.setStartDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
             data = updateSysRepo.save(updatesSystem);
 
- /*           //Empty temporals table
+            //Empty temporals table
             if(!deleteTemporalData())
                 return;
 
@@ -107,7 +107,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             //If this is execute then the synchronization was Ok, for that reason Empty temporals table
             if(!deleteTemporalData())
                 return;
-*/
+
             //Update Stock table
             if(!updateStockProvided()){
                 logger.error(String.format("Error updating stock to publications in Mercado Libre, Error: "));

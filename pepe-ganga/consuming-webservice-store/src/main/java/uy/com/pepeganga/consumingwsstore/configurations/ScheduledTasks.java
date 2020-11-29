@@ -24,8 +24,4 @@ public class ScheduledTasks {
         schedulesService.syncDataBase();
         logger.info("Finishing updating consuming service....");
     }
-
-    public void test(){
-        //schedulesService.updateStockOfPublicationsMeli();
-    }
 }
