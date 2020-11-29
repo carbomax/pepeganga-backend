@@ -1,27 +1,34 @@
 package uy.com.pepeganga.consumingwsstore.services;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.consumingwsstore.client.MeliFeignClient;
 import uy.com.pepeganga.consumingwsstore.entities.*;
+import uy.com.pepeganga.consumingwsstore.models.Pair;
 import uy.com.pepeganga.consumingwsstore.models.RiskTime;
 import uy.com.pepeganga.consumingwsstore.repositories.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@EnableAsync
 @Service
 public class ScheduledSyncService implements IScheduledSyncService{
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduledSyncService.class);
     static RestTemplate restTemplate = new RestTemplate();
+    ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     MeliFeignClient feign;
@@ -78,7 +85,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             updatesSystem.setStartDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
             data = updateSysRepo.save(updatesSystem);
 
-            //Empty temporals table
+ /*           //Empty temporals table
             if(!deleteTemporalData())
                 return;
 
@@ -100,9 +107,12 @@ public class ScheduledSyncService implements IScheduledSyncService{
             //If this is execute then the synchronization was Ok, for that reason Empty temporals table
             if(!deleteTemporalData())
                 return;
-
+*/
             //Update Stock table
-            updateStockProvided();
+            if(!updateStockProvided()){
+                logger.error(String.format("Error updating stock to publications in Mercado Libre, Error: "));
+            }
+
         }catch (Exception e) {
             logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getMessage());
             updateTableLogs(String.format("Error synchronizing Tables {General method}, Error: %s", e.getMessage()), true);
@@ -133,7 +143,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }
             return true;
         }catch (Exception e) {
-            logger.error(" Error deleting temporal tables {}", e.getStackTrace());
+            logger.error(" Error deleting temporal tables {}", e.getMessage());
             updateTableLogs("Error deleting temporal tables {}" + e.getMessage(), true);
             return false;
         }
@@ -152,7 +162,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error inserting temporal %s tables {}", type), e.getStackTrace());
+            logger.error(String.format("Error inserting temporal %s tables {}", type), e.getMessage());
             updateTableLogs(String.format("Error inseting temporal %s tables {}", type) + e.getMessage(), true);
             deleteTemporalData();
             return false;
@@ -348,7 +358,6 @@ public class ScheduledSyncService implements IScheduledSyncService{
             return false;
         }
         /** *********  All OK  ************** **/
-        updateTableLogs("Synchronization completed...", false);
         return true;
     }
 
@@ -357,13 +366,16 @@ public class ScheduledSyncService implements IScheduledSyncService{
         stockList.addAll(stockProcRepo.findAll());
         List<Item> itemsU = new ArrayList<>();
         itemsU = itemRepo.findAll();
+        List<Pair> pairs = new ArrayList<>();
         boolean initialStockEmpty = false;
+        boolean finishedWithError = false;
 
         List<CheckingStockProcessor> checkingList = new ArrayList<>();
         List<StockProcessor> stockToAddOrUpdate = new ArrayList<>();
 
         if(!stockList.isEmpty()){
             itemsU.forEach(newItem -> {
+                pairs.add(new Pair(newItem.getSku(), Math.toIntExact(newItem.getStockActual())));
                 boolean exit = false;
                 AtomicInteger count = new AtomicInteger();
                 CheckingStockProcessor checking = new CheckingStockProcessor();
@@ -387,6 +399,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                                 checking.setRealStock((int) newItem.getStockActual());
                                 checking.setAction(0);
                                 checkingList.add(checking);
+                                logger.info("Enviando al checking con item con sku: {}", checking.getSku());
                             }
                         }
                         //Articulo no pausado por stock -- Verifico si se pausa al actualizar
@@ -397,6 +410,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                                 checking.setRealStock((int) newItem.getStockActual());
                                 checking.setAction(0);
                                 checkingList.add(checking);
+                                logger.info("Enviando al checking con item con sku: {}", checking.getSku());
                             }
                         }
                     }
@@ -415,6 +429,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                         checking.setRealStock((int) newItem.getStockActual());
                         checking.setAction(0);
                         checkingList.add(checking);
+                        logger.info("Enviando al checking con item con sku: {}", checking.getSku());
                     }
                 }
 
@@ -440,6 +455,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                     checkingNew.setRealStock((int) i.getStockActual());
                     checkingNew.setAction(0);
                     checkingList.add(checkingNew);
+                    logger.info("Enviando al checking con item con sku: {}", checkingNew.getSku());
                 }
                 stockToAddOrUpdate.add(stockNew);
             });
@@ -473,49 +489,69 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 check.setExpectedStock(0);
                 check.setRealStock(0);
                 check.setAction(1);
+
+                CheckingStockProcessor data1 = checkStockRepo.findBySku(s.getSku());
+                if(data1 != null)
+                    check.setId(data1.getId());
                 checkingList.add(check);
                 deleteStockList.add(s);
+                logger.info("Enviando al checking para eliminar item con sku: {}", s.getSku());
             }
         });
 
         //Actualizar ambas tablas en la base datos
-        if(!checkingList.isEmpty())
+        if(!checkingList.isEmpty()) {
+            checkingList.forEach(check -> {
+                CheckingStockProcessor data = checkStockRepo.findBySku(check.getSku());
+                if(data != null)
+                    check.setId(data.getId());
+            });
             checkStockRepo.saveAll(checkingList);
+        }
         if(!deleteStockList.isEmpty())
             stockProcRepo.deleteAll(deleteStockList);
+
         if(!stockToAddOrUpdate.isEmpty())
             stockProcRepo.saveAll(stockToAddOrUpdate);
 
         //Actualiza stock en el sistema y en Mercado Libre
-        if(!updateStockOfPublicationsMeli(itemsU))
-            return false;
-        if(!updateStockOfProductsMeli(itemsU))
-            return false;
-
-        return true;
+        if(!initialStockEmpty) {
+            if(!updateStockOfProductsMeli(itemsU)){
+               finishedWithError = true;
+            }
+            if(updateStockOfPublicationsMeli(pairs)) {
+                finishedWithError = true;
+            }
+        }
+        if(finishedWithError){ return false;}
+        else {
+            updateTableLogs("Synchronization completed...", false);
+            return true;
+        }
     }
 
     private boolean updateStockOfProductsMeli(List<Item> itemsU){
         try {
             itemsU.forEach( i -> {
-                productRepo.updateStockBySKU(Math.toIntExact(i.getStockActual()), i.getSku());
+                productRepo.updateStockBySKU(i.getStockActual(), i.getSku());
             });
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error updating stock in mercadolibrepublications table {} Error: "), e.getStackTrace());
+            logger.error(String.format("Error updating stock in mercadolibrepublications table {} Error: "), e.getMessage());
+            updateTableLogs(String.format("Error updating stock in mercadolibrepublications table {} Error: ", e.getMessage()), true);
             return false;
         }
 
     }
 
-    private boolean updateStockOfPublicationsMeli(List<Item> itemsU){
+    @Async
+    public boolean updateStockOfPublicationsMeli(List<Pair> pairs){
         try {
-            itemsU.forEach(item -> {
-                feign.updateStock(itemsU);
-            });
+            boolean p1 = feign.updateStock(pairs);
             return true;
         }catch (Exception e) {
-            logger.error(String.format("Error calling meli service to update stock of publications {} Error: "), e.getStackTrace());
+            logger.error(String.format("Error calling meli service to update stock of publications {} Error: "), e.getMessage());
+            updateTableLogs(String.format("Error calling meli service to update stock of publications {} Error: ", e.getMessage()), true);
             return false;
         }
     }
@@ -628,7 +664,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error %s Item table {}", action), e.getStackTrace());
+            logger.error(String.format("Error %s Item table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Item table {}", action) + e.getMessage(), true);
             return false;
         }
@@ -643,7 +679,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error %s Brand table {}", action), e.getStackTrace());
+            logger.error(String.format("Error %s Brand table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Brand table {}", action) + e.getMessage(), true);
             return false;
         }
@@ -658,7 +694,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error %s Family table {}", action), e.getStackTrace());
+            logger.error(String.format("Error %s Family table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Family table {}", action) + e.getMessage(), true);
             return false;
         }
@@ -674,7 +710,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error %s Category table {}", action), e.getStackTrace());
+            logger.error(String.format("Error %s Category table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Category table {}", action) + e.getMessage(), true);
             return false;
         }

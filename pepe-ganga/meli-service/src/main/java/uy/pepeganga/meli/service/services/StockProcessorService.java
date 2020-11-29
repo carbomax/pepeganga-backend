@@ -80,137 +80,143 @@ public class StockProcessorService implements IStockProcessorService {
             List<DetailsPublicationsMeli> detailsPublications = detailsPublicationMeliRepository.findAllBySku(stockProcessorFounded.getSku());
             List<MercadoLibrePublications> meliPublications = mercadoLibrePublishRepository.findAllBySku(stockProcessorFounded.getSku());
 
-            // Check if this is in the risk zone
-            if ((stockProcessorFounded.getRealStock() - stockProcessorFounded.getExpectedStock()) <= StockProcessorService.RISK) {
-                // Pausar con estado especial todas las publicaciones y  bloquear los item no publicados correspondientes.
+            if (detailsPublications.isEmpty() && meliPublications.isEmpty()) {
+                logger.info("Deleting checking stock processor by empty both lists: detailsPublications and meliPublications. sku: {}", checkingStockProcessor.getSku());
+                checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
+                logger.info("Checking stock processor deleted by empty both lists: detailsPublications and meliPublications. sku: {}", checkingStockProcessor.getSku());
 
-                // bloqueamos o mandamos a eliminar todos los items no publicados
-                for (MercadoLibrePublications mercadoLibrePublications :
-                        meliPublications) {
-                    try {
-                        logger.info("Blocking unpublished product for special paused or to delete with sku: {} ", mercadoLibrePublications.getSku());
-                        mercadoLibrePublications.setSpecialPaused(1);
-                        if (checkingStockProcessor.getAction() == 1) {
-                            mercadoLibrePublications.setDeleted(1);
+            } else {
+
+                // Check if this is in the risk zone
+                if ((stockProcessorFounded.getRealStock() - stockProcessorFounded.getExpectedStock()) <= StockProcessorService.RISK) {
+                    // Pausar con estado especial todas las publicaciones y  bloquear los item no publicados correspondientes.
+
+                    // bloqueamos o mandamos a eliminar todos los items no publicados
+                    for (MercadoLibrePublications mercadoLibrePublications :
+                            meliPublications) {
+                        try {
+                            logger.info("Blocking unpublished product for special paused or to delete with sku: {} ", mercadoLibrePublications.getSku());
+                            mercadoLibrePublications.setSpecialPaused(1);
+                            if (checkingStockProcessor.getAction() == 1) {
+                                mercadoLibrePublications.setDeleted(1);
+                            }
+                            mercadoLibrePublishRepository.save(mercadoLibrePublications);
+                            logger.info("Blocking unpublished product successfully with sku: {} ", mercadoLibrePublications.getSku());
+                        } catch (Exception e) {
+                            logger.error("Blocking unpublished product not successfully with sku: {} ", mercadoLibrePublications.getSku());
+                            checkingProcessed.set(checkingProcessed.get() + 1);
                         }
-                        mercadoLibrePublishRepository.save(mercadoLibrePublications);
-                        logger.info("Blocking unpublished product successfully with sku: {} ", mercadoLibrePublications.getSku());
-                    } catch (Exception e) {
-                        logger.error("Blocking unpublished product not successfully with sku: {} ", mercadoLibrePublications.getSku());
-                        checkingProcessed.set(checkingProcessed.get() + 1);
+
                     }
 
-                }
-
-                for (DetailsPublicationsMeli detailsPublicationsMeli :
-                        detailsPublications) {
-                    // se marca como pausado especial aunque no se pueda pausar en mercado libre.
-                    try {
+                    for (DetailsPublicationsMeli detailsPublicationsMeli :
+                            detailsPublications) {
+                        // se marca como pausado especial aunque no se pueda pausar en mercado libre.
                         detailsPublicationsMeli.setSpecialPaused(1);
-                        detailsPublicationMeliRepository.save(detailsPublicationsMeli);
-                    }catch (Exception e) {
-                        logger.error("DetailsPublicationsMeli not update in database with special paused. DetailsPublicationsMeli: id {}, idPublication: {}",
-                                detailsPublicationsMeli.getId(), detailsPublicationsMeli.getIdMLPublication());
-                        checkingProcessed.set(checkingProcessed.get() + 1);
-                    }
 
-                    // Voy a pausar
-                    if (checkingStockProcessor.getAction() == 0) {
+                        // Voy a pausar
+                        if (checkingStockProcessor.getAction() == 0) {
 
-                        // Comprobamos si está activa la publicacion, si lo está mandamos a pausar
-                        if (detailsPublicationsMeli.getStatus().equals(ChangeStatusPublicationType.ACTIVE.getStatus())) {
-                            Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
-                                    ChangeStatusPublicationType.PAUSED.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
-                            if (response.containsKey(MapResponseConstants.RESPONSE)) {
-                                logger.info("Publication was paused successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                            } else {
-                                logger.warn("Publication was not paused. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                            // Comprobamos si está activa la publicacion, si lo está mandamos a pausar
+                            if (detailsPublicationsMeli.getStatus().equals(ChangeStatusPublicationType.ACTIVE.getStatus())) {
+                                Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
+                                        ChangeStatusPublicationType.PAUSED.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
+                                if (response.containsKey(MapResponseConstants.RESPONSE)) {
+                                    logger.info("Publication was paused successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    detailsPublicationsMeli.setStatus((String) response.get(MapResponseConstants.RESPONSE));
+                                } else {
+                                    logger.warn("Publication was not paused. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    checkingProcessed.set(checkingProcessed.get() + 1);
+                                }
+                            }
+                        }
+
+                        // Voy a finalizar la publicacion
+                        if (checkingStockProcessor.getAction() == 1) {
+                            try {
+                                // aqui se le pasa el estado actual de la publicacion
+                                Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
+                                        ChangeStatusPublicationType.CLOSED.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
+                                if (response.containsKey(MapResponseConstants.RESPONSE)) {
+                                    logger.info("Publication was finished successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    detailsPublicationsMeli.setStatus((String) response.get(MapResponseConstants.RESPONSE));
+                                } else {
+                                    logger.warn("Publication was not finished. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    checkingProcessed.set(checkingProcessed.get() + 1);
+                                }
+                            } catch (Exception e) {
+                                logger.error("DetailsPublicationMeli with id: {}, idPublication: {} not cannot be closed.",
+                                        detailsPublicationsMeli.getId(), detailsPublicationsMeli.getIdPublicationMeli());
                                 checkingProcessed.set(checkingProcessed.get() + 1);
                             }
                         }
+                        detailsPublicationMeliRepository.save(detailsPublicationsMeli);
                     }
 
-                    // Voy a finalizar la publicacion
-                    if (checkingStockProcessor.getAction() == 1) {
-                      try {
-                          // aqui se le pasa el estado actual de la publicacion
-                          Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
-                                  ChangeStatusPublicationType.CLOSED.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
-                          if (response.containsKey(MapResponseConstants.RESPONSE)) {
-                              logger.info("Publication was finished successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                          } else {
-                              logger.warn("Publication was not finished. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                              checkingProcessed.set(checkingProcessed.get() + 1);
-                          }
-                      } catch (Exception e){
-                          logger.error("DetailsPublicationMeli with id: {}, idPublication: {} not cannot be closed.",
-                                  detailsPublicationsMeli.getId(), detailsPublicationsMeli.getIdPublicationMeli());
-                          checkingProcessed.set(checkingProcessed.get() + 1);
-                      }
-                    }
-                }
 
+                } else {
+                    // Reactivar las publicaciones con pausado especial y  desbloquear los item no publicados
+                    for (MercadoLibrePublications mercadoLibrePublications :
+                            meliPublications) {
+                        try {
+                            logger.info("Unlocking unpublished product for special paused or to delete with sku: {} ", mercadoLibrePublications.getSku());
 
-            } else {
-                // Reactivar las publicaciones con pausado especial y  desbloquear los item no publicados
-                for (MercadoLibrePublications mercadoLibrePublications :
-                        meliPublications) {
-                    try {
-                        logger.info("Unlocking unpublished product for special paused or to delete with sku: {} ", mercadoLibrePublications.getSku());
+                            if (checkingStockProcessor.getAction() == 1) {
+                                mercadoLibrePublications.setDeleted(1);
+                                mercadoLibrePublications.setSpecialPaused(1);
+                                logger.info("Marking unpublished product to delete with sku: {} ", mercadoLibrePublications.getSku());
+                            } else {
+                                mercadoLibrePublications.setDeleted(0);
+                                mercadoLibrePublications.setSpecialPaused(0);
+                                logger.info("Marking unpublished product to unlocking with sku: {} ", mercadoLibrePublications.getSku());
+                            }
 
-                        if (checkingStockProcessor.getAction() == 1) {
-                            mercadoLibrePublications.setDeleted(1);
-                            mercadoLibrePublications.setSpecialPaused(1);
-                            logger.info("Marking unpublished product to delete with sku: {} ", mercadoLibrePublications.getSku());
-                        } else {
-                            mercadoLibrePublications.setDeleted(0);
-                            mercadoLibrePublications.setSpecialPaused(0);
-                            logger.info("Marking unpublished product to unlocking with sku: {} ", mercadoLibrePublications.getSku());
+                            mercadoLibrePublishRepository.save(mercadoLibrePublications);
+                            logger.info("Unpublished product updated successfully with sku: {} ", mercadoLibrePublications.getSku());
+                        } catch (Exception e) {
+                            logger.error("Unlocking unpublished product not successfully with sku: {} ", mercadoLibrePublications.getSku());
+                            checkingProcessed.set(checkingProcessed.get() + 1);
                         }
 
-                        mercadoLibrePublishRepository.save(mercadoLibrePublications);
-                        logger.info("Unpublished product updated successfully with sku: {} ", mercadoLibrePublications.getSku());
-                    } catch (Exception e) {
-                        logger.error("Unlocking unpublished product not successfully with sku: {} ", mercadoLibrePublications.getSku());
-                        checkingProcessed.set(checkingProcessed.get() + 1);
                     }
 
-                }
+                    for (DetailsPublicationsMeli detailsPublicationsMeli :
+                            detailsPublications) {
 
-                for (DetailsPublicationsMeli detailsPublicationsMeli :
-                        detailsPublications) {
+                        // Comprobamos si está activa la publicacion, si lo está mandamos a pausar
+                        if (detailsPublicationsMeli.getStatus().equals(ChangeStatusPublicationType.PAUSED.getStatus())) {
+                            try {
+                                Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
+                                        ChangeStatusPublicationType.ACTIVE.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
+                                if (response.containsKey(MapResponseConstants.RESPONSE)) {
+                                    logger.info("Publication was reactivated successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    // Si se logro activar entonces se elimina el bloqueo especial y estaria disponible en el frontend
+                                    detailsPublicationsMeli.setSpecialPaused(0);
+                                    detailsPublicationsMeli.setStatus((String) response.get(MapResponseConstants.RESPONSE));
+                                    detailsPublicationMeliRepository.save(detailsPublicationsMeli);
 
-                    // Comprobamos si está activa la publicacion, si lo está mandamos a pausar
-                    if (detailsPublicationsMeli.getStatus().equals(ChangeStatusPublicationType.PAUSED.getStatus())) {
-                        try {
-                            Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
-                                    ChangeStatusPublicationType.ACTIVE.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
-                            if (response.containsKey(MapResponseConstants.RESPONSE)) {
-                                logger.info("Publication was reactivated successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                                // Si se logro activar entonces se elimina el bloqueo especial y estaria disponible en el frontend
-                                detailsPublicationsMeli.setSpecialPaused(0);
-                                detailsPublicationMeliRepository.save(detailsPublicationsMeli);
-
-                            } else {
+                                } else {
+                                    logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    checkingProcessed.set(checkingProcessed.get() + 1);
+                                }
+                            } catch (Exception e) {
                                 logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
                                 checkingProcessed.set(checkingProcessed.get() + 1);
                             }
-                        }catch (Exception e) {
-                            logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                            checkingProcessed.set(checkingProcessed.get() + 1);
                         }
-                    }
 
+                    }
+                }
+                if (checkingProcessed.get() <= 0) {
+                    // Deleting of checking table
+                    logger.info("Deleting checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
+                    checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
+                    logger.info("Deleted checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
+                } else {
+                    logger.info("checkingStockProcessor with sku: {}, not deleted by counter: {}", checkingStockProcessor.getSku(), checkingProcessed.get());
                 }
             }
-            if (checkingProcessed.get() <= 0) {
-                // Deleting of checking table
-                logger.info("Deleting checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
-                checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
-                logger.info("Deleted checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
-            } else {
-                logger.info("checkingStockProcessor with sku: {}, not deleted by counter: {}", checkingStockProcessor.getSku(), checkingProcessed.get());
-            }
+
         }
     }
 }

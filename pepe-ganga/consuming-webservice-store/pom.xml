@@ -77,7 +77,7 @@
 
 	<!-- tag::profile[] -->
 	<profiles>
-		<profile>
+	<!--	<profile>
 			<id>java11</id>
 			<activation>
 				<jdk>[11,)</jdk>
@@ -89,7 +89,7 @@
 					<artifactId>jaxb-runtime</artifactId>
 				</dependency>
 			</dependencies>
-		</profile>
+		</profile> -->
 		<profile>
 			<id>dev</id>
 			<activation>
