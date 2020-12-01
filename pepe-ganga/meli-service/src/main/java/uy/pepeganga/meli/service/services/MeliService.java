@@ -14,10 +14,7 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.exceptions.TokenException;
-import uy.pepeganga.meli.service.models.ApiMeliModelException;
-import uy.pepeganga.meli.service.models.DetailsModelResponse;
-import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
-import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.MapResponseConstants;
@@ -467,7 +464,7 @@ public class MeliService  implements IMeliService{
              }
             return response;
          }catch (Exception e){
-             logger.error("Error storing in Data Base:", e.getStackTrace());
+             logger.error("Error storing in Data Base:", e.getMessage());
              response.put(ActionResult.DATABASE_ERROR.getValue(), "Error storing in database");
              return response;
          }
@@ -738,19 +735,20 @@ public class MeliService  implements IMeliService{
             }
             return response;
         }catch (Exception e){
-            logger.error(String.format("Error of systems "), e.getStackTrace());
+            logger.error(String.format("Error of systems "), e.getMessage());
             response.put(ActionResult.ERROR.getValue(), String.format("Error of systems: {}: ", e.getMessage()));
             return response;
         }
     }
 
     @Override
-    public boolean updateStock(List<uy.com.pepeganga.business.common.entities.Item> items) {
+    public Boolean updateStock(List<Pair> pairs) {
+        logger.info(" Begin updating of stock in Mercado Libre");
         AtomicBoolean isGood = new AtomicBoolean(true);
         try {
-            items.forEach(prod -> {
+            pairs.forEach(pair -> {
                 List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
-                detailsList = detailsPublicationRepository.findAllBySku(prod.getSku());
+                detailsList = detailsPublicationRepository.findAllBySku(pair.getSku());
                 List<SellerAccount> accountsMeli = new ArrayList<>();
                 if(detailsList != null) {
                     detailsList.forEach(d -> {
@@ -765,8 +763,10 @@ public class MeliService  implements IMeliService{
                                         accountsMeli.add(seller.get());
                                         //Actualizo stock en ML
                                         ChangeStockRequest request = new ChangeStockRequest();
-                                        request.setAvailable_quantity((int) prod.getStockActual());
+                                        request.setAvailable_quantity(pair.getStock());
+                                        logger.info(" Updating publication: {} with stock: {} in Mercado Libre", d.getIdPublicationMeli(), pair.getStock());
                                         apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
+                                        logger.info(" Publication updated successfully...");
                                     }
                                 } catch (ApiException e) {
                                     logger.error(" Error updating stock in mercado libre, Methods: updateStock(), {}", e.getResponseBody());
@@ -786,7 +786,7 @@ public class MeliService  implements IMeliService{
                                     accountsMeli.add(seller1.get());
                                     //Actualizo stock en ML
                                     ChangeStockRequest request = new ChangeStockRequest();
-                                    request.setAvailable_quantity((int) prod.getStockActual());
+                                    request.setAvailable_quantity(pair.getStock());
                                     apiService.updateStock(request, seller1.get().getAccessToken(), d.getIdPublicationMeli());
                                 } catch (ApiException e) {
                                     logger.error(" Error updating stock in mercado libre, API: call to ML, Methods: updateStock(), {}", e.getResponseBody());
@@ -803,7 +803,7 @@ public class MeliService  implements IMeliService{
                 }
             });
         }catch (Exception e){
-            logger.error(" Error getting publications of Database in the Detail Publications Meli table, Methods: updateStock(), {}", e.getStackTrace());
+            logger.error(" Error getting publications of Database in the Detail Publications Meli table, Methods: updateStock(), {}", e.getMessage());
             isGood.set(false);
         }
         if(isGood.get())
@@ -873,7 +873,7 @@ public class MeliService  implements IMeliService{
                 return response;
             }
         }catch (Exception e){
-            logger.error(ActionResult.DATABASE_ERROR.getValue(), e.getStackTrace());
+            logger.error(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
             response.put(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
         }
         return response;

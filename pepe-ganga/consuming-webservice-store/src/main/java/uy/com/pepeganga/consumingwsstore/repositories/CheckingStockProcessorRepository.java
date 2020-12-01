@@ -6,4 +6,5 @@ import uy.com.pepeganga.business.common.entities.CheckingStockProcessor;
 
 @Repository
 public interface CheckingStockProcessorRepository extends JpaRepository<CheckingStockProcessor, Integer> {
+    public CheckingStockProcessor findBySku(String sku);
 }

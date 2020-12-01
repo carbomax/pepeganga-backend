@@ -112,7 +112,7 @@ public class StockProcessorService implements IStockProcessorService {
                     for (DetailsPublicationsMeli detailsPublicationsMeli :
                             detailsPublications) {
                         // se marca como pausado especial aunque no se pueda pausar en mercado libre.
-                            detailsPublicationsMeli.setSpecialPaused(1);
+                        detailsPublicationsMeli.setSpecialPaused(1);
 
                         // Voy a pausar
                         if (checkingStockProcessor.getAction() == 0) {
