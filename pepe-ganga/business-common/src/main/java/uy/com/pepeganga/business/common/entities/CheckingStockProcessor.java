@@ -19,7 +19,7 @@ public class CheckingStockProcessor implements Serializable {
     private Integer realStock;
 
     // 0 - to paused, 1 - to delete
-    private Integer action;
+    private Integer action = 0;
 
     public CheckingStockProcessor(String sku, Integer expectedStock, Integer realStock) {
         this.sku = sku;
