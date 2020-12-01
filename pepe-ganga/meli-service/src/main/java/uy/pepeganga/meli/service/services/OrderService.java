@@ -426,13 +426,9 @@ public class OrderService implements IOrderService {
         ).collect(Collectors.toList()));
         if (!orderToUpdate.getStatus().equals(order.getStatus())) {
             StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(order.getOrderItems().get(0).getItem().getSellerSku());
-            StockProcessor stockProcessor = new StockProcessor();
-            if (Objects.isNull(stockProcessorFounded)) {
-                // Create new item to Stock Processor table.
-                stockProcessor.setExpectedStock(1);
-                stockProcessor.setSku(order.getOrderItems().get(0).getItem().getSellerSku());
-                stockProcessor = stockProcessorRepository.save(stockProcessor);
-            } else {
+
+            if (Objects.nonNull(stockProcessorFounded)) {
+                StockProcessor stockProcessor = new StockProcessor();
                 // Add 1 to expected Stock.
                 if (order.getStatus().equals(OrderStatusType.PAID.getStatus())) {
                     stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
@@ -444,9 +440,10 @@ public class OrderService implements IOrderService {
                     stockProcessor =stockProcessorRepository.save(stockProcessorFounded);
                 }
 
+                updateCheckingStockProcessor(stockProcessor);
             }
 
-            updateCheckingStockProcessor(stockProcessor);
+
         }
         ordersRepository.save(transformDateOrderCreated(orderToUpdate));
     }
@@ -523,19 +520,16 @@ public class OrderService implements IOrderService {
                 // Update stock
                 order.getOrderItems().forEach(dmOrderItems -> {
                     StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(dmOrderItems.getItem().getSellerSku());
-                    StockProcessor stockProcessor = new StockProcessor();
-                    if (Objects.isNull(stockProcessorFounded)) {
-                        // Create new item to Stock Processor table
-                        stockProcessor.setExpectedStock(1);
-                        stockProcessor.setSku(dmOrderItems.getItem().getSellerSku());
-                        stockProcessor = stockProcessorRepository.save(stockProcessor);
-                    } else {
+
+                    if (Objects.nonNull(stockProcessorFounded)) {
+                        StockProcessor processor = new StockProcessor();
                         // Add 1 to expected Stock.
                         stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
-                        stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
+                        processor = stockProcessorRepository.save(stockProcessorFounded);
+                        // updating checking table to scheduler
+                        updateCheckingStockProcessor(processor);
                     }
-                    // updating checking table to scheduler
-                    updateCheckingStockProcessor(stockProcessor);
+
 
                 });
 
