@@ -39,8 +39,8 @@ public class OrderController {
     public ResponseEntity<Page<MeliOrders>> getAllOrdersByProfile(@PathVariable Integer profileId, @RequestParam List<String> statusFilter,
                                                                   @RequestParam(defaultValue = "") String nameClient,
                                                                   @RequestParam(defaultValue = "0") Long dateFrom,  @RequestParam(defaultValue = "99999999") Long dateTo,
-                                                                  @RequestParam int page, @RequestParam int size){
-        return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, dateFrom, dateTo, page, size), HttpStatus.OK);
+                                                                  @RequestParam int page, @RequestParam int size, @RequestParam List<String> operatorBusinessStatus){
+        return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, dateFrom, dateTo, page, size, operatorBusinessStatus), HttpStatus.OK);
     }
 
     @PutMapping("/update-carrier/{orderId}/{carrierId}")
