@@ -56,6 +56,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	@Autowired
 	DetailsPublicationsMeliRepository detailsPublicationsMeliRepository;
 
+	@Autowired
+	CheckingStockProcessorRepository checkingStockRepo;
+
 	// Method to fill the details of marketplace card
 	@Override
 	public MarketplaceDetails getDetailsMarketplaces(Integer idProfile) {
@@ -502,6 +505,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 			List<DMDetailsPublicationsMeli> publicationsMeliGrids =  new ArrayList<>();
 			detailsPublication.getContent().forEach(details -> {
+			if(itemService.findItemById(details.getSku()).isPresent()) {
 				DMDetailsPublicationsMeli publicationsMeliGrid = new DMDetailsPublicationsMeli();
 				publicationsMeliGrid.setAccountName(
 						Objects.requireNonNull(profile.get().getSellerAccounts()
@@ -526,6 +530,17 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setCurrentStock(itemService.findItemById(details.getSku()).get().getStockActual());
 				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
 				publicationsMeliGrids.add(publicationsMeliGrid);
+				}
+				else{
+					CheckingStockProcessor checking = checkingStockRepo.findBySku(details.getSku());
+					if(checking == null) {
+						checking = new CheckingStockProcessor();
+					}
+					checking.setRealStock(0);
+					checking.setExpectedStock(0);
+					checking.setAction(1);
+					checkingStockRepo.save(checking);
+				}
 
 			});
 

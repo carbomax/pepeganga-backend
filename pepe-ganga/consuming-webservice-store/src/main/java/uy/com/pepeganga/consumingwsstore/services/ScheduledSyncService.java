@@ -80,7 +80,8 @@ public class ScheduledSyncService implements IScheduledSyncService{
     public void syncDataBase(){
 
         try {
-            //Create sincronization logs
+            //Create synchronization logs
+            logger.info("Starting synchronization");
             UpdatesOfSystem updatesSystem = new UpdatesOfSystem();
             updatesSystem.setStartDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
             data = updateSysRepo.save(updatesSystem);
@@ -122,6 +123,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     }
 
     private boolean deleteTemporalData() {
+        logger.info("Starting to delete temporal tables");
         try {
             if (tempItemRepo.count() != 0) {
                 tempItemRepo.deleteAll();
@@ -141,6 +143,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             if (tempFamilyRepo.count() != 0) {
                 tempFamilyRepo.deleteAll();
             }
+            logger.info("Table deletion completed");
             return true;
         }catch (Exception e) {
             logger.error(" Error deleting temporal tables {}", e.getMessage());
@@ -150,6 +153,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     }
 
     private boolean insertTemporalData(String type) {
+        logger.info("Starting to insert data in temporal table");
         try {
             if (type.equals("brand"))
                 brandService.storeBrand();
