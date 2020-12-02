@@ -25,6 +25,7 @@ import uy.pepeganga.meli.service.models.orders.DMOrderShipping;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
 import uy.pepeganga.meli.service.utils.MeliUtils;
+import uy.pepeganga.meli.service.utils.OperatorBusinessStatusType;
 import uy.pepeganga.meli.service.utils.OrderStatusType;
 
 import java.util.*;
@@ -129,7 +130,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size) {
+    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus) {
         Optional<Profile> profile = profileRepository.findById(profileId);
 
         if (profile.isEmpty()) {
@@ -141,8 +142,26 @@ public class OrderService implements IOrderService {
                     accounts.add(String.valueOf(sellerAccount.getUserId()));
                 }
             });
-            Page<MeliOrders> orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), dateFrom, dateTo, PageRequest.of(page, size));
+            List<Integer> operatorBssStatus = new ArrayList<>();
+            if(operatorBusinessStatus.isEmpty()){
+                operatorBssStatus.add(OperatorBusinessStatusType.IN_PROCESS.getCode());
+                operatorBssStatus.add(OperatorBusinessStatusType.UNDELIVERED.getCode());
+                operatorBssStatus.add(OperatorBusinessStatusType.DELIVERED.getCode());
+            } else {
+                try {
+                    operatorBusinessStatus.forEach(s -> operatorBssStatus.add(OperatorBusinessStatusType.ofByStatus(s).getCode()));
+                } catch (IllegalArgumentException e) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            String.format("Operator business status not corrects. Try with : [ %s, %s, %s ]",
+                                    OperatorBusinessStatusType.IN_PROCESS.getStatus(),
+                                    OperatorBusinessStatusType.UNDELIVERED.getStatus(),
+                                    OperatorBusinessStatusType.DELIVERED.getStatus()));
+                }
 
+
+            }
+
+            Page<MeliOrders> orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
             List<Long> shipments = new ArrayList<>();
             orders.getContent().forEach(order -> {
                 if (order.getShippingId() != null && order.getShippingId() > 0) {
@@ -407,13 +426,9 @@ public class OrderService implements IOrderService {
         ).collect(Collectors.toList()));
         if (!orderToUpdate.getStatus().equals(order.getStatus())) {
             StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(order.getOrderItems().get(0).getItem().getSellerSku());
-            StockProcessor stockProcessor = new StockProcessor();
-            if (Objects.isNull(stockProcessorFounded)) {
-                // Create new item to Stock Processor table.
-                stockProcessor.setExpectedStock(1);
-                stockProcessor.setSku(order.getOrderItems().get(0).getItem().getSellerSku());
-                stockProcessor = stockProcessorRepository.save(stockProcessor);
-            } else {
+
+            if (Objects.nonNull(stockProcessorFounded)) {
+                StockProcessor stockProcessor = new StockProcessor();
                 // Add 1 to expected Stock.
                 if (order.getStatus().equals(OrderStatusType.PAID.getStatus())) {
                     stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
@@ -425,9 +440,10 @@ public class OrderService implements IOrderService {
                     stockProcessor =stockProcessorRepository.save(stockProcessorFounded);
                 }
 
+                updateCheckingStockProcessor(stockProcessor);
             }
 
-            updateCheckingStockProcessor(stockProcessor);
+
         }
         ordersRepository.save(transformDateOrderCreated(orderToUpdate));
     }
@@ -504,19 +520,16 @@ public class OrderService implements IOrderService {
                 // Update stock
                 order.getOrderItems().forEach(dmOrderItems -> {
                     StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(dmOrderItems.getItem().getSellerSku());
-                    StockProcessor stockProcessor = new StockProcessor();
-                    if (Objects.isNull(stockProcessorFounded)) {
-                        // Create new item to Stock Processor table
-                        stockProcessor.setExpectedStock(1);
-                        stockProcessor.setSku(dmOrderItems.getItem().getSellerSku());
-                        stockProcessor = stockProcessorRepository.save(stockProcessor);
-                    } else {
+
+                    if (Objects.nonNull(stockProcessorFounded)) {
+                        StockProcessor processor = new StockProcessor();
                         // Add 1 to expected Stock.
                         stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
-                        stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
+                        processor = stockProcessorRepository.save(stockProcessorFounded);
+                        // updating checking table to scheduler
+                        updateCheckingStockProcessor(processor);
                     }
-                    // updating checking table to scheduler
-                    updateCheckingStockProcessor(stockProcessor);
+
 
                 });
 

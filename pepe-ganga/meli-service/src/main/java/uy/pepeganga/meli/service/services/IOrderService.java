@@ -15,7 +15,7 @@ public interface IOrderService {
     Object delete();
 
     // Real implementation
-    Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size);
+    Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus);
 
     boolean updateCarrier(Long orderId, int carrierId);
 

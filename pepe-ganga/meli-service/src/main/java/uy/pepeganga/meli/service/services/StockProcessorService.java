@@ -72,13 +72,10 @@ public class StockProcessorService implements IStockProcessorService {
         logger.info("Processing checking stock... sku: {}, expectedStock: {}, realStock: {}, action: {} ",
                 checkingStockProcessor.getSku(), checkingStockProcessor.getExpectedStock(), checkingStockProcessor.getRealStock(), checkingStockProcessor.getAction());
 
-        StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(checkingStockProcessor.getSku());
-        AtomicInteger checkingProcessed = new AtomicInteger(0);
+            AtomicInteger checkingProcessed = new AtomicInteger(0);
 
-        if (stockProcessorFounded != null) {
-
-            List<DetailsPublicationsMeli> detailsPublications = detailsPublicationMeliRepository.findAllBySku(stockProcessorFounded.getSku());
-            List<MercadoLibrePublications> meliPublications = mercadoLibrePublishRepository.findAllBySku(stockProcessorFounded.getSku());
+            List<DetailsPublicationsMeli> detailsPublications = detailsPublicationMeliRepository.findAllBySku(checkingStockProcessor.getSku());
+            List<MercadoLibrePublications> meliPublications = mercadoLibrePublishRepository.findAllBySku(checkingStockProcessor.getSku());
 
             if (detailsPublications.isEmpty() && meliPublications.isEmpty()) {
                 logger.info("Deleting checking stock processor by empty both lists: detailsPublications and meliPublications. sku: {}", checkingStockProcessor.getSku());
@@ -88,7 +85,7 @@ public class StockProcessorService implements IStockProcessorService {
             } else {
 
                 // Check if this is in the risk zone
-                if ((stockProcessorFounded.getRealStock() - stockProcessorFounded.getExpectedStock()) <= StockProcessorService.RISK) {
+                if ((checkingStockProcessor.getRealStock() - checkingStockProcessor.getExpectedStock()) <= StockProcessorService.RISK) {
                     // Pausar con estado especial todas las publicaciones y  bloquear los item no publicados correspondientes.
 
                     // bloqueamos o mandamos a eliminar todos los items no publicados
@@ -217,6 +214,5 @@ public class StockProcessorService implements IStockProcessorService {
                 }
             }
 
-        }
     }
 }
