@@ -403,15 +403,24 @@ public class OrderService implements IOrderService {
         DMOrder order = mapper.convertValue(apiService.getOrderByNotificationResource(notification.getResource(),
                 sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrder.class);
 
-        if (ordersRepository.existsByOrderId(String.valueOf(order.getId()))) {
-            // update order
-            updateMeliOrder(order);
-
-        } else {
-            // create order
-            this.createMeliOrder(order);
+        if(Objects.isNull(order)){
+            throw  new OrderCreateException(String.format("Order not obtained by resource: %s", notification.getResource()));
         }
-        return order;
+        // Exist publication for this order
+        if(detailsPublicationMeliRepository.existsByIdPublicationMeli(order.getOrderItems().get(0).getItem().getId())){
+            if (ordersRepository.existsByOrderId(String.valueOf(order.getId()))) {
+                // update order
+                updateMeliOrder(order);
+
+            } else {
+                // create order
+                this.createMeliOrder(order);
+            }
+            return order;
+        } else {
+            throw  new OrderCreateException(String.format("Item with id: %s is not our", order.getOrderItems().get(0).getItem().getId()));
+        }
+
     }
 
     private void updateMeliOrder(DMOrder order) {
@@ -421,9 +430,6 @@ public class OrderService implements IOrderService {
         orderToUpdate.setAmountTaxes(order.getTaxes().getAmount());
         orderToUpdate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
         orderToUpdate.setPaidAmount(order.getPaidAmount());
-        orderToUpdate.setPayments(order.getPayments().stream().map(dmOrderPayment -> new MeliOrderPayment(dmOrderPayment.getId(), dmOrderPayment.getTransactionAmount(),
-                dmOrderPayment.getCurrencyId(), dmOrderPayment.getStatus())
-        ).collect(Collectors.toList()));
         if (!orderToUpdate.getStatus().equals(order.getStatus())) {
             StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(order.getOrderItems().get(0).getItem().getSellerSku());
 
@@ -515,6 +521,10 @@ public class OrderService implements IOrderService {
                 orderToCreate.setPaidAmount(order.getPaidAmount());
                 orderToCreate.setAmountTaxes(order.getTaxes().getAmount());
                 orderToCreate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
+                orderToCreate.setDateCreatedMeli(order.getDateCreated());
+                Carrier carrier = new Carrier();
+                carrier.setId(0);
+                orderToCreate.setCarrier(carrier);
                 ordersRepository.save(orderToCreate);
 
                 // Update stock
