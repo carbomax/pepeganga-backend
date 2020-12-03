@@ -18,9 +18,9 @@ public class DMOrder {
 
     private List<DMOrderItems> orderItems;
 
-    private double totalAmount;
+    private double totalAmount = 0;
 
-    private double paidAmount;
+    private double paidAmount = 0;
 
     private String currencyId;
 

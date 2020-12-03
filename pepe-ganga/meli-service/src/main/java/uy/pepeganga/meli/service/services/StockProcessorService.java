@@ -10,6 +10,7 @@ import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.StockProcessor;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
+import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
 import uy.pepeganga.meli.service.repository.CheckingStockProcessorRepository;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
@@ -131,15 +132,21 @@ public class StockProcessorService implements IStockProcessorService {
                         // Voy a finalizar la publicacion
                         if (checkingStockProcessor.getAction() == 1) {
                             try {
+                                detailsPublicationsMeli.setDeleted(1);
                                 // aqui se le pasa el estado actual de la publicacion
-                                Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
-                                        ChangeStatusPublicationType.CLOSED.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
-                                if (response.containsKey(MapResponseConstants.RESPONSE)) {
-                                    logger.info("Publication was finished successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                                    detailsPublicationsMeli.setStatus((String) response.get(MapResponseConstants.RESPONSE));
+                                if(!detailsPublicationsMeli.getStatus().equals(MeliStatusPublications.FAIL.getValue()) &&
+                                        !detailsPublicationsMeli.getStatus().equals(ChangeStatusPublicationType.CLOSED.getStatus())){
+                                    Map<String, Object> response = meliService.changeStatusPublication(detailsPublicationsMeli.getAccountMeli(),
+                                            ChangeStatusPublicationType.CLOSED.getCode(), detailsPublicationsMeli.getIdPublicationMeli());
+                                    if (response.containsKey(MapResponseConstants.RESPONSE)) {
+                                        logger.info("Publication was finished successfully. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                        detailsPublicationsMeli.setStatus((String) response.get(MapResponseConstants.RESPONSE));
+                                    } else {
+                                        logger.warn("Publication was not finished. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                        checkingProcessed.set(checkingProcessed.get() + 1);
+                                    }
                                 } else {
-                                    logger.warn("Publication was not finished. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
-                                    checkingProcessed.set(checkingProcessed.get() + 1);
+                                    logger.warn("Publication was not finished by status. Publication Id: {}, status: {}", detailsPublicationsMeli.getIdMLPublication(), MeliStatusPublications.FAIL.getValue());
                                 }
                             } catch (Exception e) {
                                 logger.error("DetailsPublicationMeli with id: {}, idPublication: {} not cannot be closed.",
