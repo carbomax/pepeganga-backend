@@ -258,7 +258,14 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			{
 				if(!images.isEmpty()) {
 					List<Image> imagesList = product.getImages();
-					imagesList.addAll(images);
+					images.forEach(ima ->{
+						String[] parts = ima.getPhotos().split("_");
+						int pos = parts[0].lastIndexOf("/");
+						String sku_compare = parts[0].substring(pos+1);
+						if(sku_compare.equals(sku)) {
+							imagesList.add(ima);
+						}
+					});
 					product.setImages(imagesList);
 				}
 				if(!description.isBlank()) {

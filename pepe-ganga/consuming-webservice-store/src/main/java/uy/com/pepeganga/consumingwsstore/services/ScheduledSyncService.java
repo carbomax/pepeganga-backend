@@ -163,7 +163,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 categoryService.storeCategories();
             if (type.equals("item"))
                 itemService.storeItems();
-
+            logger.info("Insert data in temporal table completed....");
             return true;
         }catch (Exception e){
             logger.error(String.format("Error inserting temporal %s tables {}", type), e.getMessage());
@@ -187,7 +187,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
     private boolean synchronizeDatas() {
         AtomicBoolean exist = new AtomicBoolean(false);
-
+        logger.info("Starting to synchronization Data method");
         /** ************ Operation with Item Table ********** **/
         //Spliting Item Table
         List<TempItem> tempItems = new ArrayList<>();
@@ -362,10 +362,12 @@ public class ScheduledSyncService implements IScheduledSyncService{
             return false;
         }
         /** *********  All OK  ************** **/
+        logger.info("Synchronization Data method completed....");
         return true;
     }
 
     private boolean updateStockProvided(){
+        logger.info("Starting to update stock provider");
         List<StockProcessor> stockList = new ArrayList<>();
         stockList.addAll(stockProcRepo.findAll());
         List<Item> itemsU = new ArrayList<>();
@@ -502,7 +504,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 logger.info("Enviando al checking para eliminar item con sku: {}", s.getSku());
             }
         });
-
+        logger.info("Updating checking Stock and stock product table");
         //Actualizar ambas tablas en la base datos
         if(!checkingList.isEmpty()) {
             checkingList.forEach(check -> {
@@ -518,6 +520,8 @@ public class ScheduledSyncService implements IScheduledSyncService{
         if(!stockToAddOrUpdate.isEmpty())
             stockProcRepo.saveAll(stockToAddOrUpdate);
 
+        logger.info("Checking Stock and stock product table completed...");
+        logger.info("Starting update publications in Mercado Libre");
         //Actualiza stock en el sistema y en Mercado Libre
         if(!initialStockEmpty) {
             if(!updateStockOfProductsMeli(itemsU)){
@@ -527,6 +531,8 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 finishedWithError = true;
             }
         }
+        logger.info("Update publications in Mercado Libre Completed...");
+
         if(finishedWithError){ return false;}
         else {
             updateTableLogs("Synchronization completed...", false);
