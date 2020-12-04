@@ -308,54 +308,68 @@ public class MeliService  implements IMeliService{
             apiService.getTokenByRefreshToken(accountFounded.get());
             accountFounded = sellerAccountRepository.findById(product.getAccountMeli());
         }
+            //Encontrar el producto en la base datos
+            String sku = product.getSku();
+            DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, product.getAccountMeli());
 
-            DescriptionRequest descriptionRequest = new DescriptionRequest();
-            descriptionRequest.setDescription(product.getDescription());
-            response.put("response", apiService.updateDescription(descriptionRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+            if(detailP != null) {
+                if(detailP.getDescription().trim().equals(product.getDescription().trim())) {
+                    DescriptionRequest descriptionRequest = new DescriptionRequest();
+                    descriptionRequest.setDescription(product.getDescription());
+                    response.put("response", apiService.updateDescription(descriptionRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+                }
+                //Para las imagenes
+                List<Source> sources = new ArrayList<>();
+                List<ImagePublicationMeli> newImageList = new ArrayList<>();
+                product.getImages().forEach(i -> {
+                    if(i.getId() != null) {
+                        newImageList.add(i);
+                    }
+                });
 
-            //Para las imagenes
-            Source source = new Source();
-            List<Source> sources = new ArrayList<>();
+                //Ordeno el arreglo segun orden de ubicacion de las imagenes
+                List<ImagePublicationMeli> imageOrderList = BurbbleSort.burbbleLowerToHigherByImagesDetails(newImageList);
+                for (ImagePublicationMeli image : imageOrderList) {
+                    Source source = new Source();
+                    source.setSource(image.getPhotos());
+                    sources.add(source);
+                }
 
-            //Ordeno el arreglo segun orden de ubicacion de las imagenes
-            List<ImagePublicationMeli> newImageList= BurbbleSort.burbbleLowerToHigherByImagesDetails(product.getImages());
-            for (ImagePublicationMeli image: newImageList) {
-                source.setSource(image.getPhotos());
-                sources.add(source);
+                //Producto Con ventas
+                if (product.getSaleStatus() == 1) {
+                    PropertiesWithSalesRequest withSaleRequest = new PropertiesWithSalesRequest();
+                    withSaleRequest.setPrice(product.getPricePublication());
+                    withSaleRequest.setPictures(sources);
+                    response.put("response", apiService.updatePropertiesWithSales(withSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+
+                    //Producto Sin ventas
+                } else if (product.getSaleStatus() == 0) {
+                    PropertiesWithoutSalesRequest withoutSaleRequest = new PropertiesWithoutSalesRequest();
+                    withoutSaleRequest.setPrice(product.getPricePublication());
+                    withoutSaleRequest.setPictures(sources);
+                    withoutSaleRequest.setTitle(product.getTitle());
+                    response.put("response", apiService.updatePropertiesWithoutSales(withoutSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+                }
+
+                //Construyo objeto para retornar
+                if (response.containsKey("response")) {
+                    Object obj = response.get("response");
+                    DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
+                    detailP.setLastUpgrade(detailM.getLastUpdated());
+                    detailP.setPricePublication(detailM.getPrice());
+                    detailP.setMargin(product.getMargin());
+                    detailsPublicationRepository.save(detailP);
+                    productResponse = product;
+                    productResponse.setLastUpgrade(detailM.getLastUpdated());
+                    return productResponse;
+                } else {
+                    logger.error("Fallo actualizando producto en Mercado Libre");
+                    throw new ApiException(HttpStatus.CONFLICT.value(), "Fallo actualizando producto en Mercado Libre");
+                }
             }
-
-            //Producto Con ventas
-            if (product.getSaleStatus() == 1) {
-                PropertiesWithSalesRequest withSaleRequest = new PropertiesWithSalesRequest();
-                withSaleRequest.setPrice(product.getPricePublication());
-                withSaleRequest.setPictures(sources);
-                response.put("response", apiService.updatePropertiesWithSales(withSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
-
-             //Producto Sin ventas
-            } else if (product.getSaleStatus() == 0) {
-                PropertiesWithoutSalesRequest withoutSaleRequest = new PropertiesWithoutSalesRequest();
-                withoutSaleRequest.setPrice(product.getPricePublication());
-                withoutSaleRequest.setPictures(sources);
-                withoutSaleRequest.setTitle(product.getTitle());
-                response.put("response", apiService.updatePropertiesWithoutSales(withoutSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
-            }
-
-            //Construyo objeto para retornar
-            if(response.containsKey("response")){
-                Object obj = response.get("response");
-                DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
-                String sku = product.getSku();
-                DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, product.getAccountMeli());
-                detailP.setLastUpgrade(detailM.getLastUpdated());
-                detailP.setPricePublication(detailM.getPrice());
-                detailP.setMargin(product.getMargin());
-                detailsPublicationRepository.save(detailP);
-                productResponse = product;
-                productResponse.setLastUpgrade(detailM.getLastUpdated());
-                return productResponse;
-            }
-            else{
-                throw new ApiException(HttpStatus.CONFLICT.value(), "Fallo actualizando producto en Mercado Libre");
+            else {
+                logger.error("No existen publicaciones para el producto a actualizar. Sincronice sus publicaciones.");
+                throw new ApiException(HttpStatus.CONFLICT.value(), "No existen publicaciones para el producto a actualizar. Sincronice sus publicaciones.");
             }
         }
         catch (TokenException e) {
