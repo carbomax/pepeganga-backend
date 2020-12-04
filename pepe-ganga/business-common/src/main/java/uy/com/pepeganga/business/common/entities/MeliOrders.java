@@ -22,9 +22,9 @@ public class MeliOrders implements Serializable {
 
     private String dateClosed;
 
-    private Double totalAmount;
+    private Double totalAmount = 0.0;
 
-    private Double paidAmount;
+    private Double paidAmount = 0.0;
 
     private String currencyId;
 
@@ -50,6 +50,8 @@ public class MeliOrders implements Serializable {
     private Integer operatorBusinessStatus = 0;
 
     private String operatorNameBss;
+
+    private String dateCreatedMeli;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -272,5 +274,13 @@ public class MeliOrders implements Serializable {
 
     public void setOperatorNameBss(String operatorNameBss) {
         this.operatorNameBss = operatorNameBss;
+    }
+
+    public String getDateCreatedMeli() {
+        return dateCreatedMeli;
+    }
+
+    public void setDateCreatedMeli(String dateCreatedMeli) {
+        this.dateCreatedMeli = dateCreatedMeli;
     }
 }
