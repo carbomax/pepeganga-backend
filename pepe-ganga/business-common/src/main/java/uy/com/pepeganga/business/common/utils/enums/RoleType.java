@@ -4,7 +4,8 @@ public enum RoleType {
 
     ADMIN("ROLE_ADMIN"),
     SELLER("ROLE_SELLER"),
-    INVITED("ROLE_INVITED");
+    INVITED("ROLE_INVITED"),
+    OPERATOR("ROLE_OPERATOR");
 
     private String businessRole;
 

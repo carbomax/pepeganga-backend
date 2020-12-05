@@ -142,6 +142,7 @@ public class ApiService implements IApiService {
                 sellerAccountToUpdate.setSiteId(meliUserAccount.getSiteId());
                 sellerAccountToUpdate.setUserType(meliUserAccount.getUserType());
                 sellerAccountToUpdate.setPoints(meliUserAccount.getPoints());
+                sellerAccountToUpdate.setMe2(isMe2(meliUserAccount.getShippingModes()));
                 map.put("response", sellerAccountRepository.save(sellerAccountToUpdate));
             } catch (ApiException e) {
 
@@ -159,6 +160,7 @@ public class ApiService implements IApiService {
         return map;
     }
 
+
     @Override
     public SellerAccount getTokenByRefreshToken(SellerAccount account) throws TokenException {
 
@@ -173,12 +175,13 @@ public class ApiService implements IApiService {
             account.setExpiresIn(meliAutheticationResponse.getExpiresIn());
             account.setUserId(meliAutheticationResponse.getUserId());
             account.setRefreshToken(meliAutheticationResponse.getRefreshToken());
-            account.setExpirationDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().getMillis());
+            account.setExpirationDate(DateTimeUtilsBss.plusCurrentTimeMilleSeconds(account.getExpiresIn(), DateTimePlusType.MINUTE));
             account.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
 
             return sellerAccountRepository.save(account);
         } catch (Exception e) {
             if(e.getCause() instanceof  ApiException){
+                logger.error("Error refresh token with meli request Code: {}, ResponseBody: {}", ((ApiException) e.getCause()).getCode(), ((ApiException) e.getCause()).getResponseBody());
                 throw  new TokenException(((ApiException) e.getCause()).getCode(),((ApiException) e.getCause()).getResponseBody(), e.getCause());
             }
            throw  new TokenException(e.getMessage(), e);
@@ -195,6 +198,11 @@ public class ApiService implements IApiService {
     @Override
     public Object getOrderByNotificationResource(String notificationResource, String token) throws ApiException {
         return restClientApiUy.resourceGet(notificationResource, token);
+    }
+
+    @Override
+    public Object getShipmentOfOrder(Long shipmentId, String token) throws ApiException {
+        return restClientApiUy.resourceGet(String.format(ApiResources.SHIPMENTS + "/%d", shipmentId), token);
     }
 
     @Override
@@ -233,6 +241,11 @@ public class ApiService implements IApiService {
     }
 
     @Override
+    public Object updateStock(ChangeStockRequest request, String token, String idPublicationMeli) throws ApiException {
+        return restClientApiUy.resourcePut(String.format(ApiResources.ITEMS + "/%s", idPublicationMeli), token, request);
+    }
+
+    @Override
     public Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException {
         return restClientApiUy.resourcePost(String.format(ApiResources.ITEMS + "/%s" + "/relist", idPublicationMeli), token, request);
     }
@@ -249,6 +262,14 @@ public class ApiService implements IApiService {
            response.put(MELI_ERROR, e.getCause());
         }
         return response;
+    }
+
+    private int isMe2(List<String> shippingModes){
+        try {
+            return shippingModes.contains("me2") ? 1 : 0;
+        }catch (ClassCastException | NullPointerException e){
+            return 2;
+        }
     }
 }
 

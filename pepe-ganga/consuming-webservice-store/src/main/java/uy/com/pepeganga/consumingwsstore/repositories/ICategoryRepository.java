@@ -7,6 +7,6 @@ import uy.com.pepeganga.business.common.entities.*;
 
 
 @Repository
-public interface ICategoryRepository extends JpaRepository<Category, Integer>{
+public interface ICategoryRepository extends JpaRepository<Category, Short>{
 
 }

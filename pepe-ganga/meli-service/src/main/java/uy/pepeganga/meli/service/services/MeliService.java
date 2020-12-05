@@ -14,16 +14,14 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.exceptions.TokenException;
-import uy.pepeganga.meli.service.models.ApiMeliModelException;
-import uy.pepeganga.meli.service.models.DetailsModelResponse;
-import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
-import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
+import uy.pepeganga.meli.service.utils.MapResponseConstants;
 import uy.pepeganga.meli.service.utils.MeliUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,9 +53,6 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     ObjectMapper mapper;
-
-    private static final String ERROR = "error";
-    private static final String MELI_ERROR = "error_meli";
 
     @Override
     public SellerAccount createAccountByProfile(Integer profileId, SellerAccount sellerAccount) {
@@ -108,10 +103,10 @@ public class MeliService  implements IMeliService{
         Map<String, Object> response = new HashMap<>();
         try {
             if (accountFounded.isEmpty()) {
-                response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+                response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+            else if(MeliUtils.isExpiredToken(accountFounded.get())){
                 accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                 accountMeli = accountFounded;
             }
@@ -164,11 +159,11 @@ public class MeliService  implements IMeliService{
 
         }  catch (TokenException e) {
             logger.error(" Error getting token Meli Response: {}", e.getMessage());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
             return response;
         }catch (ApiException e) {
             logger.error(" Error in the system: {}", e.getResponseBody());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error en el sistema. Contacte al administrador del sistema"));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error en el sistema. Contacte al administrador del sistema"));
             return response;
         }
     }
@@ -309,58 +304,72 @@ public class MeliService  implements IMeliService{
         if (accountFounded.isEmpty()) {
             throw new ApiException(HttpStatus.NOT_FOUND.value(), String.format("No se encontro la cuenta: %s", product.getAccountName()));
         }
-        else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+        else if(MeliUtils.isExpiredToken(accountFounded.get())){
             apiService.getTokenByRefreshToken(accountFounded.get());
             accountFounded = sellerAccountRepository.findById(product.getAccountMeli());
         }
+            //Encontrar el producto en la base datos
+            String sku = product.getSku();
+            DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, product.getAccountMeli());
 
-            DescriptionRequest descriptionRequest = new DescriptionRequest();
-            descriptionRequest.setDescription(product.getDescription());
-            response.put("response", apiService.updateDescription(descriptionRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+            if(detailP != null) {
+                if(detailP.getDescription().trim().equals(product.getDescription().trim())) {
+                    DescriptionRequest descriptionRequest = new DescriptionRequest();
+                    descriptionRequest.setDescription(product.getDescription());
+                    response.put("response", apiService.updateDescription(descriptionRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+                }
+                //Para las imagenes
+                List<Source> sources = new ArrayList<>();
+                List<ImagePublicationMeli> newImageList = new ArrayList<>();
+                product.getImages().forEach(i -> {
+                    if(i.getId() != null) {
+                        newImageList.add(i);
+                    }
+                });
 
-            //Para las imagenes
-            Source source = new Source();
-            List<Source> sources = new ArrayList<>();
+                //Ordeno el arreglo segun orden de ubicacion de las imagenes
+                List<ImagePublicationMeli> imageOrderList = BurbbleSort.burbbleLowerToHigherByImagesDetails(newImageList);
+                for (ImagePublicationMeli image : imageOrderList) {
+                    Source source = new Source();
+                    source.setSource(image.getPhotos());
+                    sources.add(source);
+                }
 
-            //Ordeno el arreglo segun orden de ubicacion de las imagenes
-            List<ImagePublicationMeli> newImageList= BurbbleSort.burbbleLowerToHigherByImagesDetails(product.getImages());
-            for (ImagePublicationMeli image: newImageList) {
-                source.setSource(image.getPhotos());
-                sources.add(source);
+                //Producto Con ventas
+                if (product.getSaleStatus() == 1) {
+                    PropertiesWithSalesRequest withSaleRequest = new PropertiesWithSalesRequest();
+                    withSaleRequest.setPrice(product.getPricePublication());
+                    withSaleRequest.setPictures(sources);
+                    response.put("response", apiService.updatePropertiesWithSales(withSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+
+                    //Producto Sin ventas
+                } else if (product.getSaleStatus() == 0) {
+                    PropertiesWithoutSalesRequest withoutSaleRequest = new PropertiesWithoutSalesRequest();
+                    withoutSaleRequest.setPrice(product.getPricePublication());
+                    withoutSaleRequest.setPictures(sources);
+                    withoutSaleRequest.setTitle(product.getTitle());
+                    response.put("response", apiService.updatePropertiesWithoutSales(withoutSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
+                }
+
+                //Construyo objeto para retornar
+                if (response.containsKey("response")) {
+                    Object obj = response.get("response");
+                    DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
+                    detailP.setLastUpgrade(detailM.getLastUpdated());
+                    detailP.setPricePublication(detailM.getPrice());
+                    detailP.setMargin(product.getMargin());
+                    detailsPublicationRepository.save(detailP);
+                    productResponse = product;
+                    productResponse.setLastUpgrade(detailM.getLastUpdated());
+                    return productResponse;
+                } else {
+                    logger.error("Fallo actualizando producto en Mercado Libre");
+                    throw new ApiException(HttpStatus.CONFLICT.value(), "Fallo actualizando producto en Mercado Libre");
+                }
             }
-
-            //Producto Con ventas
-            if (product.getSaleStatus() == 1) {
-                PropertiesWithSalesRequest withSaleRequest = new PropertiesWithSalesRequest();
-                withSaleRequest.setPrice(product.getPricePublication());
-                withSaleRequest.setPictures(sources);
-                response.put("response", apiService.updatePropertiesWithSales(withSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
-
-             //Producto Sin ventas
-            } else if (product.getSaleStatus() == 0) {
-                PropertiesWithoutSalesRequest withoutSaleRequest = new PropertiesWithoutSalesRequest();
-                withoutSaleRequest.setPrice(product.getPricePublication());
-                withoutSaleRequest.setPictures(sources);
-                withoutSaleRequest.setTitle(product.getTitle());
-                response.put("response", apiService.updatePropertiesWithoutSales(withoutSaleRequest, accountFounded.get().getAccessToken(), product.getIdPublicationMeli()));
-            }
-
-            //Construyo objeto para retornar
-            if(response.containsKey("response")){
-                Object obj = response.get("response");
-                DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
-                String sku = product.getSku();
-                DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(sku, product.getAccountMeli());
-                detailP.setLastUpgrade(detailM.getLastUpdated());
-                detailP.setPricePublication(detailM.getPrice());
-                detailP.setMargin(product.getMargin());
-                detailsPublicationRepository.save(detailP);
-                productResponse = product;
-                productResponse.setLastUpgrade(detailM.getLastUpdated());
-                return productResponse;
-            }
-            else{
-                throw new ApiException(HttpStatus.CONFLICT.value(), "Fallo actualizando producto en Mercado Libre");
+            else {
+                logger.error("No existen publicaciones para el producto a actualizar. Sincronice sus publicaciones.");
+                throw new ApiException(HttpStatus.CONFLICT.value(), "No existen publicaciones para el producto a actualizar. Sincronice sus publicaciones.");
             }
         }
         catch (TokenException e) {
@@ -389,10 +398,10 @@ public class MeliService  implements IMeliService{
             DetailsPublicationsMeli details = detailsPublicationRepository.findByIdPublicationMeli(idPublication);
             if(Objects.isNull(details)){
                 logger.error("Detail Publication with id: {} not found", idPublication);
-                response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+                response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            if (statusPublication != ChangeStatusPublicationType.CLOSED.getStatus()) {
+            if (!statusPublication.equals(ChangeStatusPublicationType.CLOSED.getStatus())) {
                 var result = changeStatusPublication(accountId, 5, idPublication);
                 if(!result.containsKey("response")){
                     //Hubo un error que ya fue registrado en el metodo que se llamó
@@ -405,10 +414,10 @@ public class MeliService  implements IMeliService{
             Optional<SellerAccount> accountFounded = getAccountMeli(accountId, false);
             if (accountFounded.isEmpty()) {
                 logger.error("Account with id: {} not found", accountId);
-                response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+                response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 return response;
             }
-            else if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+            else if(MeliUtils.isExpiredToken(accountFounded.get())){
                 accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
             }
             Object result = apiService.deletePublication(request, accountFounded.get().getAccessToken(), idPublication);
@@ -424,24 +433,24 @@ public class MeliService  implements IMeliService{
                 }
             } else {
                 logger.error("Publication cannot be deleted by Mercado Libre, publicationId: {}", idPublication);
-                response.put(MELI_ERROR, ChangeStatusPublicationType.ofCode(-1).getStatus());
+                response.put(MapResponseConstants.MELI_ERROR, ChangeStatusPublicationType.ofCode(-1).getStatus());
             }
             return response;
         }catch (IllegalArgumentException e){
             logger.error("The status: {} you provide is not correct");
-            response.put(ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status that you provide is not correct")));
+            response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status that you provide is not correct")));
             return response;
         } catch (TokenException e) {
             logger.error(" Error getting token Meli Response: {}", e.getMessage());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
             return response;
         }catch (ApiException e) {
             if(e.getCode() == 409){
                 logger.error(String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication), e.getCode());
-                response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication)));
+                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication)));
             }else{
                 logger.error(String.format("Publication cannot be deleted, publicationId: {}", idPublication), e.getCode());
-                response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("Publication cannot be deleted, publicationId: {}", idPublication)));
+                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("Publication cannot be deleted, publicationId: {}", idPublication)));
             }
             return response;
         }
@@ -453,10 +462,11 @@ public class MeliService  implements IMeliService{
         try{
              Optional<DetailsPublicationsMeli> details = detailsPublicationRepository.findById(id);
              if(details.isPresent()){
+                 Map<String, Object> map = setProductToNopublishedStatus(details.get().getIdMLPublication(), States.NOPUBLISHED.getId());
                  details.get().setDeleted(1);
                  details.get().setIdMLPublication(-1);
                  detailsPublicationRepository.save(details.get());
-                 Map<String, Object> map = setProductToNopublishedStatus(details.get().getIdMLPublication(), States.NOPUBLISHED.getId());
+
                  if(map.containsKey("response")) {
                      response.put("response", "deleted");
                  }else{
@@ -468,7 +478,7 @@ public class MeliService  implements IMeliService{
              }
             return response;
          }catch (Exception e){
-             logger.error("Error storing in Data Base:", e.getStackTrace());
+             logger.error("Error storing in Data Base:", e.getMessage());
              response.put(ActionResult.DATABASE_ERROR.getValue(), "Error storing in database");
              return response;
          }
@@ -482,14 +492,14 @@ public class MeliService  implements IMeliService{
             DetailsPublicationsMeli details = detailsPublicationRepository.findByIdPublicationMeli(idPublication);
             if(Objects.isNull(details)){
                 logger.error("Detail Publication with id: {} not found", idPublication);
-                response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+                response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
             } else {
                 Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(accountId);
                 if (accountFounded.isEmpty()) {
                     logger.error("Account with id: {} not found", accountId);
-                    response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+                    response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
                 } else {
-                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                    if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
                     request.setListing_type_id("bronze");
@@ -502,11 +512,11 @@ public class MeliService  implements IMeliService{
                         details.setIdPublicationMeli(detailM.getIdPublication());
                         details.setLastUpgrade(detailM.getLastUpdated());
                         details.setPermalink(detailM.getPermalink());
-                        response.put("response", detailsPublicationRepository.save(details).getStatus().trim());
+                        response.put(MapResponseConstants.RESPONSE, detailsPublicationRepository.save(details).getStatus().trim());
                     }
                     else{
                         logger.error("The product do not republished");
-                        response.put(MELI_ERROR, new ApiMeliModelException(HttpStatus.NOT_MODIFIED.value(), String.format("The product do not republished")));
+                        response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(HttpStatus.NOT_MODIFIED.value(), String.format("The product do not republished")));
                     }
                 }
             }
@@ -514,16 +524,16 @@ public class MeliService  implements IMeliService{
         }
         catch (TokenException e) {
             logger.error(" Error getting token Meli Response: {}", e.getMessage());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
         }
         catch (ApiException e) {
             //if(e.getCode() == 400) ya esta eliminada
             logger.error(" Error With MErcado Libre API: {}", e.getMessage());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
         }
         catch (Exception e){
             logger.error(" Error of the system: {}", e.getMessage());
-            response.put(ERROR, new ApiMeliModelException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+            response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
         return response;
     }
@@ -549,7 +559,7 @@ public class MeliService  implements IMeliService{
         } catch (ApiException e) {
             //comprobar los codigos de Token Vencido
             logger.error(" Error obteniendo el token de seguridad: {}", e.getResponseBody());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
             return response;
         }
     }
@@ -562,7 +572,7 @@ public class MeliService  implements IMeliService{
         } catch (ApiException e) {
             //comprobar los codigos de Token Vencido
             logger.error(" Error obteniendo el token de seguridad: {}", e.getResponseBody());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
             return response;
         }
     }
@@ -575,7 +585,7 @@ public class MeliService  implements IMeliService{
         } catch (ApiException e) {
             //comprobar los codigos de Token Vencido
             logger.error(" Error obteniendo el token de seguridad: {}", e.getResponseBody());
-            response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+            response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
             return response;
         }
     }
@@ -590,39 +600,39 @@ public class MeliService  implements IMeliService{
             request.setStatus(ChangeStatusPublicationType.ofCode(status).getStatus());
         } catch (IllegalArgumentException e){
             logger.error("The status: {} you provide is not correct", status);
-             response.put(ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status: %d you provide is not correct", status)));
+             response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status: %d you provide is not correct", status)));
             return response;
         }
 
         DetailsPublicationsMeli details = detailsPublicationRepository.findByIdPublicationMeli(idPublication);
         if(Objects.isNull(details)){
             logger.error("Detail Publication with id: {} not found", idPublication);
-            response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+            response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
         } else {
             Optional<SellerAccount> accountFounded = sellerAccountRepository.findById(accountId);
             if (accountFounded.isEmpty()) {
                 logger.error("Account with id: {} not found", accountId);
-                response.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
+                response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.NOT_FOUND.value(), String.format("Account with id: %s not found", accountId)));
             } else {
                 try {
-                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                    if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
                     Object result = apiService.changeStatusPublications(request, accountFounded.get().getAccessToken(), idPublication);
                     if (!Objects.isNull(result)) {
                         details.setStatus(ChangeStatusPublicationType.ofCode(status).getStatus());
-                        response.put("response", detailsPublicationRepository.save(details).getStatus().trim());
+                        response.put(MapResponseConstants.RESPONSE, detailsPublicationRepository.save(details).getStatus().trim());
                     } else {
                         logger.error("Publication not changed: status to change: {}, publicationId: {}", status, idPublication);
-                        response.put(ERROR,  ChangeStatusPublicationType.ofCode(-1).getStatus());
+                        response.put(MapResponseConstants.ERROR,  ChangeStatusPublicationType.ofCode(-1).getStatus());
                     }
                 }
                 catch (TokenException e) {
                     logger.error(" Error getting token Meli Response: {}", e.getMessage());
-                    response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
+                    response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
                 }
                 catch (ApiException e) {
-                   response.put(MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+                   response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
                 }
 
             }
@@ -645,8 +655,8 @@ public class MeliService  implements IMeliService{
 
     @Override
     public void updatePricePublication(Margin margin, Integer idProfile){
-        List<SellerAccount> accountList = new ArrayList<>();
-        List<Integer> accountIdList = new ArrayList<>();
+        List<SellerAccount> accountList;
+        List<Integer> accountIdList;
         List<DetailsPublicationsMeli> detailsPublicationUpdatedList = new ArrayList<>();
         Map<String, Object> response = new HashMap<>();
         try {
@@ -681,7 +691,7 @@ public class MeliService  implements IMeliService{
                     ChangePriceRequest changePrice = new ChangePriceRequest(detail.getPricePublication());
                     Optional<SellerAccount> accountFounded = finalAccountList.stream().filter(a -> a.getId() == detail.getAccountMeli()).findFirst();
                     try {
-                        if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                        if(MeliUtils.isExpiredToken(accountFounded.get())){
                             accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                         }
 
@@ -716,8 +726,8 @@ public class MeliService  implements IMeliService{
                 //Sincroniza los estados de las publicaciones en ML con la base datos
                 detailsList.forEach(d -> {
                     Map<String, Object> status = apiService.getStatusPublication(d.getIdPublicationMeli());
-                    if (status.containsKey("response")) {
-                        Object obj = status.get("response");
+                    if (status.containsKey(MapResponseConstants.RESPONSE)) {
+                        Object obj = status.get(MapResponseConstants.RESPONSE);
                         MeliCodeResponse detailM = mapper.convertValue(obj, MeliCodeResponse.class);
                         if (!detailM.getBody().getStatus().equals(d.getStatus())) {
                             d.setStatus(detailM.getBody().getStatus());
@@ -734,15 +744,85 @@ public class MeliService  implements IMeliService{
                 if (!toUpdateList.isEmpty()) {
                     response.putAll(updatePriceMeliOfActivePublications(idProfile, toUpdateList));
                 } else {
-                    response.put("response", "No existen publicaciones para actualizar");
+                    response.put(MapResponseConstants.RESPONSE, "No existen publicaciones para actualizar");
                 }
             }
             return response;
         }catch (Exception e){
-            logger.error(String.format("Error of systems "), e.getStackTrace());
+            logger.error(String.format("Error of systems "), e.getMessage());
             response.put(ActionResult.ERROR.getValue(), String.format("Error of systems: {}: ", e.getMessage()));
             return response;
         }
+    }
+
+    @Override
+    public Boolean updateStock(List<Pair> pairs) {
+        logger.info(" Begin updating of stock in Mercado Libre");
+        AtomicBoolean isGood = new AtomicBoolean(true);
+        try {
+            pairs.forEach(pair -> {
+                List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
+                detailsList = detailsPublicationRepository.findAllBySku(pair.getSku());
+                List<SellerAccount> accountsMeli = new ArrayList<>();
+                if(detailsList != null) {
+                    detailsList.forEach(d -> {
+                        if (d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) || d.getStatus().equals(MeliStatusPublications.PAUSED.getValue())) {
+                            if (accountsMeli.isEmpty() || !accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst().isPresent()) {
+                                try {
+                                    Optional<SellerAccount> seller = sellerAccountRepository.findById(d.getAccountMeli());
+                                    if (seller.isPresent()) {
+                                        if (MeliUtils.isExpiredToken(seller.get())) {
+                                            seller = Optional.ofNullable(apiService.getTokenByRefreshToken(seller.get()));
+                                        }
+                                        accountsMeli.add(seller.get());
+                                        //Actualizo stock en ML
+                                        ChangeStockRequest request = new ChangeStockRequest();
+                                        request.setAvailable_quantity(pair.getStock());
+                                        logger.info(" Updating publication: {} with stock: {} in Mercado Libre", d.getIdPublicationMeli(), pair.getStock());
+                                        apiService.updateStock(request, seller.get().getAccessToken(), d.getIdPublicationMeli());
+                                        logger.info(" Publication updated successfully...");
+                                    }
+                                } catch (ApiException e) {
+                                    logger.error(" Error updating stock in mercado libre, Methods: updateStock(), {}", e.getResponseBody());
+                                    isGood.set(false);
+                                } catch (TokenException e) {
+                                    logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
+                                    logger.error(" Code of the error: {}", e.getCode());
+                                    isGood.set(false);
+                                }
+                            } else {
+                                try {
+                                    Optional<SellerAccount> seller1 = accountsMeli.stream().filter(p -> p.getId().equals(d.getAccountMeli())).findFirst();
+                                    if (MeliUtils.isExpiredToken(seller1.get())) {
+                                        seller1 = Optional.ofNullable(apiService.getTokenByRefreshToken(seller1.get()));
+
+                                    }
+                                    accountsMeli.add(seller1.get());
+                                    //Actualizo stock en ML
+                                    ChangeStockRequest request = new ChangeStockRequest();
+                                    request.setAvailable_quantity(pair.getStock());
+                                    apiService.updateStock(request, seller1.get().getAccessToken(), d.getIdPublicationMeli());
+                                } catch (ApiException e) {
+                                    logger.error(" Error updating stock in mercado libre, API: call to ML, Methods: updateStock(), {}", e.getResponseBody());
+                                    isGood.set(false);
+                                } catch (TokenException e) {
+                                    logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
+                                    logger.error(" Code of the error: {}", e.getCode());
+                                    isGood.set(false);
+                                }
+                            }
+
+                        }
+                    });
+                }
+            });
+        }catch (Exception e){
+            logger.error(" Error getting publications of Database in the Detail Publications Meli table, Methods: updateStock(), {}", e.getMessage());
+            isGood.set(false);
+        }
+        if(isGood.get())
+            return true;
+        return false;
     }
 
     /**** Metodos auxiliares ****/
@@ -771,7 +851,7 @@ public class MeliService  implements IMeliService{
                 ChangePriceRequest changePrice = new ChangePriceRequest(detail.getPricePublication());
                 Optional<SellerAccount> accountFounded = finalAccountList.stream().filter(a -> a.getId() == detail.getAccountMeli()).findFirst();
                 try {
-                    if(!MeliUtils.validateTokenExpiration(accountFounded.get().getExpirationDate())){
+                    if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
 
@@ -793,7 +873,7 @@ public class MeliService  implements IMeliService{
         if(!listDetails.isEmpty()) {
             detailsPublicationRepository.saveAll(listDetails);
         }
-        return (Map<String, Object>) response.put("response", String.format("All publications were updated"));
+        return (Map<String, Object>) response.put(MapResponseConstants.RESPONSE, String.format("All publications were updated"));
     }
 
     private Map<String, Object> setProductToNopublishedStatus(Integer idProduct, Short status){
@@ -807,7 +887,7 @@ public class MeliService  implements IMeliService{
                 return response;
             }
         }catch (Exception e){
-            logger.error(ActionResult.DATABASE_ERROR.getValue(), e.getStackTrace());
+            logger.error(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
             response.put(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
         }
         return response;

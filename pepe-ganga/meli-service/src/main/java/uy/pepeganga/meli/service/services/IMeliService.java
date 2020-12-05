@@ -6,6 +6,7 @@ import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.models.Pair;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
@@ -57,5 +58,7 @@ public interface IMeliService {
     void updatePricePublication(Margin margin, Integer idProfile);
 
     Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
+
+    Boolean updateStock(List<Pair> pairs);
 
 }

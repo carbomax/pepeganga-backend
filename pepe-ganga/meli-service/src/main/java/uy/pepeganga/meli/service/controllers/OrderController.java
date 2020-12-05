@@ -39,8 +39,8 @@ public class OrderController {
     public ResponseEntity<Page<MeliOrders>> getAllOrdersByProfile(@PathVariable Integer profileId, @RequestParam List<String> statusFilter,
                                                                   @RequestParam(defaultValue = "") String nameClient,
                                                                   @RequestParam(defaultValue = "0") Long dateFrom,  @RequestParam(defaultValue = "99999999") Long dateTo,
-                                                                  @RequestParam int page, @RequestParam int size){
-        return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, dateFrom, dateTo, page, size), HttpStatus.OK);
+                                                                  @RequestParam int page, @RequestParam int size, @RequestParam List<String> operatorBusinessStatus){
+        return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, dateFrom, dateTo, page, size, operatorBusinessStatus), HttpStatus.OK);
     }
 
     @PutMapping("/update-carrier/{orderId}/{carrierId}")
@@ -49,10 +49,16 @@ public class OrderController {
     }
 
 
-    @PutMapping("/update-description/{orderId}")
-    public ResponseEntity<Boolean> updateDescription(@PathVariable Long orderId, @RequestParam String description){
-        return new ResponseEntity<>(orderService.updateDescription(orderId, description), HttpStatus.OK);
+    @PutMapping("/update-operator-name/{orderId}")
+    public ResponseEntity<Boolean> updateOperatorName(@PathVariable Long orderId, @RequestParam String name){
+        return new ResponseEntity<>(orderService.updateOperatorName(orderId, name), HttpStatus.OK);
     }
+
+    @PutMapping("/update-tag/{orderId}")
+    public ResponseEntity<Boolean> updateDescription(@PathVariable Long orderId, @RequestParam Integer tagBss){
+        return new ResponseEntity<>(orderService.updateTag(orderId, tagBss), HttpStatus.OK);
+    }
+
 
     @PutMapping("/update-observation/{orderId}")
     public ResponseEntity<Boolean> updateObservation(@PathVariable Long orderId, @RequestParam String observation){
@@ -62,5 +68,15 @@ public class OrderController {
     @PutMapping("/update-invoice/{orderId}")
     public ResponseEntity<Boolean> updateInvoice(@PathVariable Long orderId, @RequestParam Long invoice){
         return new ResponseEntity<>(orderService.updateInvoice(orderId, invoice), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-operator-business-status/{orderId}")
+    public ResponseEntity<Boolean> updateOperatorBusinessStatus(@PathVariable Long orderId, @RequestParam Integer status){
+        return new ResponseEntity<>(orderService.updateOperatorBusinessStatus(orderId, status), HttpStatus.OK);
+    }
+
+    @GetMapping("/url-invoice/{orderId}")
+    public ResponseEntity<Map<String, Object>> getInvoiceUrl(@PathVariable  Long orderId){
+        return new ResponseEntity<>(orderService.getInvoiceUrl(orderId), HttpStatus.OK);
     }
 }

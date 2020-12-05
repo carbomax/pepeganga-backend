@@ -15,9 +15,13 @@ public interface DetailsPublicationMeliRepository extends JpaRepository<DetailsP
 
     DetailsPublicationsMeli findByIdPublicationMeli(String idPublicationMeli);
 
+    boolean existsByIdPublicationMeli(String idPublicationMeli);
+
     @Transactional(readOnly = true)
     @Query(value = "select dt.* from detailspublicationsmeli dt where account_meli in (:accountsId) and dt.deleted = :isDeleted and dt.margin = :idMargin ", nativeQuery = true)
     List<DetailsPublicationsMeli> findByIdAccountsAndMargin(List<Integer> accountsId, Short idMargin, Integer isDeleted);
+
+    List<DetailsPublicationsMeli> findAllBySku(String sku);
 
 
 }

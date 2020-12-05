@@ -18,7 +18,9 @@ public class DMOrder {
 
     private List<DMOrderItems> orderItems;
 
-    private double totalAmount;
+    private double totalAmount = 0;
+
+    private double paidAmount = 0;
 
     private String currencyId;
 
@@ -29,6 +31,8 @@ public class DMOrder {
     private DMOrderSeller seller;
 
     private DMOrderShipping shipping;
+
+    private DMOrderTaxes taxes;
 
     @JsonProperty("id")
     public Long getId() {
@@ -83,5 +87,15 @@ public class DMOrder {
     @JsonProperty("shipping")
     public DMOrderShipping getShipping() {
         return shipping;
+    }
+
+    @JsonProperty("taxes")
+    public DMOrderTaxes getTaxes() {
+        return taxes;
+    }
+
+    @JsonProperty("paid_amount")
+    public double getPaidAmount() {
+        return paidAmount;
     }
 }

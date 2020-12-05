@@ -1,5 +1,7 @@
 package uy.pepeganga.meli.service.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
 import meli.model.Item;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
+import uy.pepeganga.meli.service.models.Pair;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.services.IMeliService;
 
@@ -122,5 +125,10 @@ public class MeliController {
     @GetMapping("/synchronize-publications")
     public ResponseEntity<Map<String, Object>> synchronizePublication(@RequestParam Integer idProfile, @RequestParam List<Integer> idDetailsPublicationsList){
         return new ResponseEntity<>(meliService.synchronizePublication(idProfile, idDetailsPublicationsList), HttpStatus.OK);
+    }
+
+    @PostMapping("/update-stock")
+    public Boolean updateStock(@RequestBody List<Pair> pairs){
+        return meliService.updateStock(pairs);
     }
 }

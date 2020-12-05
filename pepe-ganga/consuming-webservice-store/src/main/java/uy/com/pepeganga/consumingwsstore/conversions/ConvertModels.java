@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.consumingwsstore.entities.*;
 import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtLineasSubFliasSdtLineaSubFlias;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtSubFliasSdtSubFlia;
@@ -17,26 +17,26 @@ import uy.com.pepeganga.consumingwsstore.wsdl.marcas.SdtMarcasSdtMarca;
 public class ConvertModels {
 
 	@Autowired
-	private static Item itemResp;	
+	private static TempItem itemResp;
 	
 	@Autowired
-	private static Category categoryResp;	
+	private static TempCategory categoryResp;
 	
 	@Autowired
-	private static Family familyResp;
+	private static TempFamily familyResp;
 	
 	@Autowired
-	private static SubFamily subfamilyResp;	
+	private static TempSubFamily subfamilyResp;
 	
 	@Autowired
-	private static Brand brandResp;
+	private static TempBrand brandResp;
 	
 	@Autowired
 	private static ItemGrid itemGridResp;
 	
 	
-	public static Item convetToItemEntity(SDTArticulosWebPaginaArticulo artResp) {
-		itemResp = new Item();		
+	public static TempItem convetToItemEntity(SDTArticulosWebPaginaArticulo artResp) {
+		itemResp = new TempItem();
 		
 		if (!isNull(artResp))			
 		 {				
@@ -70,7 +70,7 @@ public class ConvertModels {
 			
 			if(artResp.getSdtCategorias() != null)
 			{
-				List<Category> categoryTempList = new ArrayList<>();
+				List<TempCategory> categoryTempList = new ArrayList<>();
 				for (SdtCategoriasSdtCategoria variable : artResp.getSdtCategorias().getSdtCategoriasSdtCategoria()) {
 					if(variable != null)				
 						categoryTempList.add(convetToCategoryEntityItem(variable));
@@ -94,15 +94,17 @@ public class ConvertModels {
 		return itemResp;
 	}
 
-	public static List<Item> convetToItemEntityList(List<SDTArticulosWebPaginaArticulo> artList)
+	public static List<TempItem> convetToItemEntityList(List<SDTArticulosWebPaginaArticulo> artList)
 	{
-		List<Item> itemList = new ArrayList<>();
+		List<TempItem> itemList = new ArrayList<>();
 		
 		if(!artList.isEmpty())
 		{
 			for (SDTArticulosWebPaginaArticulo variable : artList) {
-				if(variable != null)
-					itemList.add(convetToItemEntity(variable));
+				if(variable != null) {
+					if("S".equals(variable.getArtVendibleMercadoLibre().trim().toUpperCase()))
+						itemList.add(convetToItemEntity(variable));
+				}
 			}
 		}
 		return itemList;
@@ -138,21 +140,9 @@ public class ConvertModels {
 		return itemGridList;
 	}
 		
-	public static Category convetToCategoryEntity(uy.com.pepeganga.consumingwsstore.wsdl.categories.SdtCategoriasSdtCategoria category) {
+	public static TempCategory convetToCategoryEntity(uy.com.pepeganga.consumingwsstore.wsdl.categories.SdtCategoriasSdtCategoria category) {
 		
-		categoryResp = new Category();		
-		
-		if (!isNull(category))			
-		 {			
-			categoryResp.setId(category.getCategoriaId());
-			categoryResp.setDescription(category.getCategoriaDescrip());
-		 }
-		 return categoryResp;
-	}
-	
-	public static Category convetToCategoryEntityItem(SdtCategoriasSdtCategoria category) {
-		
-		categoryResp = new Category();		
+		categoryResp = new TempCategory();
 		
 		if (!isNull(category))			
 		 {			
@@ -162,9 +152,21 @@ public class ConvertModels {
 		 return categoryResp;
 	}
 	
-	public static List<Category> convetToCategoryEntityList(List<uy.com.pepeganga.consumingwsstore.wsdl.categories.SdtCategoriasSdtCategoria> catList){
+	public static TempCategory convetToCategoryEntityItem(SdtCategoriasSdtCategoria category) {
 		
-		List<Category> categoryList = new ArrayList<>();
+		categoryResp = new TempCategory();
+		
+		if (!isNull(category))			
+		 {			
+			categoryResp.setId(category.getCategoriaId());
+			categoryResp.setDescription(category.getCategoriaDescrip());
+		 }
+		 return categoryResp;
+	}
+	
+	public static List<TempCategory> convetToCategoryEntityList(List<uy.com.pepeganga.consumingwsstore.wsdl.categories.SdtCategoriasSdtCategoria> catList){
+		
+		List<TempCategory> categoryList = new ArrayList<>();
 		
 		if(!catList.isEmpty())
 		{
@@ -175,9 +177,9 @@ public class ConvertModels {
 		return categoryList;
 	}
 	
-	public static Family convetToFamilyEntity(SdtLineasSubFliasSdtLineaSubFlias family) {
+	public static TempFamily convetToFamilyEntity(SdtLineasSubFliasSdtLineaSubFlias family) {
 		
-		familyResp = new Family();		
+		familyResp = new TempFamily();
 		
 		if (!isNull(family))			
 		 {			
@@ -189,9 +191,9 @@ public class ConvertModels {
 		return familyResp;
 	}
 	
-	public static List<Family> convetToFamilyEntityList(List<SdtLineasSubFliasSdtLineaSubFlias> famiList){
+	public static List<TempFamily> convetToFamilyEntityList(List<SdtLineasSubFliasSdtLineaSubFlias> famiList){
 		
-		List<Family> familyList = new ArrayList<>();
+		List<TempFamily> familyList = new ArrayList<>();
 		
 		if(!famiList.isEmpty())
 		{
@@ -202,9 +204,9 @@ public class ConvertModels {
 		return familyList;
 	}	
 	
-	public static SubFamily convetToSubFamilyEntity(SdtSubFliasSdtSubFlia subfamily) {
+	public static TempSubFamily convetToSubFamilyEntity(SdtSubFliasSdtSubFlia subfamily) {
 		
-		subfamilyResp = new SubFamily();		
+		subfamilyResp = new TempSubFamily();
 		
 		if (!isNull(subfamily))			
 		 {		
@@ -214,9 +216,9 @@ public class ConvertModels {
 		return subfamilyResp;
 	}
 	
-	public static List<SubFamily> convertToSubFamilyEntityList(List<SdtSubFliasSdtSubFlia> subfamiList){
+	public static List<TempSubFamily> convertToSubFamilyEntityList(List<SdtSubFliasSdtSubFlia> subfamiList){
 		
-		List<SubFamily> familyList = new ArrayList<>();
+		List<TempSubFamily> familyList = new ArrayList<>();
 		
 		if(!subfamiList.isEmpty())
 		{
@@ -227,9 +229,9 @@ public class ConvertModels {
 		return familyList;
 	}
 	
-	public static Brand convertToBrandEntity(SdtMarcasSdtMarca brand) {
+	public static TempBrand convertToBrandEntity(SdtMarcasSdtMarca brand) {
 	
-		brandResp = new Brand();		
+		brandResp = new TempBrand();
 		
 		if (!isNull(brand))			
 		 {			
@@ -240,9 +242,9 @@ public class ConvertModels {
 		 return brandResp;
 	}
 	
-	public static List<Brand> convetToBrandEntityList(List<SdtMarcasSdtMarca> brandList){
+	public static List<TempBrand> convetToBrandEntityList(List<SdtMarcasSdtMarca> brandList){
 		
-		List<Brand> responseList = new ArrayList<>();
+		List<TempBrand> responseList = new ArrayList<>();
 		
 		if(!brandList.isEmpty())
 		{
@@ -255,14 +257,14 @@ public class ConvertModels {
 	
 	/*Auxiliar Class*/
 	//Nota: cambiar todos los metodos despues a private cuando quite la generacion ficticia de Item en el Run()
- 	private static Family createFamilyInstance(short id) {
-		Family family = new Family();
+ 	private static TempFamily createFamilyInstance(short id) {
+		TempFamily family = new TempFamily();
 		family.setId(id);
 		return family;
 	}
 	
-	private static Brand createBrandInstance(short id) {
-		Brand brand = new Brand();
+	private static TempBrand createBrandInstance(short id) {
+		TempBrand brand = new TempBrand();
 		brand.setId(id);
 		return brand;
 	}

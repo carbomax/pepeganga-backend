@@ -10,4 +10,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 
     @Transactional(readOnly = true)
     List<Notification> findByTopic(String topic);
+
+    void deleteAllByResource(String resource);
 }

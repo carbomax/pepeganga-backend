@@ -8,10 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
+import uy.com.pepeganga.consumingwsstore.entities.TempItem;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.repositories.IItemRepository;
+import uy.com.pepeganga.consumingwsstore.repositories.ITempItemRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecuteResponse;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPagina;
@@ -28,18 +28,18 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 	ConsumingWebserviceStoreApplication p;
 	
 	@Autowired
-	IItemRepository itemClient;
+	ITempItemRepository tempItemClient;
 		
 	public void deleteItem() {
-		Item item = new Item();
+		TempItem item = new TempItem();
 		item.setSku("E0195");
-		itemClient.delete(item);
+		tempItemClient.delete(item);
 	}
 	
-	public List<Item> getItems() {
+	public List<TempItem> getItems() {
 		
 		boolean finish = false;
-		List<Item> responseList = new ArrayList<Item>();
+		List<TempItem> responseList = new ArrayList<TempItem>();
 		 
 		 CargaArticulosPaginadoExecute request = new CargaArticulosPaginadoExecute();
 		 SDTArticulosWebPagina stdItems = new SDTArticulosWebPagina();		
@@ -54,11 +54,11 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 			 CargaArticulosPaginadoExecuteResponse response = (CargaArticulosPaginadoExecuteResponse) getWebServiceTemplate()
 			        .marshalSendAndReceive("http://201.217.140.35/agile/aCargaArticulosPaginado.aspx", request);
 			
-			 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
+			 List<TempItem> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
 			 responseList.addAll(partialList);
 			 part++;
-			 
-			 if(partialList.size() < 100 || partialList.isEmpty())
+
+			 if(response.getSdtarticuloswebpagina().getArticulos().getArticulo().size() < 100 )
 				 finish = true;
 			 
 		} while (!finish);
@@ -67,11 +67,10 @@ public class ItemRequestService extends WebServiceGatewaySupport{
   	}
 	
 	/*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
-	public void storeItems() {		
+	public void storeItems() {
 		try{
-			List<Item> itemList = getItems();
-			itemList.removeIf(item -> item == null || !"S".equalsIgnoreCase(item.getArtVendibleMercadoLibre().trim()));
-			itemClient.saveAll(itemList);
+			List<TempItem> itemList = getItems();
+			tempItemClient.saveAll(itemList);
 			logger.info("Items saved successfully: {}", itemList.size());
 		}catch (Exception e){
 			logger.error("Error almacenando datos", e.getMessage());
@@ -81,5 +80,6 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 					
 		
 	}	
-	
+
+
 }

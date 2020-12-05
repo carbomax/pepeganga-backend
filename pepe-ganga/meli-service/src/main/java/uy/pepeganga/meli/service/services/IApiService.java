@@ -24,6 +24,8 @@ public interface IApiService {
 
     Object getOrderByNotificationResource(String orderId, String token) throws ApiException;
 
+    Object getShipmentOfOrder(Long shipmentId, String token) throws ApiException;
+
     Object getOrdersBySeller(Long seller, String token) throws ApiException;
 
     Object updateDescription(DescriptionRequest request, String token, String idPublicationMeli) throws ApiException;
@@ -39,6 +41,8 @@ public interface IApiService {
     Object deletePublication(DeletePublicationRequest request, String token, String idPublicationMeli) throws ApiException;
 
     Object republishPublication(RepublishPublicationRequest request, String token, String idPublicationMeli) throws ApiException;
+
+    Object updateStock(ChangeStockRequest request, String token, String idPublicationMeli) throws ApiException;
 
     Map<String, Object> getStatusPublication(String idPublication);
 }

@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import uy.com.pepeganga.business.common.entities.*;
 
 @Repository
-public interface IItemRepository extends JpaRepository<Item, Integer>{
+public interface IItemRepository extends JpaRepository<Item, String>{
 	
 }

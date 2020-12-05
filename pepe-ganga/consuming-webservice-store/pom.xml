@@ -49,11 +49,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.swagger</groupId>
-			<artifactId>swagger-java-client</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>
 				spring-cloud-starter-netflix-eureka-client
@@ -74,11 +69,15 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-openfeign</artifactId>
+		</dependency>
 	</dependencies>
 
 	<!-- tag::profile[] -->
 	<profiles>
-		<profile>
+	<!--	<profile>
 			<id>java11</id>
 			<activation>
 				<jdk>[11,)</jdk>
@@ -90,11 +89,42 @@
 					<artifactId>jaxb-runtime</artifactId>
 				</dependency>
 			</dependencies>
+		</profile> -->
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.profiles.active>prod</spring.profiles.active>
+			</properties>
 		</profile>
 	</profiles>
-	<!-- end::profile[] -->
- <!--	
+  
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+
+	<!-- end::profile[] -->
+<!-- 
+ 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -118,30 +148,30 @@
 						<schema>
 							<url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>
 						</schema>
+					</schemas>  
+					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
+					<schemas>
+						<schema>
+							<url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
+						</schema>
+					</schemas>
+					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.marcas</generatePackage>
+					<schemas>
+						<schema>
+							<url>http://201.217.140.35/agile/acargamarcas.aspx?wsdl</url>
+						</schema>
+					</schemas>
+					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.items</generatePackage>
+					<schemas>
+						<schema>
+							<url>http://201.217.140.35/agile/aCargaArticulosPaginado.aspx?wsdl</url>
+						</schema>
 					</schemas> 
-		<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
-        <schemas>
-            <schema>
-                <url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
-            </schema>
-        </schemas>
-     <generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.marcas</generatePackage>
-        <schemas>
-            <schema>
-                <url>http://201.217.140.35/agile/acargamarcas.aspx?wsdl</url>
-            </schema>
-        </schemas>
-         <generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.items</generatePackage>
-        <schemas>
-            <schema>
-                <url>http://201.217.140.35/agile/aCargaArticulosPaginado.aspx?wsdl</url>
-            </schema>
-        </schemas> 
-    </configuration>
+				</configuration>
 </plugin>
 </plugins>
-</build>-->
-
+</build>
+ -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -153,4 +183,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+
 </project>

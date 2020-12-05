@@ -1,0 +1,31 @@
+server:
+  port: ${PORT:0}
+  
+spring:
+  application:
+    name: consuming-store-service   
+    
+  datasource:
+    username: admin
+    password: 123456789.*dhl
+    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
+  client:
+    service-url:
+        defaultZone: http://eureka-server:8761/eureka
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 160000
+        readTimeout: 160000
+
+#El directorio debe crearse en el home del usuario o sección
+risk_time: 5

@@ -31,6 +31,8 @@ public interface MercadoLibrePublishService {
 	
 	EditableProductModel getCustomProduct(Integer id);
 
+	DMDetailsPublicationsMeli getDetailPublication(Integer id);
+
 	List<MercadoLibrePublications> getFullProduct(List<String> skus, String profileEncode) throws Exception;
 
 	List<EditableProductModel> getFullProductById(List<Integer> ids) throws Exception;

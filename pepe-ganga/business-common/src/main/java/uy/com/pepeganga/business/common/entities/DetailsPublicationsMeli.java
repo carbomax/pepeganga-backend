@@ -20,7 +20,7 @@ public class DetailsPublicationsMeli implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @JoinColumn(name="idmlpublication", nullable = true)
+    @JoinColumn(name="idmlpublication")
     private Integer idMLPublication;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -84,6 +84,9 @@ public class DetailsPublicationsMeli implements Serializable {
 
     @Column(name="pending_margin_update")
     private Boolean pendingMarginUpdate = false;
+
+    // 0 - Not paused, 1 - Paused
+    private Integer specialPaused = 0;
 
     public void setId(Integer id) {
         this.id = id;
@@ -267,6 +270,14 @@ public class DetailsPublicationsMeli implements Serializable {
 
     public void setPendingMarginUpdate(Boolean pendingMarginUpdate) {
         this.pendingMarginUpdate = pendingMarginUpdate;
+    }
+
+    public Integer getSpecialPaused() {
+        return specialPaused;
+    }
+
+    public void setSpecialPaused(Integer specialPaused) {
+        this.specialPaused = specialPaused;
     }
 
     @Override

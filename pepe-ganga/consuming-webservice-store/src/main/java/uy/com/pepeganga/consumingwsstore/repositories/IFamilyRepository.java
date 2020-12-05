@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import uy.com.pepeganga.business.common.entities.*;
 
 @Repository
-public interface IFamilyRepository extends JpaRepository<Family, Integer>{
+public interface IFamilyRepository extends JpaRepository<Family, Short>{
 
 }

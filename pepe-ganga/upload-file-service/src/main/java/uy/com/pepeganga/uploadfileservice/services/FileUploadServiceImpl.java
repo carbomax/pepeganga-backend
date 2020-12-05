@@ -26,7 +26,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 	String optionalFileName = "Almacen_de_imagenes";
 	String directory = "";
 
-	public ReasonResponse uploadFile(MultipartFile file) throws IOException {
+	public ReasonResponse uploadFile(MultipartFile file, String uri) throws IOException {
 		ReasonResponse result = new ReasonResponse();
 		result.setSuccess(false);
 
@@ -37,7 +37,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 		Path path = Paths.get(builder.toString());
 		Files.write(path, fileBytes);
 
-		result.setReason("http://localhost:9999/pepeganga/upload/api/file/" + file.getOriginalFilename());
+		result.setReason(uri + "/upload/api/file/" + file.getOriginalFilename());
 		result.setSuccess(true);
 		return result;
 	}

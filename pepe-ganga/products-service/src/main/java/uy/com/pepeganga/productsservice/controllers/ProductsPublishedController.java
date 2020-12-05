@@ -37,4 +37,17 @@ public class ProductsPublishedController {
         }
 
     }
+
+    @GetMapping("/publication-info/{id}")
+    public ResponseEntity<DMDetailsPublicationsMeli> getDetailPublication(@PathVariable Integer id){
+        try {
+            return new ResponseEntity<>(publishService.getDetailPublication(id), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            // TODO: handle exception
+            return new ResponseEntity<>( HttpStatus.CONFLICT);
+        }
+
+    }
+
 }

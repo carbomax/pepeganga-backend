@@ -22,7 +22,9 @@ public class MeliOrders implements Serializable {
 
     private String dateClosed;
 
-    private double totalAmount;
+    private Double totalAmount = 0.0;
+
+    private Double paidAmount = 0.0;
 
     private String currencyId;
 
@@ -39,6 +41,17 @@ public class MeliOrders implements Serializable {
     private Integer tagBss = 0;
 
     private Integer stateBss = 0;
+
+    private Double amountTaxes = 0.0;
+
+    private String currencyIdTaxes;
+
+    // 0 - In process, 1 - Undelivered, 2 - Delivered
+    private Integer operatorBusinessStatus = 0;
+
+    private String operatorNameBss;
+
+    private String dateCreatedMeli;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -59,6 +72,9 @@ public class MeliOrders implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "meli_orders_id")
     private List<MeliOrderItem> items;
+
+    @Transient
+    private MeliOrderShipment shipment;
 
     public Long getId() {
         return id;
@@ -132,12 +148,20 @@ public class MeliOrders implements Serializable {
         this.dateClosed = dateClosed;
     }
 
-    public double getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public Double getPaidAmount() {
+        return paidAmount;
+    }
+
+    public void setPaidAmount(Double paidAmount) {
+        this.paidAmount = paidAmount;
     }
 
     public String getCurrencyId() {
@@ -210,5 +234,53 @@ public class MeliOrders implements Serializable {
 
     public void setCarrier(Carrier carrier) {
         this.carrier = carrier;
+    }
+
+    public Double getAmountTaxes() {
+        return amountTaxes;
+    }
+
+    public void setAmountTaxes(Double amountTaxes) {
+        this.amountTaxes = amountTaxes;
+    }
+
+    public String getCurrencyIdTaxes() {
+        return currencyIdTaxes;
+    }
+
+    public void setCurrencyIdTaxes(String currencyIdTaxes) {
+        this.currencyIdTaxes = currencyIdTaxes;
+    }
+
+    public Integer getOperatorBusinessStatus() {
+        return operatorBusinessStatus;
+    }
+
+    public void setOperatorBusinessStatus(Integer operatorBusinessStatus) {
+        this.operatorBusinessStatus = operatorBusinessStatus;
+    }
+
+    public MeliOrderShipment getShipment() {
+        return shipment;
+    }
+
+    public void setShipment(MeliOrderShipment shipment) {
+        this.shipment = shipment;
+    }
+
+    public String getOperatorNameBss() {
+        return operatorNameBss;
+    }
+
+    public void setOperatorNameBss(String operatorNameBss) {
+        this.operatorNameBss = operatorNameBss;
+    }
+
+    public String getDateCreatedMeli() {
+        return dateCreatedMeli;
+    }
+
+    public void setDateCreatedMeli(String dateCreatedMeli) {
+        this.dateCreatedMeli = dateCreatedMeli;
     }
 }
