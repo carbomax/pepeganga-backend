@@ -29,7 +29,7 @@ logging:
 scheduler:
   cron:
     stock: 0 */5 * ? * *
-    notification: 0 */5 * ? * *
+    notification: 0/30 * * ? * *
 
 
 # Business properties
@@ -45,4 +45,4 @@ meli:
     expiration:
      token: 30
   order:
-    attempts: 10
+    attempts: 1
