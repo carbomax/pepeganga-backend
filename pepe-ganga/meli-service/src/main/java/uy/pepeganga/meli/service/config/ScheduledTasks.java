@@ -10,7 +10,6 @@ import uy.pepeganga.meli.service.services.IOrderService;
 import uy.pepeganga.meli.service.services.IStockProcessorService;
 
 @Component
-@Async
 public class ScheduledTasks {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
@@ -22,6 +21,7 @@ public class ScheduledTasks {
      private IStockProcessorService stockProcessorService;
 
     @Scheduled(cron = "${scheduler.cron.notification}")
+    @Async
     public void processingOrdersNotification(){
         logger.info("Processing Orders V2 by Notification scheduler....");
         orderService.schedulingOrdersV2();
@@ -29,6 +29,7 @@ public class ScheduledTasks {
     }
 
     @Scheduled(cron = "${scheduler.cron.stock}")
+    @Async
     public void schedulingStockProcessor(){
         logger.info("Processing Stock processor scheduler....");
         stockProcessorService.schedulingStockProcessor();

@@ -44,4 +44,4 @@ meli:
     expiration:
       token: 30
   order:
-    attempts: 10
+    attempts: 2
