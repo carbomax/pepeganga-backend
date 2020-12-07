@@ -223,6 +223,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				itemMeliGrid.setPrice_costUSD(p.getPriceCostUSD());
 				itemMeliGrid.setPrice_costUYU(p.getPriceCostUYU());
 				itemMeliGrid.setDeleted(p.getDeleted());
+				itemMeliGrid.setSpecialPaused(p.getSpecialPaused());
 				itemMeliGridList.add(itemMeliGrid);
 			});
 			PageItemMeliGrid pageItemMeliGrid = new PageItemMeliGrid();
@@ -536,6 +537,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setDescription(details.getDescription());
 				publicationsMeliGrid.setCurrentStock(itemService.findItemById(details.getSku()).get().getStockActual());
 				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
+				publicationsMeliGrid.setDeleted(details.getDeleted());
+				publicationsMeliGrid.setSpecialPaused(details.getSpecialPaused());
 				publicationsMeliGrids.add(publicationsMeliGrid);
 				}
 				else{

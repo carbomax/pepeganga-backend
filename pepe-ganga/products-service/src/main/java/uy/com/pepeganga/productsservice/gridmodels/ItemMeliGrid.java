@@ -39,6 +39,8 @@ public class ItemMeliGrid implements Serializable{
 
 	private Integer deleted;
 
+	private Integer specialPaused;
+
 	public Integer getId() {
 		return id;
 	}
@@ -141,5 +143,13 @@ public class ItemMeliGrid implements Serializable{
 
 	public void setDeleted(Integer deleted) {
 		this.deleted = deleted;
+	}
+
+	public Integer getSpecialPaused() {
+		return specialPaused;
+	}
+
+	public void setSpecialPaused(Integer specialPaused) {
+		this.specialPaused = specialPaused;
 	}
 }

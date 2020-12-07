@@ -105,14 +105,15 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 return;
             }
 
-            //If this is execute then the synchronization was Ok, for that reason Empty temporals table
-            if(!deleteTemporalData())
-                return;
-
             //Update Stock table
             if(!updateStockProvided()){
                 logger.error(String.format("Error updating stock to publications in Mercado Libre, Error: "));
+                return;
             }
+
+            //If this is execute then the synchronization was Ok, for that reason Empty temporals table
+            deleteTemporalData();
+
 
         }catch (Exception e) {
             logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getMessage());
@@ -156,13 +157,17 @@ public class ScheduledSyncService implements IScheduledSyncService{
         logger.info("Starting to insert data in temporal table");
         try {
             if (type.equals("brand"))
-                brandService.storeBrand();
+                if(!brandService.storeBrand(data))
+                    return false;
             if (type.equals("family"))
-                familyService.storeFamilies();
+                if(!familyService.storeFamilies(data))
+                    return false;
             if (type.equals("category"))
-                categoryService.storeCategories();
+                if(categoryService.storeCategories(data))
+                    return false;
             if (type.equals("item"))
-                itemService.storeItems();
+                if(itemService.storeItems(data))
+                    return false;
             logger.info("Insert data in temporal table completed....");
             return true;
         }catch (Exception e){
@@ -180,7 +185,8 @@ public class ScheduledSyncService implements IScheduledSyncService{
         else {
             data.setFinishedSync(true);
         }
-        data.setMessage(msg);
+        String data1 = data.getMessage();
+        data.setMessage(data1 + msg);
         data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
         updateSysRepo.save(data);
     }
@@ -527,16 +533,20 @@ public class ScheduledSyncService implements IScheduledSyncService{
             if(!updateStockOfProductsMeli(itemsU)){
                finishedWithError = true;
             }
-            if(updateStockOfPublicationsMeli(pairs)) {
-                finishedWithError = true;
-            }
+            updateStockOfPublicationsMeli(pairs);
+
         }
         logger.info("Update publications in Mercado Libre Completed...");
 
         if(finishedWithError){ return false;}
         else {
-            updateTableLogs("Synchronization completed...", false);
-            return true;
+            if(data.getEndDate() == null) {
+                updateTableLogs("Synchronization completed...", false);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 
@@ -557,7 +567,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     @Async
     public boolean updateStockOfPublicationsMeli(List<Pair> pairs){
         try {
-            boolean p1 = feign.updateStock(pairs);
+            boolean p1 = feign.updateStock(pairs, data.getId());
             return true;
         }catch (Exception e) {
             logger.error(String.format("Error calling meli service to update stock of publications {} Error: "), e.getMessage());
@@ -665,6 +675,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     }
 
     private boolean saveOrDeleteItemsTable(List<Item> list, String action){
+        logger.info("Starting to synchronization from TempItems to Item table in database");
         try {
             if(action.equals("deleting")) {
                 if(list.size() != 0)
@@ -672,14 +683,17 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }else if(action.equals("saving")){
                 itemRepo.saveAll(list);
             }
+            logger.info("The synchronization from TempItems to Item table in database completed...");
             return true;
         }catch (Exception e){
+            logger.error("The synchronization from TempItems to Item table in database throw a error");
             logger.error(String.format("Error %s Item table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Item table {}", action) + e.getMessage(), true);
             return false;
         }
     }
     private boolean saveOrDeleteBrandsTable(List<Brand> list, String action){
+        logger.info("Starting to synchronization from TempBrand to Brand table in database");
         try {
             if(action.equals("deleting")) {
                 if(list.size() != 0)
@@ -687,14 +701,17 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }else if(action.equals("saving")){
                 brandRepo.saveAll(list);
             }
+            logger.info("The synchronization from TempBrand to Brand table in database completed...");
             return true;
         }catch (Exception e){
+            logger.error("The synchronization from TempBrand to Brand table in database throw a error");
             logger.error(String.format("Error %s Brand table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Brand table {}", action) + e.getMessage(), true);
             return false;
         }
     }
     private boolean saveOrDeleteFamiliesTable(List<Family> list, String action){
+        logger.info("Starting to synchronization from TempFamilies to Families table in database");
         try {
             if(action.equals("deleting")) {
                 if(list.size() != 0)
@@ -702,15 +719,17 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }else if(action.equals("saving")){
                 familyRepo.saveAll(list);
             }
+            logger.info("The synchronization from TempFamilies to Families table in database completed...");
             return true;
         }catch (Exception e){
+            logger.error("The synchronization from TempFamilies to Families table in database throw a error");
             logger.error(String.format("Error %s Family table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Family table {}", action) + e.getMessage(), true);
             return false;
         }
     }
     private boolean saveOrDeleteCategoriesTable(List<Category> list, String action){
-
+        logger.info("Starting to synchronization from TempCategories to Categories table in database");
         try {
             if(action.equals("deleting")) {
                 if(list.size() != 0)
@@ -718,8 +737,10 @@ public class ScheduledSyncService implements IScheduledSyncService{
             }else if(action.equals("saving")){
                 categoryRepo.saveAll(list);
             }
+            logger.info("The synchronization from TempCategories to Categories table in database completed...");
             return true;
         }catch (Exception e){
+            logger.error("The synchronization from TempCategories to Categories table in database throw a error");
             logger.error(String.format("Error %s Category table {}", action), e.getMessage());
             updateTableLogs(String.format("Error %s Category table {}", action) + e.getMessage(), true);
             return false;

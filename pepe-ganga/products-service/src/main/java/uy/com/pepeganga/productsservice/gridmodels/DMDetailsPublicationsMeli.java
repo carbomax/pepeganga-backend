@@ -49,6 +49,10 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     private Integer saleStatus;
 
+    private Integer deleted;
+
+    private Integer specialPaused;
+
     private int totalElements;
 
     public Integer getId() {
@@ -225,5 +229,21 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     public void setPriceEditProduct(double priceEditProduct) {
         this.priceEditProduct = priceEditProduct;
+    }
+
+    public Integer getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Integer deleted) {
+        this.deleted = deleted;
+    }
+
+    public Integer getSpecialPaused() {
+        return specialPaused;
+    }
+
+    public void setSpecialPaused(Integer specialPaused) {
+        this.specialPaused = specialPaused;
     }
 }
