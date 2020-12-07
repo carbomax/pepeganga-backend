@@ -4,10 +4,11 @@ server:
 spring:
   application:
     name: consuming-store-service   
+    
   datasource:
     username: admin
     password: 123456789.*dhl
-    url: jdbc:mysql://database-prod.c9ir9n4tc2qb.us-east-2.rds.amazonaws.com:3306/pepegangadb
+    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
       ddl-auto: none
