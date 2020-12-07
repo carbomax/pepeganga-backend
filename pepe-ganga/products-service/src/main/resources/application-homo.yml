@@ -1,0 +1,30 @@
+server:
+  port: ${PORT:0}
+  error:
+    include-message: always
+    include-binding-errors: always
+  
+spring:
+  application:
+    name: products-service 
+  datasource:
+    username: admin
+    password: 123456789.*dhl  
+    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
+  client:
+    service-url:
+        defaultZone: http://eureka-server:8761/eureka
+        
