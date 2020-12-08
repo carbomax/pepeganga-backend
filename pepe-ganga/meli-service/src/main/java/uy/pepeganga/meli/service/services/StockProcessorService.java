@@ -11,6 +11,7 @@ import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.StockProcessor;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
+import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.pepeganga.meli.service.repository.CheckingStockProcessorRepository;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
@@ -97,6 +98,7 @@ public class StockProcessorService implements IStockProcessorService {
                             mercadoLibrePublications.setSpecialPaused(1);
                             if (checkingStockProcessor.getAction() == 1) {
                                 mercadoLibrePublications.setDeleted(1);
+                                mercadoLibrePublications.setStates(States.NOPUBLISHED.getId());
                             }
                             mercadoLibrePublishRepository.save(mercadoLibrePublications);
                             logger.info("Blocking unpublished product successfully with sku: {} ", mercadoLibrePublications.getSku());
@@ -167,6 +169,7 @@ public class StockProcessorService implements IStockProcessorService {
 
                             if (checkingStockProcessor.getAction() == 1) {
                                 mercadoLibrePublications.setDeleted(1);
+                                mercadoLibrePublications.setStates(States.NOPUBLISHED.getId());
                                 mercadoLibrePublications.setSpecialPaused(1);
                                 logger.info("Marking unpublished product to delete with sku: {} ", mercadoLibrePublications.getSku());
                             } else {

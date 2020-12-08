@@ -154,7 +154,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     }
 
     private boolean insertTemporalData(String type) {
-        logger.info("Starting to insert data in temporal table");
+        logger.info(String.format("Starting to insert %s data in temporal table", type));
         try {
             if (type.equals("brand"))
                 if(!brandService.storeBrand(data))
@@ -163,12 +163,12 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 if(!familyService.storeFamilies(data))
                     return false;
             if (type.equals("category"))
-                if(categoryService.storeCategories(data))
+                if(!categoryService.storeCategories(data))
                     return false;
             if (type.equals("item"))
-                if(itemService.storeItems(data))
+                if(!itemService.storeItems(data))
                     return false;
-            logger.info("Insert data in temporal table completed....");
+            logger.info(String.format("Insert %s data in temporal table completed....", type));
             return true;
         }catch (Exception e){
             logger.error(String.format("Error inserting temporal %s tables {}", type), e.getMessage());
