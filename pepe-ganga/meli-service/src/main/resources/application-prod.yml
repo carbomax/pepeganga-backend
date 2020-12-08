@@ -40,8 +40,8 @@ meli:
       url: https://api.mercadolibre.com/shipment_labels?shipment_ids=XXX&response_type=pdf&access_token=
     client: 3756313271086728
     secret: QjgI9XjbZEd7petHtAVnwFhKpLvnyK6l
-    redirect: https://pepeganga-d4ce6.web.app/home/meli-accounts
+    redirect: https://pepeganga-dropshipping.web.app/home/meli-accounts
     expiration:
       token: 30
   order:
-    attempts: 2
+    attempts: 3

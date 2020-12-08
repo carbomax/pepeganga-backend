@@ -5,13 +5,12 @@ spring:
   application:
     name: user-service   
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
     password: 123456789.*dhl
     url: jdbc:mysql://database-prod.c9ir9n4tc2qb.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 eureka:
   instance:
     instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
@@ -19,6 +18,8 @@ eureka:
     service-url:
         defaultZone: http://eureka-server:8761/eureka
 logging:
+  file:
+    name: ./log/user-service.log
   level:
     org:
       hibernate:
