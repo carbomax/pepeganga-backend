@@ -5,7 +5,6 @@ spring:
   application:
     name: notification-service
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
     password: 123456789.*dhl
     url: jdbc:mysql://database-prod.c9ir9n4tc2qb.us-east-2.rds.amazonaws.com:3306/pepegangadb
@@ -23,3 +22,5 @@ logging:
     org:
       hibernate:
         SQL: debug
+  file:
+    name: ./log/notification-service.log
