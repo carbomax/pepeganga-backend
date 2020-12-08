@@ -7,9 +7,10 @@ spring:
   application:
     name: meli-service
   datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: admin
     password: 123456789.*dhl
-    url: jdbc:mysql://database-prod.c9ir9n4tc2qb.us-east-2.rds.amazonaws.com:3306/pepegangadb
+    url: jdbc:mysql://db1.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
       ddl-auto: none
@@ -24,8 +25,6 @@ logging:
     org:
       hibernate:
         SQL: debug
-  file:
-    name: ./log/meli-service.log
 
 scheduler:
   cron:
@@ -34,14 +33,14 @@ scheduler:
 
 # Business properties
 meli:
-  risk: 5
+  risk: 10
   api:
     url: https://api.mercadolibre.com
     invoice:
       url: https://api.mercadolibre.com/shipment_labels?shipment_ids=XXX&response_type=pdf&access_token=
     client: 3756313271086728
     secret: QjgI9XjbZEd7petHtAVnwFhKpLvnyK6l
-    redirect: https://pepeganga-dropshipping.web.app/home/meli-accounts
+    redirect: https://pepeganga-d4ce6.web.app/home/meli-accounts
     expiration:
       token: 30
   order:

@@ -4,21 +4,23 @@ spring:
   application:
     name: oauth-service
 feign:
- client:
-   config:
+  client:
+    config:
       default:
-         connectTimeout: 160000
-         readTimeout: 160000
+        connectTimeout: 160000
+        readTimeout: 160000
 
 eureka:
   instance:
     instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
   client:
     service-url:
-        defaultZone: http://eureka-server:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
 logging:
-  file:
-    name: ./log/oauth-service.log
+  level:
+    org:
+      hibernate:
+        SQL: debug
 
 hystrix:
   command:
