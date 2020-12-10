@@ -506,7 +506,7 @@ public class MeliService  implements IMeliService{
                     if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
-                    request.setListing_type_id("bronze");
+                    request.setListing_type_id("gold_premium");
                     request.setPrice(details.getPricePublication());
                     request.setQuantity((int) itemRepository.findById(details.getSku()).get().getStockActual());
                     Object obj = apiService.republishPublication(request, accountFounded.get().getAccessToken(), idPublication);

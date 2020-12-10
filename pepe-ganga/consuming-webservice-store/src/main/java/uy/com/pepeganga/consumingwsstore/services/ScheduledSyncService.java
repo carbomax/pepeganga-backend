@@ -39,7 +39,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     ProductsRepository productRepo;
 
     //Repositories of temporal Tables
-    @Autowired
+  /*  @Autowired
     ITempBrandRepository tempBrandRepo;
     @Autowired
     ITempCategoryRepository tempCategoryRepo;
@@ -47,7 +47,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
     ITempFamilyRepository tempFamilyRepo;
     @Autowired
     ITempItemRepository tempItemRepo;
-    @Autowired
+ */   @Autowired
     IUpdatesSystemRepository updateSysRepo;
 
     //Repositories of Tables
@@ -86,23 +86,14 @@ public class ScheduledSyncService implements IScheduledSyncService{
             updatesSystem.setStartDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
             data = updateSysRepo.save(updatesSystem);
 
-            //Empty temporals table
-            if(!deleteTemporalData())
-                return;
-
             //Insert synchronization data
             String[] dataTypes = new String[]{
                     "brand","family","category","item" };
 
             for(int i = 0; i < dataTypes.length; i++) {
-                if(!insertTemporalData(dataTypes[i])) {
+                if(!insertData(dataTypes[i])) {
                     return;
                 }
-            }
-
-            //Update the system tables from temporal data
-            if(!synchronizeDatas()){
-                return;
             }
 
             //Update Stock table
@@ -110,10 +101,10 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 logger.error(String.format("Error updating stock to publications in Mercado Libre, Error: "));
                 return;
             }
-
+/*
             //If this is execute then the synchronization was Ok, for that reason Empty temporals table
             deleteTemporalData();
-
+*/
 
         }catch (Exception e) {
             logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getMessage());
@@ -123,38 +114,8 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
     }
 
-    private boolean deleteTemporalData() {
-        logger.info("Starting to delete temporal tables");
-        try {
-            if (tempItemRepo.count() != 0) {
-                tempItemRepo.deleteAll();
-            }
-
-            if (tempCategoryRepo.count() != 0) {
-                tempCategoryRepo.deleteAll();
-            }
-
-            if (tempBrandRepo.count() != 0) {
-                tempBrandRepo.deleteAll();
-            }
-           /* if (tempItemRepo.getCountCategoriesRelation() != 0) {
-                tempItemRepo.deleteAllCategoriesRelation();
-            }*/
-
-            if (tempFamilyRepo.count() != 0) {
-                tempFamilyRepo.deleteAll();
-            }
-            logger.info("Table deletion completed");
-            return true;
-        }catch (Exception e) {
-            logger.error(" Error deleting temporal tables {}", e.getMessage());
-            updateTableLogs("Error deleting temporal tables {}" + e.getMessage(), true);
-            return false;
-        }
-    }
-
-    private boolean insertTemporalData(String type) {
-        logger.info(String.format("Starting to insert %s data in temporal table", type));
+    private boolean insertData(String type) {
+        logger.info(String.format("Starting to insert or update %s data in table", type));
         try {
             if (type.equals("brand"))
                 if(!brandService.storeBrand(data))
@@ -168,12 +129,12 @@ public class ScheduledSyncService implements IScheduledSyncService{
             if (type.equals("item"))
                 if(!itemService.storeItems(data))
                     return false;
-            logger.info(String.format("Insert %s data in temporal table completed....", type));
+            logger.info(String.format("Insert or Update %s data in table Completed....", type));
             return true;
         }catch (Exception e){
-            logger.error(String.format("Error inserting temporal %s tables {}", type), e.getMessage());
-            updateTableLogs(String.format("Error inseting temporal %s tables {}", type) + e.getMessage(), true);
-            deleteTemporalData();
+            logger.error(String.format("Error inserting or updating %s tables {}", type), e.getMessage());
+            updateTableLogs(String.format("Error inseting or updating %s tables {}", type) + e.getMessage(), true);
+            //deleteTemporalData();
             return false;
         }
     }
@@ -191,193 +152,14 @@ public class ScheduledSyncService implements IScheduledSyncService{
         updateSysRepo.save(data);
     }
 
-    private boolean synchronizeDatas() {
-        AtomicBoolean exist = new AtomicBoolean(false);
-        logger.info("Starting to synchronization Data method");
-        /** ************ Operation with Item Table ********** **/
-        //Spliting Item Table
-        List<TempItem> tempItems = new ArrayList<>();
-        tempItems.addAll(tempItemRepo.findAll());
-        List<Item> items = itemRepo.findAll();
-        List<Item> itemsDeleted = new ArrayList<>(){};
-        List<Item> newItemList = new ArrayList<>();
-
-        //Getting items to update and delete
-        items.forEach(i -> {
-            Integer count = 0;
-            boolean exit = false;
-            while (count < tempItems.size() && !exit) {
-                if(i.getSku().equals(tempItems.get(count).getSku())) {
-                    //element to update
-                    newItemList.add(updateItem(tempItems.get(count), i));
-                    exit = true;
-                }
-                count++;
-            }
-            if(!exit){
-                //element to delete
-                itemsDeleted.add(i);
-            }
-            else {
-                int iter = count - 1;
-                tempItems.remove(iter);
-            }
-        });
-
-        //new element to add
-        if(tempItems.size() != 0){
-            tempItems.forEach(i -> {
-                newItemList.add(addItem(i));
-            });
-        }
-
-        /** ************ Operation with Category Table ********** **/
-        //Spliting Category Table
-
-        List<TempCategory> tempCategory = new ArrayList<>();
-        tempCategory.addAll(tempCategoryRepo.findAll());
-        List<Category> category = categoryRepo.findAll();
-        List<Category> categoryDeleted = new ArrayList<>(){};
-        List<Category> newCategoryList = new ArrayList<>();
-
-        //Getting categories to save
-        tempCategory.forEach(cat -> {
-            newCategoryList.add(addCategory(cat));
-        });
-
-        //Getting Categories to delete
-        category.forEach(i -> {
-            Integer count = 0;
-            boolean exit = false;
-            while (count < tempCategory.size() && !exit) {
-                if(i.getId() == tempCategory.get(count).getId()) {
-                    exit = true;
-                }
-                count++;
-            }
-            if(!exit){
-                categoryDeleted.add(i);
-            }
-            else {
-                int iter = count - 1;
-                tempCategory.remove(iter);
-            }
-        });
-
-        /** ************ Operation with Family Table ********** **/
-        //Spliting Family Table
-
-        List<TempFamily> tempFamily = new ArrayList<>();
-        tempFamily.addAll(tempFamilyRepo.findAll());
-        List<Family> family = familyRepo.findAll();
-        List<Family> familyDeleted = new ArrayList<>(){};
-        List<Family> newFamilyList = new ArrayList<>();
-
-        //Getting families to save
-        tempFamily.forEach(fam -> {
-            newFamilyList.add(addFamily(fam));
-        });
-
-        //Getting Families to delete
-        family.forEach(i -> {
-            Integer count = 0;
-            boolean exit = false;
-            while (count < tempFamily.size() && !exit) {
-                if(i.getId() == tempFamily.get(count).getId()) {
-                    exit = true;
-                }
-                count++;
-            }
-            if(!exit){
-                familyDeleted.add(i);
-            }
-            else {
-                int iter = count - 1;
-                tempFamily.remove(iter);
-            }
-        });
-
-
-        /** ************ Operation with Brand Table ********** **/
-        //Spliting Brand Table
-        List<TempBrand> tempBrand = new ArrayList<>();
-        tempBrand.addAll(tempBrandRepo.findAll());
-        List<Brand> brand = brandRepo.findAll();
-        List<Brand> brandDeleted = new ArrayList<>(){};
-        List<Brand> newBrandList = new ArrayList<>();
-
-        //Getting brands to save
-        tempBrand.forEach(b -> {
-            newBrandList.add(addBrand(b));
-        });
-
-        //Getting Brands to delete
-        brand.forEach(i -> {
-            Integer count = 0;
-            boolean exit = false;
-            while (count < tempBrand.size() && !exit) {
-                if(i.getId() == tempBrand.get(count).getId()) {
-                    exit = true;
-                }
-                count++;
-            }
-            if(!exit){
-                brandDeleted.add(i);
-            }
-            else {
-                int iter = count - 1;
-                tempBrand.remove(iter);
-            }
-        });
-
-
-        /** ********* Deleting Datas ******* **/
-        //Delete the item that not exsist
-        if(!saveOrDeleteItemsTable(itemsDeleted, "deleting")){
-            return false;
-        }
-        //Delete the category that not exsist
-        if(!saveOrDeleteCategoriesTable(categoryDeleted, "deleting")){
-            return false;
-        }
-        //Delete the families that not exsist
-        if(!saveOrDeleteFamiliesTable(familyDeleted, "deleting")){
-            return false;
-        }
-        //Delete the brands that not exsist
-        if(!saveOrDeleteBrandsTable(brandDeleted, "deleting")){
-            return false;
-        }
-
-
-        /** ********* Saving and Updating Datas ******* **/
-        //Brands
-        if(!saveOrDeleteBrandsTable(newBrandList, "saving")){
-            return false;
-        }
-        //Families
-        if(!saveOrDeleteFamiliesTable(newFamilyList, "saving")){
-            return false;
-        }
-        //Categories
-        if(!saveOrDeleteCategoriesTable(newCategoryList, "saving")){
-            return false;
-        }
-        //Items
-        if(!saveOrDeleteItemsTable(newItemList, "saving")){
-            return false;
-        }
-        /** *********  All OK  ************** **/
-        logger.info("Synchronization Data method completed....");
-        return true;
-    }
-
     private boolean updateStockProvided(){
-        logger.info("Starting to update stock provider");
+        logger.info("Starting to update stock provider...");
         List<StockProcessor> stockList = new ArrayList<>();
         stockList.addAll(stockProcRepo.findAll());
         List<Item> itemsU = new ArrayList<>();
         itemsU = itemRepo.findAll();
+        List<String> itemsToUpdate = new ArrayList<>();
+
         List<Pair> pairs = new ArrayList<>();
         boolean initialStockEmpty = false;
         boolean finishedWithError = false;
@@ -429,7 +211,8 @@ public class ScheduledSyncService implements IScheduledSyncService{
                     count.getAndIncrement();
                 }
                 if(!exit) {
-                    //No existe el articulo con SKU en la tabla -- adiciono a StockProcessor Table
+                    //No existe el articulo con SKU en la tabla StockProcessor -- lo adiciono a StockProcessor Table
+                    logger.info("Adicionando sku a la tabla Stock Processor: {}", checking.getSku());
                     stockUpdated.setSku(newItem.getSku());
                     stockUpdated.setExpectedStock(0);
                     stockUpdated.setRealStock((int) newItem.getStockActual());
@@ -447,7 +230,6 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
                 //si existe articulo: Actualizo el stock del articulo en la tabla Stock Processor, sino existe: lo adiciono
                 stockToAddOrUpdate.add(stockUpdated);
-
             });
         }
         //El stock está vacio -- Sistema nuevo
@@ -456,6 +238,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 StockProcessor stockNew = new StockProcessor();
                 CheckingStockProcessor checkingNew = new CheckingStockProcessor();
                 //adiciono a StockProcessor Table
+                logger.info("Adicionando sku a la tabla Stock Processor: {}", i.getSku());
                 stockNew.setSku(i.getSku());
                 stockNew.setExpectedStock(0);
                 stockNew.setRealStock((int) i.getStockActual());
@@ -474,7 +257,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
             initialStockEmpty = true;
         }
 
-        //Productos a eliminar por no existir
+        //Productos a pausar especialmente por no existir
         List<Item> finalItemsU1 = new ArrayList<>();
         List<StockProcessor> deleteStockList = new ArrayList<>();
         finalItemsU1.addAll(itemsU);
@@ -482,11 +265,11 @@ public class ScheduledSyncService implements IScheduledSyncService{
         if(!initialStockEmpty)
             stockList.forEach(s -> {
             boolean exit1 = false;
-            boolean delete = true;
+            boolean specialPause = true;
             int j = 0;
             while (j < finalItemsU1.size() && !exit1){
                 if(finalItemsU1.get(j).getSku().equals(s.getSku())){
-                    delete = false;
+                    specialPause = false;
                     exit1 = true;
                 }
                 j++;
@@ -495,21 +278,30 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 j--;
                 finalItemsU1.remove(j);
             }
-            if(delete) {
+            if(specialPause) {
+                //Pausamos este Item por no llegar en la actualización
                 CheckingStockProcessor check = new CheckingStockProcessor();
                 check.setSku(s.getSku());
                 check.setExpectedStock(0);
                 check.setRealStock(0);
-                check.setAction(1);
-
-                CheckingStockProcessor data1 = checkStockRepo.findBySku(s.getSku());
-                if(data1 != null)
-                    check.setId(data1.getId());
+                check.setAction(0);
                 checkingList.add(check);
-                deleteStockList.add(s);
-                logger.info("Enviando al checking para eliminar item con sku: {}", s.getSku());
+
+                //Actualizamos el stock del Producto a cero en la tabla Item
+                j--;
+                itemsToUpdate.add(finalItemsU1.get(j).getSku());
+                pairs.add(new Pair(finalItemsU1.get(j).getSku(), 0));
+
+                //actualizamos a cero el item en la tabla Stock Processor
+                s.setRealStock(0);
+                s.setExpectedStock(0);
+                stockToAddOrUpdate.add(s);
+                logger.info("Enviando al checking para pausar especial el item con sku: {} por no venir en la actualización", s.getSku());
             }
         });
+        //Liberando espacio en memoria
+        finalItemsU1.clear();
+
         logger.info("Updating checking Stock and stock product table");
         //Actualizar ambas tablas en la base datos
         if(!checkingList.isEmpty()) {
@@ -520,14 +312,24 @@ public class ScheduledSyncService implements IScheduledSyncService{
             });
             checkStockRepo.saveAll(checkingList);
         }
-        if(!deleteStockList.isEmpty())
-            stockProcRepo.deleteAll(deleteStockList);
 
         if(!stockToAddOrUpdate.isEmpty())
             stockProcRepo.saveAll(stockToAddOrUpdate);
-
         logger.info("Checking Stock and stock product table completed...");
+
+        List<Item> updateItem = new ArrayList<>();
+        itemsToUpdate.forEach(i -> {
+            Optional<Item> itemOptional = itemRepo.findById(i);
+            if(itemOptional.isPresent()) {
+                itemOptional.get().setStockActual(0);
+                updateItem.add(itemOptional.get());
+            }
+        });
+        if(!updateItem.isEmpty())
+            itemRepo.saveAll(updateItem);
+
         logger.info("Starting update publications in Mercado Libre");
+
         //Actualiza stock en el sistema y en Mercado Libre
         if(!initialStockEmpty) {
             if(!updateStockOfProductsMeli(itemsU)){
@@ -541,7 +343,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
         if(finishedWithError){ return false;}
         else {
             if(data.getEndDate() == null) {
-                updateTableLogs("Synchronization completed...", false);
+                updateTableLogs("Synchronization Completed...", false);
                 return true;
             }
             else {
