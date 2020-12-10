@@ -19,7 +19,4 @@ public interface UserFeignClient {
 
     @PutMapping("/api/users/update-user/{id}")
     User updateUser(@RequestBody User user, @PathVariable Integer id);
-
-    @PostMapping("/api/send/email-reset-password")
-    ResponseEntity<Map<String, Object>> sendEmailToResetPassword(@RequestParam String email, @RequestParam String url);
 }

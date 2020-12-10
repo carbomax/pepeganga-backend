@@ -66,15 +66,4 @@ public class UserService implements IUserService, UserDetailsService {
         return client.updateUser(user, id);
     }
 
-    @Override
-    public Map<String, Object> sendEmailToResetPassword(String email, String url) {
-        return null;
-    }
-
-    @Override
-    public boolean isValidTokenToResetPassword(String token) {
-
-        return false;
-    }
-
 }
