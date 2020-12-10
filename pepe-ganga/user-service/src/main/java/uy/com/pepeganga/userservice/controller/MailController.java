@@ -1,16 +1,17 @@
 package uy.com.pepeganga.userservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.userservice.models.EmailBody;
 import uy.com.pepeganga.userservice.service.mail.EmailService;
 
+import java.util.Map;
+
 @RestController
-@RequestMapping("mail")
+@RequestMapping("api")
 public class MailController {
 
     @Autowired
@@ -37,4 +38,7 @@ public class MailController {
         }
         return "NOT";
     }
+
+
+
 }

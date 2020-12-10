@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: oauth-service
+
 feign:
  client:
    config:

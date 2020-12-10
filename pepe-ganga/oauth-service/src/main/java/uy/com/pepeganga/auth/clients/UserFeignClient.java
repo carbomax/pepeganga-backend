@@ -1,9 +1,12 @@
 package uy.com.pepeganga.auth.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.business.common.models.AuthAddInformationClaim;
+
+import java.util.Map;
 
 @FeignClient(name = "user-service")
 public interface UserFeignClient {
@@ -16,4 +19,7 @@ public interface UserFeignClient {
 
     @PutMapping("/api/users/update-user/{id}")
     User updateUser(@RequestBody User user, @PathVariable Integer id);
+
+    @PostMapping("/api/send/email-reset-password")
+    ResponseEntity<Map<String, Object>> sendEmailToResetPassword(@RequestParam String email, @RequestParam String url);
 }

@@ -4,6 +4,7 @@ import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,6 +17,7 @@ import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.models.AuthAddInformationClaim;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -62,6 +64,17 @@ public class UserService implements IUserService, UserDetailsService {
     @Override
     public uy.com.pepeganga.business.common.entities.User updateUser(uy.com.pepeganga.business.common.entities.User user, Integer id) {
         return client.updateUser(user, id);
+    }
+
+    @Override
+    public Map<String, Object> sendEmailToResetPassword(String email, String url) {
+        return null;
+    }
+
+    @Override
+    public boolean isValidTokenToResetPassword(String token) {
+
+        return false;
     }
 
 }

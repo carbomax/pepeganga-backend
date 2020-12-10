@@ -203,13 +203,22 @@ public class StockProcessorService implements IStockProcessorService {
                                     detailsPublicationMeliRepository.save(detailsPublicationsMeli);
 
                                 } else {
-                                    logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    logger.warn("Publication was not reactivated by meli. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
                                     checkingProcessed.set(checkingProcessed.get() + 1);
                                 }
                             } catch (Exception e) {
-                                logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                logger.warn("Publication was not reactivated by meli. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
                                 checkingProcessed.set(checkingProcessed.get() + 1);
                             }
+                        } else {
+                            try {
+                                detailsPublicationsMeli.setSpecialPaused(0);
+                                detailsPublicationMeliRepository.save(detailsPublicationsMeli);
+                            }catch (Exception e){
+                                logger.warn("Publication was not reactivated by business . Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                checkingProcessed.set(checkingProcessed.get() + 1);
+                            }
+
                         }
 
                     }
