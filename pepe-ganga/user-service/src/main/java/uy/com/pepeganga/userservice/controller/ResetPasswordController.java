@@ -11,7 +11,7 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("reset")
 public class ResetPasswordController {
 
 
