@@ -760,19 +760,12 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
-    public Boolean updateStock(List<Pair> pairs, Long idData) {
+    public void updateStock(List<Pair> pairs, Long idData) {
         logger.info(" Begin updating of stock in Mercado Libre");
         AtomicBoolean isGood = new AtomicBoolean(true);
         try {
-            UpdatesOfSystem data = new UpdatesOfSystem();
-            Optional<UpdatesOfSystem> optionalData = updateSysRepo.findById(idData);
-            if(optionalData.isPresent()) {
-                data.setId(optionalData.get().getId());
-                data.setStartDate(optionalData.get().getStartDate());
-                data.setEndDate(optionalData.get().getEndDate());
-                data.setFinishedSync(optionalData.get().isFinishedSync());
-                data.setMessage(optionalData.get().getMessage());
-            }
+            UpdatesOfSystem data = getCurrentUpdateOfSystem(idData);
+
             pairs.forEach(pair -> {
                 List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
                 detailsList = detailsPublicationRepository.findAllBySku(pair.getSku());
@@ -853,13 +846,24 @@ public class MeliService  implements IMeliService{
                     });
                 }
             });
+            //todo terminó OK
+            if(isGood.get() && data.getEndDate() == null){
+                logger.info("IMPORTANT: STARTING TO UPDATE PUBLICATIONS IN MERCADO LIBRE COMPLETED CORRECTLY ....");
+                data.setMessage("Synchronization Completed...");
+                data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                data.setFinishedSync(true);
+                updateSysRepo.save(data);
+            }
         }catch (Exception e){
             logger.error(" Error getting publications of Database in the Detail Publications Meli table, Methods: updateStock(), {}", e.getMessage());
-            isGood.set(false);
+            logger.error("IMPORTANT: THE UPGRATE OF PUBLICATIONS IN MERCADO LIBRE WAS INTERRUPTED BY ERRORS ....");
+            UpdatesOfSystem data = getCurrentUpdateOfSystem(idData);
+            data.setMessage(data.getMessage() + " Error getting token, Methods: updateStock();");
+            data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+            data.setFinishedSync(false);
+            updateSysRepo.save(data);
         }
-        if(isGood.get())
-            return true;
-        return false;
+
     }
 
     /**** Metodos auxiliares ****/
@@ -928,5 +932,18 @@ public class MeliService  implements IMeliService{
             response.put(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
         }
         return response;
+    }
+
+    private UpdatesOfSystem getCurrentUpdateOfSystem(Long idData) {
+        UpdatesOfSystem data = new UpdatesOfSystem();
+        Optional<UpdatesOfSystem> optionalData = updateSysRepo.findById(idData);
+        if (optionalData.isPresent()) {
+            data.setId(optionalData.get().getId());
+            data.setStartDate(optionalData.get().getStartDate());
+            data.setEndDate(optionalData.get().getEndDate());
+            data.setFinishedSync(optionalData.get().isFinishedSync());
+            data.setMessage(optionalData.get().getMessage());
+        }
+        return data;
     }
 }

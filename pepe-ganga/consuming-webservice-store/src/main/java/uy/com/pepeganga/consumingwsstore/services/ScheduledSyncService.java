@@ -212,13 +212,13 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 }
                 if(!exit) {
                     //No existe el articulo con SKU en la tabla StockProcessor -- lo adiciono a StockProcessor Table
-                    logger.info("Adicionando sku a la tabla Stock Processor: {}", checking.getSku());
+                    logger.info("Adicionando sku a la tabla Stock Processor: {}", newItem.getSku());
                     stockUpdated.setSku(newItem.getSku());
                     stockUpdated.setExpectedStock(0);
                     stockUpdated.setRealStock((int) newItem.getStockActual());
 
                     //Verifico si cumple condicion de stock
-                    if ((int) newItem.getStockActual() - 0 <= property.getRiskTime()) {
+                    if ((int) newItem.getStockActual() <= property.getRiskTime()) {
                         checking.setSku(newItem.getSku());
                         checking.setExpectedStock(0);
                         checking.setRealStock((int) newItem.getStockActual());
@@ -244,7 +244,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 stockNew.setRealStock((int) i.getStockActual());
 
                 //Verifico si cumple condicion de stock
-                if ((int) i.getStockActual() - 0 <= property.getRiskTime()) {
+                if ((int) i.getStockActual() <= property.getRiskTime()) {
                     checkingNew.setSku(i.getSku());
                     checkingNew.setExpectedStock(0);
                     checkingNew.setRealStock((int) i.getStockActual());
@@ -259,8 +259,11 @@ public class ScheduledSyncService implements IScheduledSyncService{
 
         //Productos a pausar especialmente por no existir
         List<Item> finalItemsU1 = new ArrayList<>();
-        List<StockProcessor> deleteStockList = new ArrayList<>();
+        //List<StockProcessor> deleteStockList = new ArrayList<>();
         finalItemsU1.addAll(itemsU);
+
+        //Liberando espacio en memoria
+        itemsU.clear();
 
         if(!initialStockEmpty)
             stockList.forEach(s -> {
@@ -327,35 +330,28 @@ public class ScheduledSyncService implements IScheduledSyncService{
         });
         if(!updateItem.isEmpty())
             itemRepo.saveAll(updateItem);
+        logger.info("IMPORTANT: THE SYNCHRONIZATION PROCESS WAS FINISHED CORRECTLY ....");
 
-        logger.info("Starting update publications in Mercado Libre");
+        logger.info("STARTING TO UPDATE PUBLICATIONS IN MERCADO LIBRE AND PRODUCTS STOCK IN TABLES OF THE SYSTEM");
 
         //Actualiza stock en el sistema y en Mercado Libre
         if(!initialStockEmpty) {
-            if(!updateStockOfProductsMeli(itemsU)){
+            if(!updateStockOfProductsMeli(pairs)){
                finishedWithError = true;
             }
+            //Lamada al metodo asincrono
             updateStockOfPublicationsMeli(pairs);
 
         }
-        logger.info("Update publications in Mercado Libre Completed...");
 
         if(finishedWithError){ return false;}
-        else {
-            if(data.getEndDate() == null) {
-                updateTableLogs("Synchronization Completed...", false);
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
+        return true;
     }
 
-    private boolean updateStockOfProductsMeli(List<Item> itemsU){
+    private boolean updateStockOfProductsMeli(List<Pair> pairsI){
         try {
-            itemsU.forEach( i -> {
-                productRepo.updateStockBySKU(i.getStockActual(), i.getSku());
+            pairsI.forEach( i -> {
+                productRepo.updateStockBySKU(i.getStock(), i.getSku());
             });
             return true;
         }catch (Exception e){
@@ -367,14 +363,12 @@ public class ScheduledSyncService implements IScheduledSyncService{
     }
 
     @Async
-    public boolean updateStockOfPublicationsMeli(List<Pair> pairs){
+    public void updateStockOfPublicationsMeli(List<Pair> pairs){
         try {
-            boolean p1 = feign.updateStock(pairs, data.getId());
-            return true;
+            Long id = data.getId();
+            feign.updateStock(pairs, id);
         }catch (Exception e) {
-            logger.error(String.format("Error calling meli service to update stock of publications {} Error: "), e.getMessage());
-            updateTableLogs(String.format("Error calling meli service to update stock of publications {} Error: ", e.getMessage()), true);
-            return false;
+            logger.warn(String.format("Timeout error waiting for response from meli service to update stock of publications {} Error: "), e.getMessage());
         }
     }
 
