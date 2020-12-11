@@ -2,6 +2,7 @@ package uy.pepeganga.meli.service.services;
 
 import meli.ApiException;
 import meli.model.Item;
+import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
 import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
@@ -61,5 +62,7 @@ public interface IMeliService {
     Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList);
 
     Boolean updateStock(List<Pair> pairs, Long idData);
+
+    void synchronizationPublications(List<DetailsPublicationsMeli> detailsList);
 
 }

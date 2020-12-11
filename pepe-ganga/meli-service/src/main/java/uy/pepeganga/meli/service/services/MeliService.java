@@ -722,26 +722,11 @@ public class MeliService  implements IMeliService{
 
     @Override
     public Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList) {
-        List<DetailsPublicationsMeli> toUpdate = new ArrayList<>();
         Map<String, Object> response = new HashMap<>();
         try {
             List<DetailsPublicationsMeli> detailsList = detailsPublicationRepository.findAllById(idDetailsPublicationsList);
             if (!detailsList.isEmpty()) {
-                //Sincroniza los estados de las publicaciones en ML con la base datos
-                detailsList.forEach(d -> {
-                    Map<String, Object> status = apiService.getStatusPublication(d.getIdPublicationMeli());
-                    if (status.containsKey(MapResponseConstants.RESPONSE)) {
-                        Object obj = status.get(MapResponseConstants.RESPONSE);
-                        MeliCodeResponse detailM = mapper.convertValue(obj, MeliCodeResponse.class);
-                        if (!detailM.getBody().getStatus().equals(d.getStatus())) {
-                            d.setStatus(detailM.getBody().getStatus());
-                            toUpdate.add(d);
-                        }
-                    }
-                });
-                if (!toUpdate.isEmpty()) {
-                    detailsPublicationRepository.saveAll(toUpdate);
-                }
+                synchronizationPublications(detailsList);
 
                 //Actualiza las publicaciones con cambios pendientes
                 List<DetailsPublicationsMeli> toUpdateList = detailsList.stream().filter(d -> d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) && d.getPendingMarginUpdate()).collect(Collectors.toList());
@@ -756,6 +741,27 @@ public class MeliService  implements IMeliService{
             logger.error(String.format("Error of systems "), e.getMessage());
             response.put(ActionResult.ERROR.getValue(), String.format("Error of systems: {}: ", e.getMessage()));
             return response;
+        }
+    }
+
+    @Override
+    public void synchronizationPublications(List<DetailsPublicationsMeli> detailsList) {
+        List<DetailsPublicationsMeli> toUpdate = new ArrayList<>();
+        //Sincroniza los estados de las publicaciones en ML con la base datos
+        detailsList.forEach(d -> {
+            Map<String, Object> status = apiService.getStatusPublication(d.getIdPublicationMeli());
+            if (status.containsKey(MapResponseConstants.RESPONSE)) {
+                Object obj = status.get(MapResponseConstants.RESPONSE);
+                MeliCodeResponse detailM = mapper.convertValue(obj, MeliCodeResponse.class);
+                if (!detailM.getBody().getStatus().equals(d.getStatus())) {
+                    d.setStatus(detailM.getBody().getStatus());
+                    toUpdate.add(d);
+                }
+            }
+        });
+        if (!toUpdate.isEmpty()) {
+            logger.info("Updating {} publications by synchronization", toUpdate.size());
+            detailsPublicationRepository.saveAll(toUpdate);
         }
     }
 
