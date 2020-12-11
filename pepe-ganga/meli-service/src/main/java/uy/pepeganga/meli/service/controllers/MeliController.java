@@ -129,7 +129,7 @@ public class MeliController {
     }
 
     @PostMapping("/update-stock")
-    public Boolean updateStock(@RequestBody List<Pair> pairs, @RequestParam Long idData){
-        return meliService.updateStock(pairs, idData);
+    public void updateStock(@RequestBody List<Pair> pairs, @RequestParam Long idData){
+        meliService.updateStock(pairs, idData);
     }
 }
