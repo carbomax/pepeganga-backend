@@ -37,7 +37,7 @@ public class Profile implements Serializable {
 	@JoinColumn(name = "profile_id")
 	private List<Margin> margins;
 
-	@OneToOne(fetch = FetchType.EAGER)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	private User user;
 

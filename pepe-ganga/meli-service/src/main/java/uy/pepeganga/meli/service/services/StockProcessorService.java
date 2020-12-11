@@ -86,6 +86,10 @@ public class StockProcessorService implements IStockProcessorService {
 
             } else {
 
+                logger.info("Synchronizing publications....");
+                meliService.synchronizationPublications(detailsPublications);
+                logger.info("Synchronizing publications ended....");
+
                 // Check if this is in the risk zone
                 if ((checkingStockProcessor.getRealStock() - checkingStockProcessor.getExpectedStock()) <= StockProcessorService.RISK) {
                     // Pausar con estado especial todas las publicaciones y  bloquear los item no publicados correspondientes.
@@ -187,6 +191,9 @@ public class StockProcessorService implements IStockProcessorService {
 
                     }
 
+                    logger.info("Synchronizing publications....");
+                    meliService.synchronizationPublications(detailsPublications);
+                    logger.info("Synchronizing publications ended....");
                     for (DetailsPublicationsMeli detailsPublicationsMeli :
                             detailsPublications) {
 
