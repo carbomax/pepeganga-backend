@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
+import uy.com.pepeganga.business.common.utils.enums.RoleType;
 import uy.pepeganga.meli.service.exceptions.OrderCreateException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
@@ -136,12 +137,15 @@ public class OrderService implements IOrderService {
         if (profile.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
         } else {
-            List<String> accounts = new ArrayList<>();
-            profile.get().getSellerAccounts().forEach(sellerAccount -> {
-                if (sellerAccount.getUserId() != null) {
-                    accounts.add(String.valueOf(sellerAccount.getUserId()));
-                }
-            });
+            List<String> accounts;
+            List<Role>  rolesProfile = profile.get().getUser().getRoles();
+            boolean isOperatorOrAdmin = rolesProfile.stream().anyMatch(role -> role.getName().equals(RoleType.OPERATOR.getBusinessRole()) || role.getName().equals(RoleType.ADMIN.getBusinessRole()) );
+            if(isOperatorOrAdmin){
+                accounts = sellerAccountRepository.findAll().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
+            } else {
+                accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
+            }
+
             List<Integer> operatorBssStatus = new ArrayList<>();
             if (operatorBusinessStatus.isEmpty()) {
                 operatorBssStatus.add(OperatorBusinessStatusType.IN_PROCESS.getCode());
