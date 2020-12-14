@@ -102,7 +102,7 @@ public class EmailServiceImpl implements EmailService {
             Profile profile = profileService.findProfileByUserEmail(email.trim());
             if (Objects.isNull(profile.getUser())) {
                 map.put("userNotFound", "User not Found");
-            } else {
+            } else  if(Boolean.TRUE.equals(profile.getUser().getEnabled())){
                  // Send email and await response
                 EmailBody emailBody = new EmailBody();
                 emailBody.setTo(profile.getUser().getEmail());
@@ -114,6 +114,8 @@ public class EmailServiceImpl implements EmailService {
                     map.put("sent", "Email sent successfully");
                 } else map.put("tokenNotSaved", "Token not saved");
 
+            } else {
+                map.put("userNotEnabled", "User not enable");
             }
         } catch (Exception e) {
             map.put("error", e.getMessage());
