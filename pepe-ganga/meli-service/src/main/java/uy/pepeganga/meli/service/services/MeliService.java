@@ -1,6 +1,9 @@
 package uy.pepeganga.meli.service.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import meli.ApiException;
 import meli.model.*;
 import meli.model.Item;
@@ -19,6 +22,7 @@ import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.MapResponseConstants;
+import uy.pepeganga.meli.service.utils.MeliErrorCodeReference;
 import uy.pepeganga.meli.service.utils.MeliUtils;
 
 import java.util.*;
@@ -408,9 +412,17 @@ public class MeliService  implements IMeliService{
             if (!statusPublication.equals(ChangeStatusPublicationType.CLOSED.getStatus())) {
                 var result = changeStatusPublication(accountId, 5, idPublication);
                 if(!result.containsKey("response")){
-                    //Hubo un error que ya fue registrado en el metodo que se llamó
-                    return result;
+                    if(result.containsKey(MapResponseConstants.MELI_ERROR) && (MeliErrorCodeReference.STATUS_NOT_MODIFIABLE.getCode().trim().equals(result.get(MapResponseConstants.MELI_ERROR)))) {
+                        response.putAll(deletePublicationFailed(details.getId()));
+                        //OJO -- Ver como eliminar la referencia del nuevo producto en mercado libre
+                    }
+                    else{
+                        //Hubo un error que ya fue registrado en el metodo que se llamó
+                        response.putAll(result);
+                    }
+                    return response;
                 }
+
                 details.setStatus(MeliStatusPublications.CLOSED.getValue());
                 detailsPublicationRepository.save(details);
             }
@@ -636,7 +648,19 @@ public class MeliService  implements IMeliService{
                     response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
                 }
                 catch (ApiException e) {
-                   response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+                    try {
+                        MeliResponseBodyException bodyException = mapper.readValue(e.getResponseBody(), MeliResponseBodyException.class);
+                        if(Objects.isNull(bodyException.getCause()) || bodyException.getCause().length == 0) {
+                            logger.error(String.format("Error Meli: %s", bodyException.getMessage()));
+                            response.put(MapResponseConstants.MELI_ERROR, bodyException.getMessage());
+                        }else {
+                            Object[] obj = bodyException.getCause();
+                            MeliCauseError causeError = mapper.convertValue(obj[0], MeliCauseError.class);
+                            response.put(MapResponseConstants.MELI_ERROR, causeError.getCode());
+                        }
+                    } catch (Exception ex) {
+                        logger.error(" Error parsing Meli Exception Response", ex);
+                    }
                 }
 
             }

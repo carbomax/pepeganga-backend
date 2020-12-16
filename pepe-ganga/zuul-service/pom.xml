@@ -106,6 +106,12 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>homo</id>
+			<properties>
+				<spring.profiles.active>homo</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
 			<id>prod</id>
 			<properties>
 				<spring.profiles.active>prod</spring.profiles.active>

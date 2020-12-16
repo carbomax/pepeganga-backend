@@ -101,11 +101,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
                 logger.error(String.format("Error updating stock to publications in Mercado Libre, Error: "));
                 return;
             }
-/*
-            //If this is execute then the synchronization was Ok, for that reason Empty temporals table
-            deleteTemporalData();
-*/
-
+            return;
         }catch (Exception e) {
             logger.error(String.format("Error synchronizing Tables {General method}, Error: "), e.getMessage());
             updateTableLogs(String.format("Error synchronizing Tables {General method}, Error: %s", e.getMessage()), true);
@@ -184,35 +180,22 @@ public class ScheduledSyncService implements IScheduledSyncService{
                         stockUpdated.setExpectedStock(stockList.get(count.get()).getExpectedStock());
                         stockUpdated.setRealStock(Math.toIntExact(newItem.getStockActual()));
 
-                        //el articulo esta pausado por stock
-                        if((stockList.get(count.get()).getRealStock() - stockList.get(count.get()).getExpectedStock()) <= property.getRiskTime()){
-                            //Verifico si continua sin stock al actualizar
-                            if((int) newItem.getStockActual() - stockList.get(count.get()).getExpectedStock() > property.getRiskTime()){
-                                checking.setSku(stockList.get(count.get()).getSku());
-                                checking.setExpectedStock(stockList.get(count.get()).getExpectedStock());
-                                checking.setRealStock((int) newItem.getStockActual());
-                                checking.setAction(0);
-                                checkingList.add(checking);
-                                logger.info("Enviando al checking con item con sku: {}", checking.getSku());
-                            }
-                        }
-                        //Articulo no pausado por stock -- Verifico si se pausa al actualizar
-                        else{
-                            if((int) newItem.getStockActual() - stockList.get(count.get()).getExpectedStock() <= property.getRiskTime()){
-                                checking.setSku(stockList.get(count.get()).getSku());
-                                checking.setExpectedStock(stockList.get(count.get()).getExpectedStock());
-                                checking.setRealStock((int) newItem.getStockActual());
-                                checking.setAction(0);
-                                checkingList.add(checking);
-                                logger.info("Enviando al checking con item con sku: {}", checking.getSku());
-                            }
+                        //Si el articulo ya se encuentra pausado por stock lo envio de vuelta al checking, sino Verifico si se pausa al actualizar
+                        if(((stockList.get(count.get()).getRealStock() - stockList.get(count.get()).getExpectedStock()) <= property.getRiskTime()) || ((int) newItem.getStockActual() - stockList.get(count.get()).getExpectedStock() <= property.getRiskTime())){
+                            checking.setSku(stockList.get(count.get()).getSku());
+                            checking.setExpectedStock(stockList.get(count.get()).getExpectedStock());
+                            checking.setRealStock((int) newItem.getStockActual());
+                            checking.setAction(0);
+                            checkingList.add(checking);
+                            logger.info("Enviando al checking con item con sku: {}", checking.getSku());
+
                         }
                     }
                     count.getAndIncrement();
                 }
                 if(!exit) {
                     //No existe el articulo con SKU en la tabla StockProcessor -- lo adiciono a StockProcessor Table
-                    logger.info("Adicionando sku a la tabla Stock Processor: {}", newItem.getSku());
+                    logger.info("Adicionando nuevo sku a la tabla Stock Processor: {}", newItem.getSku());
                     stockUpdated.setSku(newItem.getSku());
                     stockUpdated.setExpectedStock(0);
                     stockUpdated.setRealStock((int) newItem.getStockActual());
@@ -234,11 +217,12 @@ public class ScheduledSyncService implements IScheduledSyncService{
         }
         //El stock está vacio -- Sistema nuevo
         else{
+            logger.info("Sistema nuevo, adicionando productos a la tabla stock");
             itemsU.forEach(i -> {
                 StockProcessor stockNew = new StockProcessor();
                 CheckingStockProcessor checkingNew = new CheckingStockProcessor();
                 //adiciono a StockProcessor Table
-                logger.info("Adicionando sku a la tabla Stock Processor: {}", i.getSku());
+                logger.info("Adicionando nuevo sku a la tabla Stock Processor: {}", i.getSku());
                 stockNew.setSku(i.getSku());
                 stockNew.setExpectedStock(0);
                 stockNew.setRealStock((int) i.getStockActual());
@@ -310,7 +294,7 @@ public class ScheduledSyncService implements IScheduledSyncService{
         if(!checkingList.isEmpty()) {
             checkingList.forEach(check -> {
                 CheckingStockProcessor data = checkStockRepo.findBySku(check.getSku());
-                if(data != null)
+                if(data != null && data.getSku() != null && data.getSku() != "")
                     check.setId(data.getId());
             });
             checkStockRepo.saveAll(checkingList);
