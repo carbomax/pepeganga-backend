@@ -37,7 +37,7 @@ public class MercadoLibrePublications implements Serializable {
 	@JoinColumn(name="profile_id", nullable = false)
 	private Profile profile;
 	
-	@Column(name="productName")
+	@Column(name="productName", columnDefinition = "TEXT")
 	private String productName;	
 	
 	@Column(name="description", columnDefinition = "TEXT")

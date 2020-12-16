@@ -39,7 +39,7 @@ public class MeliUtils {
           if(sellerAccount.getDateLastSynchronization() > currentTime || sellerAccount.getDateLastSynchronization() < currentTime){
               return true;
           } else {
-              return DateTimeUtilsBss.getDurationOfMilleSeconds(DateTimeUtilsBss.getDateTimeAtCurrentTime().getMillis(), sellerAccount.getExpirationDate() ).getStandardMinutes() <= TOKEN_EXPIRATION;
+              return DateTimeUtilsBss.getDurationOfMilleSeconds(DateTimeUtilsBss.getDateTimeAtCurrentTime().getMillis(), sellerAccount.getExpirationDate()).getStandardMinutes() <= TOKEN_EXPIRATION;
           }
       } catch (Exception e){
           logger.error(e.getMessage());

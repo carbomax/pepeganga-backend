@@ -1,6 +1,9 @@
 package uy.pepeganga.meli.service.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonParser;
 import meli.ApiException;
 import meli.model.*;
 import meli.model.Item;
@@ -11,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
 import uy.pepeganga.meli.service.exceptions.TokenException;
@@ -18,6 +22,7 @@ import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.MapResponseConstants;
+import uy.pepeganga.meli.service.utils.MeliErrorCodeReference;
 import uy.pepeganga.meli.service.utils.MeliUtils;
 
 import java.util.*;
@@ -47,6 +52,9 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     ProfileRepository profileRepository;
+
+    @Autowired
+    IUpdatesSystemRepository updateSysRepo;
 
     @Autowired
     IApiService apiService;
@@ -404,9 +412,17 @@ public class MeliService  implements IMeliService{
             if (!statusPublication.equals(ChangeStatusPublicationType.CLOSED.getStatus())) {
                 var result = changeStatusPublication(accountId, 5, idPublication);
                 if(!result.containsKey("response")){
-                    //Hubo un error que ya fue registrado en el metodo que se llamó
-                    return result;
+                    if(result.containsKey(MapResponseConstants.MELI_ERROR) && (MeliErrorCodeReference.STATUS_NOT_MODIFIABLE.getCode().trim().equals(result.get(MapResponseConstants.MELI_ERROR)))) {
+                        response.putAll(deletePublicationFailed(details.getId()));
+                        //OJO -- Ver como eliminar la referencia del nuevo producto en mercado libre
+                    }
+                    else{
+                        //Hubo un error que ya fue registrado en el metodo que se llamó
+                        response.putAll(result);
+                    }
+                    return response;
                 }
+
                 details.setStatus(MeliStatusPublications.CLOSED.getValue());
                 detailsPublicationRepository.save(details);
             }
@@ -502,7 +518,7 @@ public class MeliService  implements IMeliService{
                     if(MeliUtils.isExpiredToken(accountFounded.get())){
                         accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                     }
-                    request.setListing_type_id("bronze");
+                    request.setListing_type_id("gold_premium");
                     request.setPrice(details.getPricePublication());
                     request.setQuantity((int) itemRepository.findById(details.getSku()).get().getStockActual());
                     Object obj = apiService.republishPublication(request, accountFounded.get().getAccessToken(), idPublication);
@@ -632,7 +648,19 @@ public class MeliService  implements IMeliService{
                     response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), "Error al obtener token de Mercado Libre. Pude que la API este presentando problema de conexión"));
                 }
                 catch (ApiException e) {
-                   response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), e.getResponseBody()));
+                    try {
+                        MeliResponseBodyException bodyException = mapper.readValue(e.getResponseBody(), MeliResponseBodyException.class);
+                        if(Objects.isNull(bodyException.getCause()) || bodyException.getCause().length == 0) {
+                            logger.error(String.format("Error Meli: %s", bodyException.getMessage()));
+                            response.put(MapResponseConstants.MELI_ERROR, bodyException.getMessage());
+                        }else {
+                            Object[] obj = bodyException.getCause();
+                            MeliCauseError causeError = mapper.convertValue(obj[0], MeliCauseError.class);
+                            response.put(MapResponseConstants.MELI_ERROR, causeError.getCode());
+                        }
+                    } catch (Exception ex) {
+                        logger.error(" Error parsing Meli Exception Response", ex);
+                    }
                 }
 
             }
@@ -718,26 +746,12 @@ public class MeliService  implements IMeliService{
 
     @Override
     public Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList) {
-        List<DetailsPublicationsMeli> toUpdate = new ArrayList<>();
+
         Map<String, Object> response = new HashMap<>();
         try {
             List<DetailsPublicationsMeli> detailsList = detailsPublicationRepository.findAllById(idDetailsPublicationsList);
             if (!detailsList.isEmpty()) {
-                //Sincroniza los estados de las publicaciones en ML con la base datos
-                detailsList.forEach(d -> {
-                    Map<String, Object> status = apiService.getStatusPublication(d.getIdPublicationMeli());
-                    if (status.containsKey(MapResponseConstants.RESPONSE)) {
-                        Object obj = status.get(MapResponseConstants.RESPONSE);
-                        MeliCodeResponse detailM = mapper.convertValue(obj, MeliCodeResponse.class);
-                        if (!detailM.getBody().getStatus().equals(d.getStatus())) {
-                            d.setStatus(detailM.getBody().getStatus());
-                            toUpdate.add(d);
-                        }
-                    }
-                });
-                if (!toUpdate.isEmpty()) {
-                    detailsPublicationRepository.saveAll(toUpdate);
-                }
+                synchronizationPublications(detailsList);
 
                 //Actualiza las publicaciones con cambios pendientes
                 List<DetailsPublicationsMeli> toUpdateList = detailsList.stream().filter(d -> d.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) && d.getPendingMarginUpdate()).collect(Collectors.toList());
@@ -756,10 +770,33 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
-    public Boolean updateStock(List<Pair> pairs) {
+    public void synchronizationPublications(List<DetailsPublicationsMeli> detailsList) {
+        List<DetailsPublicationsMeli> toUpdate = new ArrayList<>();
+        //Sincroniza los estados de las publicaciones en ML con la base datos
+        detailsList.forEach(d -> {
+            Map<String, Object> status = apiService.getStatusPublication(d.getIdPublicationMeli());
+            if (status.containsKey(MapResponseConstants.RESPONSE)) {
+                Object obj = status.get(MapResponseConstants.RESPONSE);
+                MeliCodeResponse detailM = mapper.convertValue(obj, MeliCodeResponse.class);
+                if (!detailM.getBody().getStatus().equals(d.getStatus())) {
+                    d.setStatus(detailM.getBody().getStatus());
+                    toUpdate.add(d);
+                }
+            }
+        });
+        if (!toUpdate.isEmpty()) {
+            logger.info("Updating {} publication by synchronization", toUpdate.size());
+            detailsPublicationRepository.saveAll(toUpdate);
+        }
+    }
+
+    @Override
+    public void updateStock(List<Pair> pairs, Long idData) {
         logger.info(" Begin updating of stock in Mercado Libre");
         AtomicBoolean isGood = new AtomicBoolean(true);
         try {
+            UpdatesOfSystem data = getCurrentUpdateOfSystem(idData);
+
             pairs.forEach(pair -> {
                 List<DetailsPublicationsMeli> detailsList = new ArrayList<>();
                 detailsList = detailsPublicationRepository.findAllBySku(pair.getSku());
@@ -785,10 +822,22 @@ public class MeliService  implements IMeliService{
                                 } catch (ApiException e) {
                                     logger.error(" Error updating stock in mercado libre, Methods: updateStock(), {}", e.getResponseBody());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error updating stock in mercado libre, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 } catch (TokenException e) {
                                     logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
                                     logger.error(" Code of the error: {}", e.getCode());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error getting token, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 }
                             } else {
                                 try {
@@ -805,10 +854,22 @@ public class MeliService  implements IMeliService{
                                 } catch (ApiException e) {
                                     logger.error(" Error updating stock in mercado libre, API: call to ML, Methods: updateStock(), {}", e.getResponseBody());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error updating stock in mercado libre, API: call to ML, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 } catch (TokenException e) {
                                     logger.error(" Error getting token in method updateStock(): {}", e.getMessage());
                                     logger.error(" Code of the error: {}", e.getCode());
                                     isGood.set(false);
+
+                                    String data1 = data.getMessage();
+                                    data.setMessage(data1 + " Error getting token, Methods: updateStock();");
+                                    data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                                    data.setFinishedSync(false);
+                                    updateSysRepo.save(data);
                                 }
                             }
 
@@ -816,13 +877,24 @@ public class MeliService  implements IMeliService{
                     });
                 }
             });
+            //todo terminó OK
+            if(isGood.get() && data.getEndDate() == null){
+                logger.info("IMPORTANT: STARTING TO UPDATE PUBLICATIONS IN MERCADO LIBRE COMPLETED CORRECTLY ....");
+                data.setMessage("Synchronization Completed...");
+                data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+                data.setFinishedSync(true);
+                updateSysRepo.save(data);
+            }
         }catch (Exception e){
             logger.error(" Error getting publications of Database in the Detail Publications Meli table, Methods: updateStock(), {}", e.getMessage());
-            isGood.set(false);
+            logger.error("IMPORTANT: THE UPGRATE OF PUBLICATIONS IN MERCADO LIBRE WAS INTERRUPTED BY ERRORS ....");
+            UpdatesOfSystem data = getCurrentUpdateOfSystem(idData);
+            data.setMessage(data.getMessage() + " Error getting token, Methods: updateStock();");
+            data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+            data.setFinishedSync(false);
+            updateSysRepo.save(data);
         }
-        if(isGood.get())
-            return true;
-        return false;
+
     }
 
     /**** Metodos auxiliares ****/
@@ -891,5 +963,18 @@ public class MeliService  implements IMeliService{
             response.put(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
         }
         return response;
+    }
+
+    private UpdatesOfSystem getCurrentUpdateOfSystem(Long idData) {
+        UpdatesOfSystem data = new UpdatesOfSystem();
+        Optional<UpdatesOfSystem> optionalData = updateSysRepo.findById(idData);
+        if (optionalData.isPresent()) {
+            data.setId(optionalData.get().getId());
+            data.setStartDate(optionalData.get().getStartDate());
+            data.setEndDate(optionalData.get().getEndDate());
+            data.setFinishedSync(optionalData.get().isFinishedSync());
+            data.setMessage(optionalData.get().getMessage());
+        }
+        return data;
     }
 }

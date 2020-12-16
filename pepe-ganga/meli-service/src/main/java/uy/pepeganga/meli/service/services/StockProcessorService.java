@@ -11,6 +11,7 @@ import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.entities.StockProcessor;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
+import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.pepeganga.meli.service.repository.CheckingStockProcessorRepository;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
@@ -85,6 +86,10 @@ public class StockProcessorService implements IStockProcessorService {
 
             } else {
 
+                logger.info("Synchronizing publications....");
+                meliService.synchronizationPublications(detailsPublications);
+                logger.info("Synchronizing publications ended....");
+
                 // Check if this is in the risk zone
                 if ((checkingStockProcessor.getRealStock() - checkingStockProcessor.getExpectedStock()) <= StockProcessorService.RISK) {
                     // Pausar con estado especial todas las publicaciones y  bloquear los item no publicados correspondientes.
@@ -97,6 +102,7 @@ public class StockProcessorService implements IStockProcessorService {
                             mercadoLibrePublications.setSpecialPaused(1);
                             if (checkingStockProcessor.getAction() == 1) {
                                 mercadoLibrePublications.setDeleted(1);
+                                mercadoLibrePublications.setStates(States.NOPUBLISHED.getId());
                             }
                             mercadoLibrePublishRepository.save(mercadoLibrePublications);
                             logger.info("Blocking unpublished product successfully with sku: {} ", mercadoLibrePublications.getSku());
@@ -167,6 +173,7 @@ public class StockProcessorService implements IStockProcessorService {
 
                             if (checkingStockProcessor.getAction() == 1) {
                                 mercadoLibrePublications.setDeleted(1);
+                                mercadoLibrePublications.setStates(States.NOPUBLISHED.getId());
                                 mercadoLibrePublications.setSpecialPaused(1);
                                 logger.info("Marking unpublished product to delete with sku: {} ", mercadoLibrePublications.getSku());
                             } else {
@@ -184,6 +191,9 @@ public class StockProcessorService implements IStockProcessorService {
 
                     }
 
+                    logger.info("Synchronizing publications....");
+                    meliService.synchronizationPublications(detailsPublications);
+                    logger.info("Synchronizing publications ended....");
                     for (DetailsPublicationsMeli detailsPublicationsMeli :
                             detailsPublications) {
 
@@ -200,13 +210,22 @@ public class StockProcessorService implements IStockProcessorService {
                                     detailsPublicationMeliRepository.save(detailsPublicationsMeli);
 
                                 } else {
-                                    logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                    logger.warn("Publication was not reactivated by meli. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
                                     checkingProcessed.set(checkingProcessed.get() + 1);
                                 }
                             } catch (Exception e) {
-                                logger.warn("Publication was not reactivated. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                logger.warn("Publication was not reactivated by meli. Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
                                 checkingProcessed.set(checkingProcessed.get() + 1);
                             }
+                        } else {
+                            try {
+                                detailsPublicationsMeli.setSpecialPaused(0);
+                                detailsPublicationMeliRepository.save(detailsPublicationsMeli);
+                            }catch (Exception e){
+                                logger.warn("Publication was not reactivated by business . Publication Id: {}", detailsPublicationsMeli.getIdMLPublication());
+                                checkingProcessed.set(checkingProcessed.get() + 1);
+                            }
+
                         }
 
                     }

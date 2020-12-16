@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
+import uy.com.pepeganga.business.common.utils.enums.RoleType;
 import uy.pepeganga.meli.service.exceptions.OrderCreateException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
@@ -96,8 +97,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    @Transactional
     public void schedulingOrdersV2() {
+        // Get All notifications
         List<Notification> notifications = notificationRepository.findByTopic(NotificationTopic.ORDERS_V2.getTopicName().trim());
         if (notifications != null) {
             logger.info("Notifications received: {}", notifications.size());
@@ -136,14 +137,17 @@ public class OrderService implements IOrderService {
         if (profile.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
         } else {
-            List<String> accounts = new ArrayList<>();
-            profile.get().getSellerAccounts().forEach(sellerAccount -> {
-                if (sellerAccount.getUserId() != null) {
-                    accounts.add(String.valueOf(sellerAccount.getUserId()));
-                }
-            });
+            List<String> accounts;
+            List<Role>  rolesProfile = profile.get().getUser().getRoles();
+            boolean isOperatorOrAdmin = rolesProfile.stream().anyMatch(role -> role.getName().equals(RoleType.OPERATOR.getBusinessRole()) || role.getName().equals(RoleType.ADMIN.getBusinessRole()) );
+            if(isOperatorOrAdmin){
+                accounts = sellerAccountRepository.findAll().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
+            } else {
+                accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
+            }
+
             List<Integer> operatorBssStatus = new ArrayList<>();
-            if(operatorBusinessStatus.isEmpty()){
+            if (operatorBusinessStatus.isEmpty()) {
                 operatorBssStatus.add(OperatorBusinessStatusType.IN_PROCESS.getCode());
                 operatorBssStatus.add(OperatorBusinessStatusType.UNDELIVERED.getCode());
                 operatorBssStatus.add(OperatorBusinessStatusType.DELIVERED.getCode());
@@ -300,48 +304,60 @@ public class OrderService implements IOrderService {
 
     private void processingOrdersNotifications(List<Notification> notifications) {
         for (Notification notification : notifications) {
-            boolean error = false;
-            logger.info("Processing notification: topic: {}, applicationId: {}, userId: {}", notification.getTopic(), notification.getApplicationId(), notification.getUserId());
-            try {
-                // check if exist a value for account
-                if (sellerAccountRepository.existsByUserId(notification.getUserId())) {
+            if (notificationRepository.existsByResource(notification.getResource().trim())) {
+                boolean error = false;
+                logger.info("Processing notification: topic: {}, applicationId: {}, userId: {}", notification.getTopic(), notification.getApplicationId(), notification.getUserId());
+                try {
+                    // check if exist a value for account
+                    if (sellerAccountRepository.existsByUserId(notification.getUserId())) {
 
-                    SellerAccount sellerFounded = sellerAccountRepository.findByUserId(notification.getUserId());
-                    if (MeliUtils.isExpiredToken(sellerFounded)) {
-                        apiService.getTokenByRefreshToken(sellerAccountRepository.findByUserId(notification.getUserId()));
+                        SellerAccount sellerFounded = sellerAccountRepository.findByUserId(notification.getUserId());
+                        if (MeliUtils.isExpiredToken(sellerFounded)) {
+                            apiService.getTokenByRefreshToken(sellerAccountRepository.findByUserId(notification.getUserId()));
+                        }
+                        DMOrder order = processingOrderByNotification(notification);
+                        if (Objects.nonNull(order)) {
+                            DMOrderShipping orderShipping = mapper.convertValue(apiService.getShipmentOfOrder(order.getShipping().getId(),
+                                    sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrderShipping.class);
+
+                            // Processing shipments
+                            processingShipment(orderShipping);
+                        }
+                        error = false;
+                    } else {
+                        // doing something
+                        logger.info("No exist a account with id: {}", notification.getUserId());
+                        error = true;
                     }
-                    DMOrder order = processingOrderByNotification(notification);
 
-                    DMOrderShipping orderShipping = mapper.convertValue(apiService.getShipmentOfOrder(order.getShipping().getId(),
-                            sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrderShipping.class);
-
-                    // Processing shipments
-                    processingShipment(orderShipping);
-                    error = false;
-                } else {
-                    // doing something
-                    logger.info("No exist a account with id: {}", notification.getUserId());
+                } catch (Exception e) {
                     error = true;
-                }
+                    logger.error(String.format("Error meli api request  message: %s", e.getMessage()), e);
 
-            } catch (Exception e) {
-                error = true;
-                logger.error(String.format("Error meli api request  message: %s", e.getMessage()), e);
+                } finally {
+                    if (notification.getBusinessAttempts() > ORDER_ATTEMPTS) {
+                        if (notificationRepository.existsByResource(notification.getResource())) {
+                            notificationRepository.deleteAllByResource(notification.getResource());
+                            logger.info("Deleting notification for more  id: {}, resource: {}", notification.getId(), notification.getResource());
+                        }
 
-            } finally {
-                if (notification.getBusinessAttempts() > ORDER_ATTEMPTS) {
-                    notificationRepository.deleteAllByResource(notification.getResource());
-                    logger.info("Deleting notification for more  id: {}, resource: {}", notification.getId(), notification.getResource());
-                } else if (error) {
-                    notification.setBusinessAttempts(notification.getBusinessAttempts() + 1);
-                    notificationRepository.save(notification);
-                    logger.info("Order notification set business attempts to: {} by meli request error before", notification.getBusinessAttempts() + 1);
-                } else {
-                    notificationRepository.deleteAllByResource(notification.getResource());
-                    logger.info("Deleting notification by success id: {}, resource: {}", notification.getId(), notification.getResource());
+                    } else if (error) {
+                        notification.setBusinessAttempts(notification.getBusinessAttempts() + 1);
+                        notificationRepository.save(notification);
+                        logger.info("Order notification set business attempts to: {} by meli request error before", notification.getBusinessAttempts() + 1);
+                    } else {
+                        if (notificationRepository.existsByResource(notification.getResource())) {
+                            notificationRepository.deleteAllByResource(notification.getResource());
+                            logger.info("Deleting notification by success id: {}, resource: {}", notification.getId(), notification.getResource());
+                        }
+
+                    }
                 }
+            }else {
+               logger.info("OK - Notification with resource: {} already deleted", notification.getResource());
             }
         }
+
     }
 
     private void processingShipment(DMOrderShipping orderShipping) {
@@ -403,11 +419,11 @@ public class OrderService implements IOrderService {
         DMOrder order = mapper.convertValue(apiService.getOrderByNotificationResource(notification.getResource(),
                 sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrder.class);
 
-        if(Objects.isNull(order)){
-            throw  new OrderCreateException(String.format("Order not obtained by resource: %s", notification.getResource()));
+        if (Objects.isNull(order)) {
+            throw new OrderCreateException(String.format("Order not obtained by resource: %s", notification.getResource()));
         }
         // Exist publication for this order
-        if(detailsPublicationMeliRepository.existsByIdPublicationMeli(order.getOrderItems().get(0).getItem().getId())){
+        if (detailsPublicationMeliRepository.existsByIdPublicationMeli(order.getOrderItems().get(0).getItem().getId())) {
             if (ordersRepository.existsByOrderId(String.valueOf(order.getId()))) {
                 // update order
                 updateMeliOrder(order);
@@ -418,7 +434,11 @@ public class OrderService implements IOrderService {
             }
             return order;
         } else {
-            throw  new OrderCreateException(String.format("Item with id: %s is not our", order.getOrderItems().get(0).getItem().getId()));
+            //Delete notification
+            if (notificationRepository.existsById(notification.getId())) {
+                notificationRepository.deleteById(notification.getId());
+            }
+            return null;
         }
 
     }
@@ -443,7 +463,7 @@ public class OrderService implements IOrderService {
                 } else if (order.getStatus().equals(OrderStatusType.CANCELLED.getStatus())) {
                     stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() - 1);
                     stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() + 1);
-                    stockProcessor =stockProcessorRepository.save(stockProcessorFounded);
+                    stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
                 }
 
                 updateCheckingStockProcessor(stockProcessor);

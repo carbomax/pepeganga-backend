@@ -5,7 +5,10 @@ server:
     include-binding-errors: always
   tomcat:
     max-swallow-size: -1
-        
+
+logging:
+  file:
+    name: ./log/upload-file-service.log
     
 spring:
   application:

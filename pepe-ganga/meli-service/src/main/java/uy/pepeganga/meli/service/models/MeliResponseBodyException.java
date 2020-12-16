@@ -36,4 +36,20 @@ public class MeliResponseBodyException implements Serializable {
     public Object[] getCause() {
         return cause;
     }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public void setCause(Object[] cause) {
+        this.cause = cause;
+    }
 }

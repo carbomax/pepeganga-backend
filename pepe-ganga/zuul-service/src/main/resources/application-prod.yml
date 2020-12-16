@@ -1,3 +1,7 @@
+logging:
+  file:
+    name: ./log/zuul-server.log
+
 server:
   port: 9999
 

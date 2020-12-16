@@ -23,4 +23,5 @@ public interface IUserService {
 	User updateUser(User user , Integer id);
 
 
+    boolean isValidTokenToResetPassword(String token);
 }

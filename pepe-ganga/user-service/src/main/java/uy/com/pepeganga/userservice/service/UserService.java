@@ -1,5 +1,6 @@
 package uy.com.pepeganga.userservice.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -7,10 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
+import uy.com.pepeganga.userservice.entities.VerificationToken;
 import uy.com.pepeganga.userservice.repository.ProfileRepository;
 import uy.com.pepeganga.userservice.repository.UserRepository;
+import uy.com.pepeganga.userservice.repository.VerificationTokenRepository;
 
+import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -22,6 +27,9 @@ public class UserService implements IUserService {
     private final ProfileRepository profileRepository;
 
     private final BCryptPasswordEncoder cryptPasswordEncoder;
+
+    @Autowired
+    VerificationTokenRepository tokenRepository;
 
 
     public UserService(UserRepository userRepository, ProfileRepository profileRepository, BCryptPasswordEncoder cryptPasswordEncoder) {
@@ -132,5 +140,16 @@ public class UserService implements IUserService {
         }
     }
 
+    @Override
+    public boolean isValidTokenToResetPassword(String token) {
+        VerificationToken verificationTokenFounded = tokenRepository.findByToken(token);
+        if(Objects.isNull(verificationTokenFounded)) return false;
+        return !isTokenExpired(verificationTokenFounded);
+    }
+
+    private boolean isTokenExpired(VerificationToken passToken) {
+        final Calendar cal = Calendar.getInstance();
+        return passToken.getExpiryDate().before(cal.getTime());
+    }
 
 }

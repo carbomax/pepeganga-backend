@@ -1,4 +1,4 @@
-package uy.com.pepeganga.consumingwsstore.entities;
+package uy.com.pepeganga.business.common.entities;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,7 +26,7 @@ public class UpdatesOfSystem implements Serializable {
     @Column(name="finished_sync")
     private boolean finishedSync;
 
-    @Column(name="message")
+    @Column(name="message", columnDefinition = "TEXT")
     private String message;
 
     public Long getId() {

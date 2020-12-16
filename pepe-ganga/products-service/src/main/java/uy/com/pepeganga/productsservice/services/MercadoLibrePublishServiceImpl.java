@@ -16,6 +16,7 @@ import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.com.pepeganga.productsservice.gridmodels.*;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
+import uy.com.pepeganga.productsservice.models.RiskTime;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.repository.*;
 
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService {
+
+	@Autowired
+	RiskTime property;
 
 	@Autowired
 	MercadoLibrePublishRepository mlPublishRepo;
@@ -134,6 +138,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setFamilyDesc(product.get().getFamily().getDescription());
 					mlp.setStates(States.NOPUBLISHED.getId());
 					mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
+					mlp.setSpecialPaused(product.get().getStockActual() <= property.getRiskTime() ? 1 : 0);
 					prodToStore.add(mlp);
 				}
 			}
@@ -223,6 +228,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				itemMeliGrid.setPrice_costUSD(p.getPriceCostUSD());
 				itemMeliGrid.setPrice_costUYU(p.getPriceCostUYU());
 				itemMeliGrid.setDeleted(p.getDeleted());
+				itemMeliGrid.setSpecialPaused(p.getSpecialPaused());
 				itemMeliGridList.add(itemMeliGrid);
 			});
 			PageItemMeliGrid pageItemMeliGrid = new PageItemMeliGrid();
@@ -494,10 +500,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	//Method to DetailPublication (product published) Table
 	@Override
-	public PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, String sku, String idMeliPublication, int meliAccount, String typeStateSearch, int page, int size) {
+	public PageDeatilsPublicationMeli getPublicationsDetailsBySellerProfile(Integer profileId, String sku, String idMeliPublication, int meliAccount, String typeStateSearch, String title, int page, int size) {
 		String mySKU = sku.isBlank() ? "" : sku.trim();
 		String myMeliPubl = idMeliPublication.isBlank() ? "" : idMeliPublication.trim();
 		String myTypeStatus = typeStateSearch.isBlank() ? "" : typeStateSearch.trim();
+		String myTitle = title.isBlank() ? "" : title.trim();
 
 		Optional<Profile> profile = profileRepository.findById(profileId);
 		if (profile.isPresent()) {
@@ -508,7 +515,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			else{
 				accountIdList.add(meliAccount);
 			}
-			Page<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findDetailsPublicationByFilter(mySKU, myMeliPubl, accountIdList, myTypeStatus, PageRequest.of(page, size));
+			Page<DetailsPublicationsMeli> detailsPublication = detailsPublicationsMeliRepository.findDetailsPublicationByFilter(mySKU, myMeliPubl, accountIdList, myTypeStatus, myTitle, PageRequest.of(page, size));
 
 			List<DMDetailsPublicationsMeli> publicationsMeliGrids =  new ArrayList<>();
 			detailsPublication.getContent().forEach(details -> {
@@ -536,6 +543,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setDescription(details.getDescription());
 				publicationsMeliGrid.setCurrentStock(itemService.findItemById(details.getSku()).get().getStockActual());
 				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
+				publicationsMeliGrid.setDeleted(details.getDeleted());
+				publicationsMeliGrid.setSpecialPaused(details.getSpecialPaused());
 				publicationsMeliGrids.add(publicationsMeliGrid);
 				}
 				else{

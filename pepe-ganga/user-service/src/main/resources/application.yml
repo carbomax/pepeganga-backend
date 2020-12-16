@@ -1,3 +1,11 @@
 spring:
   profiles:
     active: @spring.profiles.active@
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: pepegangamail@gmail.com
+    password: mwzyljfwdpcfttcb
+    properties.mail.smtp.auth: true
+    properties.mail.smtp.starttls.enable: true
+    test-connection: true

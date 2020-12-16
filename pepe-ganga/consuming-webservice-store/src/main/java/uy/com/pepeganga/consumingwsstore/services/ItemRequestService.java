@@ -8,10 +8,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import uy.com.pepeganga.business.common.entities.Item;
+import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
+import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
-import uy.com.pepeganga.consumingwsstore.entities.TempItem;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
-import uy.com.pepeganga.consumingwsstore.repositories.ITempItemRepository;
+import uy.com.pepeganga.consumingwsstore.repositories.IItemRepository;
+import uy.com.pepeganga.consumingwsstore.repositories.IUpdatesSystemRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecuteResponse;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPagina;
@@ -28,18 +31,21 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 	ConsumingWebserviceStoreApplication p;
 	
 	@Autowired
-	ITempItemRepository tempItemClient;
+	IItemRepository itemClient;
+
+	@Autowired
+	IUpdatesSystemRepository updateSysRepo;
 		
 	public void deleteItem() {
-		TempItem item = new TempItem();
+		Item item = new Item();
 		item.setSku("E0195");
-		tempItemClient.delete(item);
+		itemClient.delete(item);
 	}
 	
-	public List<TempItem> getItems() {
+	public List<Item> getItems() {
 		
 		boolean finish = false;
-		List<TempItem> responseList = new ArrayList<TempItem>();
+		List<Item> responseList = new ArrayList<>();
 		 
 		 CargaArticulosPaginadoExecute request = new CargaArticulosPaginadoExecute();
 		 SDTArticulosWebPagina stdItems = new SDTArticulosWebPagina();		
@@ -54,7 +60,7 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 			 CargaArticulosPaginadoExecuteResponse response = (CargaArticulosPaginadoExecuteResponse) getWebServiceTemplate()
 			        .marshalSendAndReceive("http://201.217.140.35/agile/aCargaArticulosPaginado.aspx", request);
 			
-			 List<TempItem> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
+			 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
 			 responseList.addAll(partialList);
 			 part++;
 
@@ -67,13 +73,29 @@ public class ItemRequestService extends WebServiceGatewaySupport{
   	}
 	
 	/*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
-	public void storeItems() {
+	public boolean storeItems(UpdatesOfSystem data) {
 		try{
-			List<TempItem> itemList = getItems();
-			tempItemClient.saveAll(itemList);
+			List<Item> itemList = getItems();
+			if(itemList == null || itemList.isEmpty()) {
+				logger.warn("No se lograron obtener productos del servicio del almacén");
+				String data1 = data.getMessage();
+				data.setMessage(data1 + " No se lograron obtener productos del servicio del almacén;");
+				data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+				data.setFinishedSync(false);
+				updateSysRepo.save(data);
+				return false;
+			}
+			itemClient.saveAll(itemList);
 			logger.info("Items saved successfully: {}", itemList.size());
+			return true;
 		}catch (Exception e){
-			logger.error("Error almacenando datos", e.getMessage());
+			logger.error("Error almacenando items del almacén en base datos", e.getMessage());
+			String data1 = data.getMessage();
+			data.setMessage(data1 + " No se lograron obtener productos del servicio del almacén;");
+			data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+			data.setFinishedSync(false);
+			updateSysRepo.save(data);
+			return false;
 		}
 
 
