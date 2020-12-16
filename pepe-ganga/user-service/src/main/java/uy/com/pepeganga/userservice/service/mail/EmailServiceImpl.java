@@ -100,7 +100,7 @@ public class EmailServiceImpl implements EmailService {
         Map<String, Object> map = new HashMap<>();
         try {
             Profile profile = profileService.findProfileByUserEmail(email.trim());
-            if (Objects.isNull(profile.getUser())) {
+            if (Objects.isNull(profile)) {
                 map.put("userNotFound", "User not Found");
             } else  if(Boolean.TRUE.equals(profile.getUser().getEnabled())){
                  // Send email and await response

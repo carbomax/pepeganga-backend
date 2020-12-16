@@ -11,6 +11,12 @@ spring:
     username: admin
     password: 123456789.*dhl  
     url: jdbc:mysql://db-pepeganga-prod.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 60000
+      max-lifetime: 1800000
+      maximum-pool-size: 5
+      minimum-idle: 2
   jpa:
     hibernate:
       ddl-auto: none

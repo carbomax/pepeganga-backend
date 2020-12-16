@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
@@ -74,7 +75,9 @@ public class UserService implements IUserService {
 
                 User userToUpdate = userToUpdatedDb.get();
                 userToUpdate.setEmail(profile.getUser().getEmail());
-                userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
+                if(!StringUtils.isEmpty(profile.getUser().getPassword())) {
+                	 userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
+                }               
                 userToUpdate.setRoles(profile.getUser().getRoles());
                 userToUpdate.setEnabled(profile.getUser().getEnabled());
                 User userUpdated = userRepository.save(userToUpdate);
