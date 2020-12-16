@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uy.com.pepeganga.userservice.models.ResetPassword;
 import uy.com.pepeganga.userservice.service.IUserService;
 import uy.com.pepeganga.userservice.service.mail.EmailService;
 
@@ -29,5 +30,15 @@ public class ResetPasswordController {
     @GetMapping("valid-token-by-reset-password")
     public ResponseEntity<Boolean> isValidToken(@RequestParam String token){
         return new ResponseEntity<>(userService.isValidTokenToResetPassword(token), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("user-enabled-by-token")
+    public ResponseEntity<Boolean> isUserEnabledByToken(@RequestParam String token){
+        return new ResponseEntity<>(userService.isUserEnabledByToken(token), HttpStatus.OK);
+    }
+
+    @PostMapping("change-password")
+    public ResponseEntity<Map<String, Object>> changePassword(@RequestBody ResetPassword resetPassword) {
+        return new ResponseEntity<>(userService.changePassword(resetPassword), HttpStatus.ACCEPTED);
     }
 }

@@ -5,18 +5,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
 import uy.com.pepeganga.userservice.entities.VerificationToken;
+import uy.com.pepeganga.userservice.models.ResetPassword;
 import uy.com.pepeganga.userservice.repository.ProfileRepository;
 import uy.com.pepeganga.userservice.repository.UserRepository;
 import uy.com.pepeganga.userservice.repository.VerificationTokenRepository;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -76,7 +75,9 @@ public class UserService implements IUserService {
 
                 User userToUpdate = userToUpdatedDb.get();
                 userToUpdate.setEmail(profile.getUser().getEmail());
-                userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
+                if(!StringUtils.isEmpty(profile.getUser().getPassword())) {
+                	 userToUpdate.setPassword(cryptPasswordEncoder.encode(profile.getUser().getPassword()));
+                }               
                 userToUpdate.setRoles(profile.getUser().getRoles());
                 userToUpdate.setEnabled(profile.getUser().getEnabled());
                 User userUpdated = userRepository.save(userToUpdate);
@@ -145,6 +146,47 @@ public class UserService implements IUserService {
         VerificationToken verificationTokenFounded = tokenRepository.findByToken(token);
         if(Objects.isNull(verificationTokenFounded)) return false;
         return !isTokenExpired(verificationTokenFounded);
+    }
+
+    @Override
+    public boolean isUserEnabledByToken(String token) {
+       try{
+           User userFound = userRepository.findUserByToken(token);
+           if(Objects.nonNull(userFound)){
+               return userFound.getEnabled();
+           } else {
+               throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+           }
+
+       }catch (Exception e){
+           throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+       }
+    }
+
+    @Override
+    public Map<String, Object> changePassword(ResetPassword resetPassword) {
+        Map<String, Object> response = new HashMap<>();
+        if(this.isValidTokenToResetPassword(resetPassword.getToken())){
+            User userFound = userRepository.findUserByToken(resetPassword.getToken());
+            if(Objects.nonNull(userFound)){
+                if(Boolean.TRUE.equals(userFound.getEnabled())){
+                    userFound.setPassword(cryptPasswordEncoder.encode(resetPassword.getNewPassword()));
+                    userFound.setLoginAttempts(0);
+                    userRepository.save(userFound);
+                    response.put("passwordChanged", "Password changed successfully");
+                } else {
+                    response.put("userNotEnabled", "Password changed successfully");
+                }
+
+            } else {
+                response.put("userNotFound", "User not found");
+            }
+
+        } else {
+            response.put("invalidToken", "Invalid token");
+        }
+        return response;
+
     }
 
     private boolean isTokenExpired(VerificationToken passToken) {

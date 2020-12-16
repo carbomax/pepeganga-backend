@@ -1,0 +1,502 @@
+2020-12-15 00:00:35.805  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 00:01:35.805  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:02:35.806  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:03:35.807  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:04:35.808  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 00:05:35.809  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:06:35.810  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:07:35.613  INFO 5652 --- [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl    : Current renewal threshold is : 6
+2020-12-15 00:07:35.810  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:08:35.810  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:09:35.811  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:10:35.812  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 00:11:35.812  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:12:35.813  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:13:35.814  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:14:35.814  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:15:35.814  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:16:35.815  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:17:35.815  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:18:35.815  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:19:35.815  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:20:35.816  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:21:34.715  INFO 5652 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:0b936fe981b3533351d5f5973889ca2f with status DOWN (replication=false)
+2020-12-15 00:21:35.222  INFO 5652 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:0b936fe981b3533351d5f5973889ca2f with status DOWN (replication=true)
+2020-12-15 00:21:35.816  INFO 5652 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 00:21:39.772  INFO 5652 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:1758b0b489ed14ee3459eb791d4e0df7 with status DOWN (replication=false)
+2020-12-15 00:21:40.276  INFO 5652 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:1758b0b489ed14ee3459eb791d4e0df7 with status DOWN (replication=true)
+2020-12-15 00:21:45.428  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2020-12-15 00:21:45.431  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application EUREKA-SERVICE with eureka with status DOWN
+2020-12-15 00:21:45.615  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2020-12-15 00:21:45.620  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2020-12-15 00:21:45.638  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] c.n.eureka.DefaultEurekaServerContext    : Shutting down ...
+2020-12-15 00:21:45.641  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.batchSize.Will start computing stats again.
+2020-12-15 00:21:45.643  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.executionTime.Will start computing stats again.
+2020-12-15 00:21:45.643  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.executionTime.Will start computing stats again.
+2020-12-15 00:21:45.644  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.batchSize.Will start computing stats again.
+2020-12-15 00:21:45.657  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] c.n.eureka.DefaultEurekaServerContext    : Shut down
+2020-12-15 00:21:45.663  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2020-12-15 00:21:45.668  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2020-12-15 00:21:45.670  INFO 5652 --- [RMI TCP Connection(263)-127.0.0.1] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
+2020-12-15 20:45:13.708  INFO 9012 --- [restartedMain] u.c.p.e.EurekaServiceApplication         : No active profile set, falling back to default profiles: default
+2020-12-15 20:45:14.412  WARN 9012 --- [restartedMain] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2020-12-15 20:45:14.511  INFO 9012 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=c7c954a2-64c1-330e-8be5-ea4299c701df
+2020-12-15 20:45:15.013  INFO 9012 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8761 (http)
+2020-12-15 20:45:15.025  INFO 9012 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2020-12-15 20:45:15.025  INFO 9012 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.37]
+2020-12-15 20:45:15.144  INFO 9012 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2020-12-15 20:45:15.144  INFO 9012 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1423 ms
+2020-12-15 20:45:15.233  WARN 9012 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-12-15 20:45:15.233  INFO 9012 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-12-15 20:45:15.259  INFO 9012 --- [restartedMain] c.netflix.config.DynamicPropertyFactory  : DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@5361d5c2
+2020-12-15 20:45:15.560  INFO 9012 --- [restartedMain] c.s.j.s.i.a.WebApplicationImpl           : Initiating Jersey application, version 'Jersey: 1.19.1 03/11/2016 02:08 PM'
+2020-12-15 20:45:15.602  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2020-12-15 20:45:15.603  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2020-12-15 20:45:15.716  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2020-12-15 20:45:15.716  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2020-12-15 20:45:16.039  WARN 9012 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-12-15 20:45:16.039  INFO 9012 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-12-15 20:45:16.243  INFO 9012 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2020-12-15 20:45:16.911  INFO 9012 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2020-12-15 20:45:17.204  INFO 9012 --- [restartedMain] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses Jersey
+2020-12-15 20:45:17.219  WARN 9012 --- [restartedMain] ockingLoadBalancerClientRibbonWarnLogger : You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+2020-12-15 20:45:17.265  INFO 9012 --- [restartedMain] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2020-12-15 20:45:17.317  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2020-12-15 20:45:17.317  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Client configured to neither register nor query for data.
+2020-12-15 20:45:17.339  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1608075917337 with initial instances count: 0
+2020-12-15 20:45:17.371  INFO 9012 --- [restartedMain] c.n.eureka.DefaultEurekaServerContext    : Initializing ...
+2020-12-15 20:45:17.373  INFO 9012 --- [restartedMain] c.n.eureka.cluster.PeerEurekaNodes       : Adding new peer nodes [http://localhost:8761/eureka/]
+2020-12-15 20:45:17.505  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2020-12-15 20:45:17.505  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2020-12-15 20:45:17.505  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2020-12-15 20:45:17.505  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2020-12-15 20:45:17.606  INFO 9012 --- [restartedMain] c.n.eureka.cluster.PeerEurekaNodes       : Replica node URL:  http://localhost:8761/eureka/
+2020-12-15 20:45:17.612  INFO 9012 --- [restartedMain] c.n.e.registry.AbstractInstanceRegistry  : Finished initializing remote region registries. All known remote regions: []
+2020-12-15 20:45:17.613  INFO 9012 --- [restartedMain] c.n.eureka.DefaultEurekaServerContext    : Initialized
+2020-12-15 20:45:17.621  INFO 9012 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2020-12-15 20:45:17.669  INFO 9012 --- [restartedMain] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application EUREKA-SERVICE with eureka with status UP
+2020-12-15 20:45:17.670  INFO 9012 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Setting the eureka configuration..
+2020-12-15 20:45:17.673  INFO 9012 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Eureka data center value eureka.datacenter is not set, defaulting to default
+2020-12-15 20:45:17.673  INFO 9012 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Eureka environment value eureka.environment is not set, defaulting to test
+2020-12-15 20:45:17.695  INFO 9012 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : isAws returned false
+2020-12-15 20:45:17.695  INFO 9012 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Initialized server context
+2020-12-15 20:45:17.695  INFO 9012 --- [Thread-16] c.n.e.r.PeerAwareInstanceRegistryImpl    : Got 1 instances from neighboring DS node
+2020-12-15 20:45:17.695  INFO 9012 --- [Thread-16] c.n.e.r.PeerAwareInstanceRegistryImpl    : Renew threshold is: 1
+2020-12-15 20:45:17.695  INFO 9012 --- [Thread-16] c.n.e.r.PeerAwareInstanceRegistryImpl    : Changing status to UP
+2020-12-15 20:45:17.699  INFO 9012 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8761 (http) with context path ''
+2020-12-15 20:45:17.699  INFO 9012 --- [restartedMain] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8761
+2020-12-15 20:45:17.703  INFO 9012 --- [Thread-16] e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2020-12-15 20:45:17.998  INFO 9012 --- [restartedMain] u.c.p.e.EurekaServiceApplication         : Started EurekaServiceApplication in 5.907 seconds (JVM running for 6.937)
+2020-12-15 20:45:19.163  INFO 9012 --- [RMI TCP Connection(3)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2020-12-15 20:45:19.163  INFO 9012 --- [RMI TCP Connection(3)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2020-12-15 20:45:19.168  INFO 9012 --- [RMI TCP Connection(3)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+2020-12-15 20:45:39.321  INFO 9012 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:bb3a3e91773b7e56c4c136b585dd901d with status UP (replication=false)
+2020-12-15 20:45:39.898  INFO 9012 --- [http-nio-8761-exec-4] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:bb3a3e91773b7e56c4c136b585dd901d with status UP (replication=true)
+2020-12-15 20:45:44.648  INFO 9012 --- [http-nio-8761-exec-5] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:14ca095834c5b58a85b01d283d76cdd7 with status UP (replication=false)
+2020-12-15 20:45:45.159  INFO 9012 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:14ca095834c5b58a85b01d283d76cdd7 with status UP (replication=true)
+2020-12-15 20:46:00.246  INFO 9012 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:c5dcb6ca201a0a7f6368ce4be0054c9b with status UP (replication=false)
+2020-12-15 20:46:00.749  INFO 9012 --- [http-nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:c5dcb6ca201a0a7f6368ce4be0054c9b with status UP (replication=true)
+2020-12-15 20:46:17.697  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:47:17.698  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:48:17.698  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:49:17.699  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:50:17.700  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 20:51:17.700  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:52:17.700  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:53:17.701  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:54:17.701  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:55:17.701  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:56:17.702  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:57:17.702  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:58:17.702  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 20:59:01.350  INFO 9012 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance PRODUCTS-SERVICE/products-service:7d5eea02f77e1b46ccf9e2da7b5ebfcb with status UP (replication=false)
+2020-12-15 20:59:01.854  INFO 9012 --- [http-nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance PRODUCTS-SERVICE/products-service:7d5eea02f77e1b46ccf9e2da7b5ebfcb with status UP (replication=true)
+2020-12-15 20:59:17.702  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:00:17.612  INFO 9012 --- [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl    : Current renewal threshold is : 8
+2020-12-15 21:00:17.703  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:01:17.704  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:02:17.704  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:03:17.705  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:04:17.705  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:05:17.705  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:06:17.706  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:07:17.706  INFO 9012 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:07:40.270  INFO 9012 --- [Thread-8] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application EUREKA-SERVICE with eureka with status DOWN
+2020-12-15 21:07:40.478  INFO 9012 --- [Thread-8] c.n.eureka.DefaultEurekaServerContext    : Shutting down ...
+2020-12-15 21:07:40.480  INFO 9012 --- [Thread-8] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.batchSize.Will start computing stats again.
+2020-12-15 21:07:40.481  INFO 9012 --- [Thread-8] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.executionTime.Will start computing stats again.
+2020-12-15 21:07:40.481  INFO 9012 --- [Thread-8] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.executionTime.Will start computing stats again.
+2020-12-15 21:07:40.482  INFO 9012 --- [Thread-8] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.batchSize.Will start computing stats again.
+2020-12-15 21:07:40.490  INFO 9012 --- [Thread-8] c.n.eureka.DefaultEurekaServerContext    : Shut down
+2020-12-15 21:07:40.494  INFO 9012 --- [Thread-8] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2020-12-15 21:07:40.496  INFO 9012 --- [Thread-8] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2020-12-15 21:07:40.496  INFO 9012 --- [Thread-8] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
+2020-12-15 21:07:41.115  INFO 9012 --- [restartedMain] u.c.p.e.EurekaServiceApplication         : No active profile set, falling back to default profiles: default
+2020-12-15 21:07:41.380  INFO 9012 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=c7c954a2-64c1-330e-8be5-ea4299c701df
+2020-12-15 21:07:41.428  INFO 9012 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8761 (http)
+2020-12-15 21:07:41.428  INFO 9012 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2020-12-15 21:07:41.429  INFO 9012 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.37]
+2020-12-15 21:07:41.445  INFO 9012 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2020-12-15 21:07:41.445  INFO 9012 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 328 ms
+2020-12-15 21:07:41.557  INFO 9012 --- [restartedMain] c.s.j.s.i.a.WebApplicationImpl           : Initiating Jersey application, version 'Jersey: 1.19.1 03/11/2016 02:08 PM'
+2020-12-15 21:07:41.563  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2020-12-15 21:07:41.564  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2020-12-15 21:07:41.564  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2020-12-15 21:07:41.564  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2020-12-15 21:07:41.621  WARN 9012 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-12-15 21:07:41.621  INFO 9012 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-12-15 21:07:41.662  INFO 9012 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2020-12-15 21:07:42.018  INFO 9012 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2020-12-15 21:07:42.273  INFO 9012 --- [restartedMain] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses Jersey
+2020-12-15 21:07:42.278  WARN 9012 --- [restartedMain] ockingLoadBalancerClientRibbonWarnLogger : You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+2020-12-15 21:07:42.285  INFO 9012 --- [restartedMain] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2020-12-15 21:07:42.285  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2020-12-15 21:07:42.285  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Client configured to neither register nor query for data.
+2020-12-15 21:07:42.285  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1608077262285 with initial instances count: 0
+2020-12-15 21:07:42.287  INFO 9012 --- [restartedMain] c.n.eureka.DefaultEurekaServerContext    : Initializing ...
+2020-12-15 21:07:42.287  INFO 9012 --- [restartedMain] c.n.eureka.cluster.PeerEurekaNodes       : Adding new peer nodes [http://localhost:8761/eureka/]
+2020-12-15 21:07:42.289  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2020-12-15 21:07:42.289  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2020-12-15 21:07:42.289  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2020-12-15 21:07:42.289  INFO 9012 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2020-12-15 21:07:42.320  WARN 9012 --- [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'org.springframework.cloud.netflix.eureka.server.EurekaServerInitializerConfiguration': Unsatisfied dependency expressed through field 'eurekaServerBootstrap'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'eurekaServerBootstrap' defined in class path resource [org/springframework/cloud/netflix/eureka/server/EurekaServerAutoConfiguration.class]: Unsatisfied dependency expressed through method 'eurekaServerBootstrap' parameter 1; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'eurekaServerContext': Invocation of init method failed; nested exception is java.lang.IllegalStateException: java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@45e15881[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@d3dd046[Wrapped task = com.netflix.servo.monitor.StatsMonitor$$Lambda$869/0x0000000800835440@736228aa]] rejected from java.util.concurrent.ScheduledThreadPoolExecutor@6620b63b[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 60]
+2020-12-15 21:07:42.324 ERROR 9012 --- [restartedMain] c.n.e.r.PeerAwareInstanceRegistryImpl    : Cannot shutdown ReplicaAwareInstanceRegistry
+
+java.lang.NullPointerException: null
+	at com.netflix.eureka.registry.PeerAwareInstanceRegistryImpl.shutdown(PeerAwareInstanceRegistryImpl.java:174) ~[eureka-core-1.9.25.jar:1.9.25]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566) ~[na:na]
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.invokeCustomDestroyMethod(DisposableBeanAdapter.java:339) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:273) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:579) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:551) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:1092) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:512) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:1085) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1061) ~[spring-context-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:564) ~[spring-context-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at uy.com.pepeganga.eurekaservice.EurekaServiceApplication.main(EurekaServiceApplication.java:12) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49) ~[spring-boot-devtools-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+
+2020-12-15 21:07:42.324  WARN 9012 --- [restartedMain] o.s.b.f.support.DisposableBeanAdapter    : Destroy method 'shutdown' on bean with name 'peerAwareInstanceRegistry' threw an exception: java.lang.NullPointerException
+2020-12-15 21:07:42.326  INFO 9012 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2020-12-15 21:07:42.326  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2020-12-15 21:07:42.327  INFO 9012 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
+2020-12-15 21:07:42.327  INFO 9012 --- [restartedMain] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2020-12-15 21:07:42.335  INFO 9012 --- [restartedMain] ConditionEvaluationReportLoggingListener : 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2020-12-15 21:07:42.339 ERROR 9012 --- [restartedMain] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'org.springframework.cloud.netflix.eureka.server.EurekaServerInitializerConfiguration': Unsatisfied dependency expressed through field 'eurekaServerBootstrap'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'eurekaServerBootstrap' defined in class path resource [org/springframework/cloud/netflix/eureka/server/EurekaServerAutoConfiguration.class]: Unsatisfied dependency expressed through method 'eurekaServerBootstrap' parameter 1; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'eurekaServerContext': Invocation of init method failed; nested exception is java.lang.IllegalStateException: java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@45e15881[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@d3dd046[Wrapped task = com.netflix.servo.monitor.StatsMonitor$$Lambda$869/0x0000000800835440@736228aa]] rejected from java.util.concurrent.ScheduledThreadPoolExecutor@6620b63b[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 60]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:643) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:130) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:399) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1420) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:593) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:897) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:879) ~[spring-context-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:551) ~[spring-context-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:143) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:758) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:750) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:397) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:315) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1237) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1226) ~[spring-boot-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+	at uy.com.pepeganga.eurekaservice.EurekaServiceApplication.main(EurekaServiceApplication.java:12) ~[classes/:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566) ~[na:na]
+	at org.springframework.boot.devtools.restart.RestartLauncher.run(RestartLauncher.java:49) ~[spring-boot-devtools-2.3.3.RELEASE.jar:2.3.3.RELEASE]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'eurekaServerBootstrap' defined in class path resource [org/springframework/cloud/netflix/eureka/server/EurekaServerAutoConfiguration.class]: Unsatisfied dependency expressed through method 'eurekaServerBootstrap' parameter 1; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'eurekaServerContext': Invocation of init method failed; nested exception is java.lang.IllegalStateException: java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@45e15881[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@d3dd046[Wrapped task = com.netflix.servo.monitor.StatsMonitor$$Lambda$869/0x0000000800835440@736228aa]] rejected from java.util.concurrent.ScheduledThreadPoolExecutor@6620b63b[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 60]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:797) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:538) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1336) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1176) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:556) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:640) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	... 25 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'eurekaServerContext': Invocation of init method failed; nested exception is java.lang.IllegalStateException: java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@45e15881[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@d3dd046[Wrapped task = com.netflix.servo.monitor.StatsMonitor$$Lambda$869/0x0000000800835440@736228aa]] rejected from java.util.concurrent.ScheduledThreadPoolExecutor@6620b63b[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 60]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:160) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:415) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1786) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:594) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:516) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:324) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:226) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1307) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1227) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:884) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	... 38 common frames omitted
+Caused by: java.lang.IllegalStateException: java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@45e15881[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@d3dd046[Wrapped task = com.netflix.servo.monitor.StatsMonitor$$Lambda$869/0x0000000800835440@736228aa]] rejected from java.util.concurrent.ScheduledThreadPoolExecutor@6620b63b[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 60]
+	at com.netflix.eureka.cluster.PeerEurekaNodes.start(PeerEurekaNodes.java:106) ~[eureka-core-1.9.25.jar:1.9.25]
+	at com.netflix.eureka.DefaultEurekaServerContext.initialize(DefaultEurekaServerContext.java:67) ~[eureka-core-1.9.25.jar:1.9.25]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[na:na]
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566) ~[na:na]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleElement.invoke(InitDestroyAnnotationBeanPostProcessor.java:389) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:333) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:157) ~[spring-beans-5.2.8.RELEASE.jar:5.2.8.RELEASE]
+	... 51 common frames omitted
+Caused by: java.util.concurrent.RejectedExecutionException: Task java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask@45e15881[Not completed, task = java.util.concurrent.Executors$RunnableAdapter@d3dd046[Wrapped task = com.netflix.servo.monitor.StatsMonitor$$Lambda$869/0x0000000800835440@736228aa]] rejected from java.util.concurrent.ScheduledThreadPoolExecutor@6620b63b[Terminated, pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 60]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$AbortPolicy.rejectedExecution(ThreadPoolExecutor.java:2055) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.reject(ThreadPoolExecutor.java:825) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor.delayedExecute(ScheduledThreadPoolExecutor.java:340) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor.scheduleWithFixedDelay(ScheduledThreadPoolExecutor.java:680) ~[na:na]
+	at com.netflix.servo.monitor.StatsMonitor.startComputingStats(StatsMonitor.java:409) ~[servo-core-0.12.21.jar:0.12.21]
+	at com.netflix.servo.monitor.StatsMonitor.lambda$new$0(StatsMonitor.java:365) ~[servo-core-0.12.21.jar:0.12.21]
+	at com.netflix.servo.monitor.StatsMonitor.startComputingStats(StatsMonitor.java:377) ~[servo-core-0.12.21.jar:0.12.21]
+	at com.netflix.servo.monitor.StatsTimer.<init>(StatsTimer.java:70) ~[servo-core-0.12.21.jar:0.12.21]
+	at com.netflix.servo.monitor.StatsTimer.<init>(StatsTimer.java:47) ~[servo-core-0.12.21.jar:0.12.21]
+	at com.netflix.eureka.util.batcher.AcceptorExecutor.<init>(AcceptorExecutor.java:116) ~[eureka-core-1.9.25.jar:1.9.25]
+	at com.netflix.eureka.util.batcher.TaskDispatchers.createBatchingTaskDispatcher(TaskDispatchers.java:43) ~[eureka-core-1.9.25.jar:1.9.25]
+	at com.netflix.eureka.cluster.PeerEurekaNode.<init>(PeerEurekaNode.java:104) ~[eureka-core-1.9.25.jar:1.9.25]
+	at com.netflix.eureka.cluster.PeerEurekaNode.<init>(PeerEurekaNode.java:87) ~[eureka-core-1.9.25.jar:1.9.25]
+	at org.springframework.cloud.netflix.eureka.server.EurekaServerAutoConfiguration$RefreshablePeerEurekaNodes.createPeerEurekaNode(EurekaServerAutoConfiguration.java:314) ~[spring-cloud-netflix-eureka-server-2.2.5.RELEASE.jar:2.2.5.RELEASE]
+	at com.netflix.eureka.cluster.PeerEurekaNodes.updatePeerEurekaNodes(PeerEurekaNodes.java:189) ~[eureka-core-1.9.25.jar:1.9.25]
+	at com.netflix.eureka.cluster.PeerEurekaNodes.start(PeerEurekaNodes.java:87) ~[eureka-core-1.9.25.jar:1.9.25]
+	... 59 common frames omitted
+
+2020-12-15 21:28:03.783  INFO 19636 --- [restartedMain] u.c.p.e.EurekaServiceApplication         : No active profile set, falling back to default profiles: default
+2020-12-15 21:28:04.348  WARN 19636 --- [restartedMain] o.s.boot.actuate.endpoint.EndpointId     : Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+2020-12-15 21:28:04.445  INFO 19636 --- [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=c7c954a2-64c1-330e-8be5-ea4299c701df
+2020-12-15 21:28:04.835  INFO 19636 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8761 (http)
+2020-12-15 21:28:04.843  INFO 19636 --- [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2020-12-15 21:28:04.843  INFO 19636 --- [restartedMain] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.37]
+2020-12-15 21:28:04.920  INFO 19636 --- [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2020-12-15 21:28:04.921  INFO 19636 --- [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1127 ms
+2020-12-15 21:28:04.980  WARN 19636 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-12-15 21:28:04.980  INFO 19636 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-12-15 21:28:04.990  INFO 19636 --- [restartedMain] c.netflix.config.DynamicPropertyFactory  : DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@608e7f9
+2020-12-15 21:28:05.262  INFO 19636 --- [restartedMain] c.s.j.s.i.a.WebApplicationImpl           : Initiating Jersey application, version 'Jersey: 1.19.1 03/11/2016 02:08 PM'
+2020-12-15 21:28:05.305  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2020-12-15 21:28:05.306  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2020-12-15 21:28:05.404  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2020-12-15 21:28:05.404  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2020-12-15 21:28:05.635  WARN 19636 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2020-12-15 21:28:05.635  INFO 19636 --- [restartedMain] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2020-12-15 21:28:05.823  INFO 19636 --- [restartedMain] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2020-12-15 21:28:06.482  INFO 19636 --- [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2020-12-15 21:28:06.782  INFO 19636 --- [restartedMain] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses Jersey
+2020-12-15 21:28:06.796  WARN 19636 --- [restartedMain] ockingLoadBalancerClientRibbonWarnLogger : You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+2020-12-15 21:28:06.826  INFO 19636 --- [restartedMain] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2020-12-15 21:28:06.847  INFO 19636 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2020-12-15 21:28:06.847  INFO 19636 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Client configured to neither register nor query for data.
+2020-12-15 21:28:06.852  INFO 19636 --- [restartedMain] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1608078486851 with initial instances count: 0
+2020-12-15 21:28:06.878  INFO 19636 --- [restartedMain] c.n.eureka.DefaultEurekaServerContext    : Initializing ...
+2020-12-15 21:28:06.880  INFO 19636 --- [restartedMain] c.n.eureka.cluster.PeerEurekaNodes       : Adding new peer nodes [http://localhost:8761/eureka/]
+2020-12-15 21:28:06.960  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2020-12-15 21:28:06.960  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2020-12-15 21:28:06.960  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2020-12-15 21:28:06.961  INFO 19636 --- [restartedMain] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2020-12-15 21:28:07.046  INFO 19636 --- [restartedMain] c.n.eureka.cluster.PeerEurekaNodes       : Replica node URL:  http://localhost:8761/eureka/
+2020-12-15 21:28:07.055  INFO 19636 --- [restartedMain] c.n.e.registry.AbstractInstanceRegistry  : Finished initializing remote region registries. All known remote regions: []
+2020-12-15 21:28:07.055  INFO 19636 --- [restartedMain] c.n.eureka.DefaultEurekaServerContext    : Initialized
+2020-12-15 21:28:07.064  INFO 19636 --- [restartedMain] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2020-12-15 21:28:07.110  INFO 19636 --- [restartedMain] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application EUREKA-SERVICE with eureka with status UP
+2020-12-15 21:28:07.112  INFO 19636 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Setting the eureka configuration..
+2020-12-15 21:28:07.113  INFO 19636 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Eureka data center value eureka.datacenter is not set, defaulting to default
+2020-12-15 21:28:07.114  INFO 19636 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Eureka environment value eureka.environment is not set, defaulting to test
+2020-12-15 21:28:07.121  INFO 19636 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : isAws returned false
+2020-12-15 21:28:07.122  INFO 19636 --- [Thread-16] o.s.c.n.e.server.EurekaServerBootstrap   : Initialized server context
+2020-12-15 21:28:07.122  INFO 19636 --- [Thread-16] c.n.e.r.PeerAwareInstanceRegistryImpl    : Got 1 instances from neighboring DS node
+2020-12-15 21:28:07.122  INFO 19636 --- [Thread-16] c.n.e.r.PeerAwareInstanceRegistryImpl    : Renew threshold is: 1
+2020-12-15 21:28:07.122  INFO 19636 --- [Thread-16] c.n.e.r.PeerAwareInstanceRegistryImpl    : Changing status to UP
+2020-12-15 21:28:07.127  INFO 19636 --- [Thread-16] e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2020-12-15 21:28:07.132  INFO 19636 --- [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8761 (http) with context path ''
+2020-12-15 21:28:07.133  INFO 19636 --- [restartedMain] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8761
+2020-12-15 21:28:07.439  INFO 19636 --- [restartedMain] u.c.p.e.EurekaServiceApplication         : Started EurekaServiceApplication in 4.971 seconds (JVM running for 5.727)
+2020-12-15 21:28:08.718  INFO 19636 --- [RMI TCP Connection(1)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2020-12-15 21:28:08.718  INFO 19636 --- [RMI TCP Connection(1)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2020-12-15 21:28:08.723  INFO 19636 --- [RMI TCP Connection(1)-127.0.0.1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+2020-12-15 21:28:26.143  INFO 19636 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e with status UP (replication=false)
+2020-12-15 21:28:26.711  INFO 19636 --- [http-nio-8761-exec-3] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e with status UP (replication=true)
+2020-12-15 21:29:07.124  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:30:07.124  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:30:26.784  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541 with status UP (replication=false)
+2020-12-15 21:30:27.288  INFO 19636 --- [http-nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541 with status UP (replication=true)
+2020-12-15 21:31:07.124  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:31:21.978  INFO 19636 --- [http-nio-8761-exec-7] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766 with status UP (replication=false)
+2020-12-15 21:31:22.481  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766 with status UP (replication=true)
+2020-12-15 21:32:07.125  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:33:07.125  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:34:07.125  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:35:07.125  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:36:07.126  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:37:07.127  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:38:07.128  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:38:39.677  INFO 19636 --- [http-nio-8761-exec-7] c.n.e.registry.AbstractInstanceRegistry  : Registered instance PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f with status UP (replication=false)
+2020-12-15 21:38:40.182  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f with status UP (replication=true)
+2020-12-15 21:39:07.128  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:40:07.129  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:41:07.129  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:41:15.036  INFO 19636 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e with status DOWN (replication=false)
+2020-12-15 21:41:15.540  INFO 19636 --- [http-nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e with status DOWN (replication=true)
+2020-12-15 21:41:18.238  INFO 19636 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e (replication=false)
+2020-12-15 21:41:18.740  WARN 19636 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e
+2020-12-15 21:41:18.741  INFO 19636 --- [http-nio-8761-exec-2] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): USER-SERVICE - user-service:534dcb337ec7efded24e7e3cad5a004e
+2020-12-15 21:41:18.741  WARN 19636 --- [TaskBatchingWorker-target_localhost-11] c.n.eureka.cluster.ReplicationTask       : The replication of task USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e:Cancel@localhost failed with response code 404
+2020-12-15 21:41:18.741  WARN 19636 --- [TaskBatchingWorker-target_localhost-11] c.netflix.eureka.cluster.PeerEurekaNode  : USER-SERVICE/user-service:534dcb337ec7efded24e7e3cad5a004e:Cancel@localhost: missing entry.
+2020-12-15 21:42:07.130  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:42:08.995  INFO 19636 --- [http-nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:92436ce34303c69944411354c00355a0 with status UP (replication=false)
+2020-12-15 21:42:09.503  INFO 19636 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:92436ce34303c69944411354c00355a0 with status UP (replication=true)
+2020-12-15 21:43:07.055  INFO 19636 --- [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl    : Current renewal threshold is : 8
+2020-12-15 21:43:07.131  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:44:07.132  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:44:42.521  INFO 19636 --- [http-nio-8761-exec-1] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766 with status DOWN (replication=false)
+2020-12-15 21:44:43.034  INFO 19636 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766 with status DOWN (replication=true)
+2020-12-15 21:44:45.776  INFO 19636 --- [http-nio-8761-exec-3] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766 (replication=false)
+2020-12-15 21:44:46.287  WARN 19636 --- [http-nio-8761-exec-5] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766
+2020-12-15 21:44:46.288  INFO 19636 --- [http-nio-8761-exec-5] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): ZUUL-SERVICE - zuul-service:3a3a968309f15bbd5563c6b0c4498766
+2020-12-15 21:44:46.290  WARN 19636 --- [TaskBatchingWorker-target_localhost-5] c.n.eureka.cluster.ReplicationTask       : The replication of task ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766:Cancel@localhost failed with response code 404
+2020-12-15 21:44:46.290  WARN 19636 --- [TaskBatchingWorker-target_localhost-5] c.netflix.eureka.cluster.PeerEurekaNode  : ZUUL-SERVICE/zuul-service:3a3a968309f15bbd5563c6b0c4498766:Cancel@localhost: missing entry.
+2020-12-15 21:45:07.133  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 21:45:07.575  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1 with status UP (replication=false)
+2020-12-15 21:45:08.087  INFO 19636 --- [http-nio-8761-exec-7] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1 with status UP (replication=true)
+2020-12-15 21:46:07.134  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:47:07.134  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:48:07.135  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:49:07.136  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:50:07.137  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:51:07.137  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:52:07.137  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:53:07.138  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:54:07.138  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:55:07.139  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:56:07.139  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:57:07.139  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:58:07.056  INFO 19636 --- [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl    : Current renewal threshold is : 8
+2020-12-15 21:58:07.140  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 21:59:07.141  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 22:00:07.141  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:01:07.142  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 22:02:07.143  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:03:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:04:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:05:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:06:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:07:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:08:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:09:07.144  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:10:07.145  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:11:07.146  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:12:07.146  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:13:07.057  INFO 19636 --- [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl    : Current renewal threshold is : 8
+2020-12-15 22:13:07.146  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:14:07.147  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:14:50.687  INFO 19636 --- [http-nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:92436ce34303c69944411354c00355a0 with status DOWN (replication=false)
+2020-12-15 22:14:51.200  INFO 19636 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:92436ce34303c69944411354c00355a0 with status DOWN (replication=true)
+2020-12-15 22:14:53.896  INFO 19636 --- [http-nio-8761-exec-4] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance USER-SERVICE/user-service:92436ce34303c69944411354c00355a0 (replication=false)
+2020-12-15 22:14:54.399  WARN 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: USER-SERVICE/user-service:92436ce34303c69944411354c00355a0
+2020-12-15 22:14:54.399  INFO 19636 --- [http-nio-8761-exec-8] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): USER-SERVICE - user-service:92436ce34303c69944411354c00355a0
+2020-12-15 22:14:54.400  WARN 19636 --- [TaskBatchingWorker-target_localhost-12] c.n.eureka.cluster.ReplicationTask       : The replication of task USER-SERVICE/user-service:92436ce34303c69944411354c00355a0:Cancel@localhost failed with response code 404
+2020-12-15 22:14:54.400  WARN 19636 --- [TaskBatchingWorker-target_localhost-12] c.netflix.eureka.cluster.PeerEurekaNode  : USER-SERVICE/user-service:92436ce34303c69944411354c00355a0:Cancel@localhost: missing entry.
+2020-12-15 22:15:07.147  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:15:10.429  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d with status UP (replication=false)
+2020-12-15 22:15:10.484  INFO 19636 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d with status UP (replication=true)
+2020-12-15 22:16:07.147  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:17:07.148  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:18:07.149  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:19:07.149  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:20:07.149  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:21:07.150  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:22:07.150  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:23:07.150  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:24:07.151  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:24:50.111  INFO 19636 --- [http-nio-8761-exec-5] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d with status DOWN (replication=false)
+2020-12-15 22:24:50.616  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d with status DOWN (replication=true)
+2020-12-15 22:24:53.339  INFO 19636 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d (replication=false)
+2020-12-15 22:24:53.843  WARN 19636 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d
+2020-12-15 22:24:53.843  INFO 19636 --- [http-nio-8761-exec-10] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): USER-SERVICE - user-service:4608f00584a8c4e008e1fb252d0b1a2d
+2020-12-15 22:24:53.844  WARN 19636 --- [TaskBatchingWorker-target_localhost-19] c.n.eureka.cluster.ReplicationTask       : The replication of task USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d:Cancel@localhost failed with response code 404
+2020-12-15 22:24:53.844  WARN 19636 --- [TaskBatchingWorker-target_localhost-19] c.netflix.eureka.cluster.PeerEurekaNode  : USER-SERVICE/user-service:4608f00584a8c4e008e1fb252d0b1a2d:Cancel@localhost: missing entry.
+2020-12-15 22:24:57.240  INFO 19636 --- [http-nio-8761-exec-3] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5 with status UP (replication=false)
+2020-12-15 22:24:57.743  INFO 19636 --- [http-nio-8761-exec-4] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5 with status UP (replication=true)
+2020-12-15 22:25:02.887  INFO 19636 --- [http-nio-8761-exec-5] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5 with status DOWN (replication=false)
+2020-12-15 22:25:03.391  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5 with status DOWN (replication=true)
+2020-12-15 22:25:06.082  INFO 19636 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5 (replication=false)
+2020-12-15 22:25:06.593  WARN 19636 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5
+2020-12-15 22:25:06.593  INFO 19636 --- [http-nio-8761-exec-10] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): USER-SERVICE - user-service:883c7c4ab219ee52d12a88257985f7e5
+2020-12-15 22:25:06.594  WARN 19636 --- [TaskBatchingWorker-target_localhost-6] c.n.eureka.cluster.ReplicationTask       : The replication of task USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5:Cancel@localhost failed with response code 404
+2020-12-15 22:25:06.594  WARN 19636 --- [TaskBatchingWorker-target_localhost-6] c.netflix.eureka.cluster.PeerEurekaNode  : USER-SERVICE/user-service:883c7c4ab219ee52d12a88257985f7e5:Cancel@localhost: missing entry.
+2020-12-15 22:25:07.151  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:26:07.152  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:27:07.153  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:27:35.431  INFO 19636 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:c53012704e50da8603d8c95c516d5453 with status UP (replication=false)
+2020-12-15 22:27:35.938  INFO 19636 --- [http-nio-8761-exec-1] c.n.e.registry.AbstractInstanceRegistry  : Registered instance USER-SERVICE/user-service:c53012704e50da8603d8c95c516d5453 with status UP (replication=true)
+2020-12-15 22:28:07.057  INFO 19636 --- [ReplicaAwareInstanceRegistry - RenewalThresholdUpdater] c.n.e.r.PeerAwareInstanceRegistryImpl    : Current renewal threshold is : 8
+2020-12-15 22:28:07.154  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:29:07.154  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:30:07.155  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:31:07.156  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 1ms
+2020-12-15 22:31:41.773  INFO 19636 --- [http-nio-8761-exec-10] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1 with status DOWN (replication=false)
+2020-12-15 22:31:42.278  INFO 19636 --- [http-nio-8761-exec-1] c.n.e.registry.AbstractInstanceRegistry  : Registered instance ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1 with status DOWN (replication=true)
+2020-12-15 22:31:45.045  INFO 19636 --- [http-nio-8761-exec-3] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1 (replication=false)
+2020-12-15 22:31:45.548  WARN 19636 --- [http-nio-8761-exec-2] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1
+2020-12-15 22:31:45.548  INFO 19636 --- [http-nio-8761-exec-2] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): ZUUL-SERVICE - zuul-service:24ba480e7320b9692dbfafad570484b1
+2020-12-15 22:31:45.549  WARN 19636 --- [TaskBatchingWorker-target_localhost-13] c.n.eureka.cluster.ReplicationTask       : The replication of task ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1:Cancel@localhost failed with response code 404
+2020-12-15 22:31:45.549  WARN 19636 --- [TaskBatchingWorker-target_localhost-13] c.netflix.eureka.cluster.PeerEurekaNode  : ZUUL-SERVICE/zuul-service:24ba480e7320b9692dbfafad570484b1:Cancel@localhost: missing entry.
+2020-12-15 22:32:07.156  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:32:52.588  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f with status DOWN (replication=false)
+2020-12-15 22:32:53.093  INFO 19636 --- [http-nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Registered instance PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f with status DOWN (replication=true)
+2020-12-15 22:32:55.829  INFO 19636 --- [http-nio-8761-exec-7] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f (replication=false)
+2020-12-15 22:32:56.335  WARN 19636 --- [http-nio-8761-exec-1] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f
+2020-12-15 22:32:56.336  INFO 19636 --- [http-nio-8761-exec-1] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): PRODUCTS-SERVICE - products-service:1a51d06bb4a5c1833a7a36e5a56a105f
+2020-12-15 22:32:56.336  WARN 19636 --- [TaskBatchingWorker-target_localhost-13] c.n.eureka.cluster.ReplicationTask       : The replication of task PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f:Cancel@localhost failed with response code 404
+2020-12-15 22:32:56.336  WARN 19636 --- [TaskBatchingWorker-target_localhost-13] c.netflix.eureka.cluster.PeerEurekaNode  : PRODUCTS-SERVICE/products-service:1a51d06bb4a5c1833a7a36e5a56a105f:Cancel@localhost: missing entry.
+2020-12-15 22:33:00.266  INFO 19636 --- [http-nio-8761-exec-4] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541 with status DOWN (replication=false)
+2020-12-15 22:33:00.773  INFO 19636 --- [http-nio-8761-exec-5] c.n.e.registry.AbstractInstanceRegistry  : Registered instance OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541 with status DOWN (replication=true)
+2020-12-15 22:33:03.520  INFO 19636 --- [http-nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Cancelled instance OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541 (replication=false)
+2020-12-15 22:33:04.025  WARN 19636 --- [http-nio-8761-exec-7] c.n.e.registry.AbstractInstanceRegistry  : DS: Registry: cancel failed because Lease is not registered for: OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541
+2020-12-15 22:33:04.025  INFO 19636 --- [http-nio-8761-exec-7] c.n.eureka.resources.InstanceResource    : Not Found (Cancel): OAUTH-SERVICE - oauth-service:90bbf95603800b451a6918bdbf3ad541
+2020-12-15 22:33:04.026  WARN 19636 --- [TaskBatchingWorker-target_localhost-2] c.n.eureka.cluster.ReplicationTask       : The replication of task OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541:Cancel@localhost failed with response code 404
+2020-12-15 22:33:04.026  WARN 19636 --- [TaskBatchingWorker-target_localhost-2] c.netflix.eureka.cluster.PeerEurekaNode  : OAUTH-SERVICE/oauth-service:90bbf95603800b451a6918bdbf3ad541:Cancel@localhost: missing entry.
+2020-12-15 22:33:07.157  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:34:07.157  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:35:07.157  INFO 19636 --- [Eureka-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2020-12-15 22:35:11.937  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] inMXBeanRegistrar$SpringApplicationAdmin : Application shutdown requested.
+2020-12-15 22:35:11.942  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application EUREKA-SERVICE with eureka with status DOWN
+2020-12-15 22:35:12.138  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2020-12-15 22:35:12.142  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Destroying Spring FrameworkServlet 'dispatcherServlet'
+2020-12-15 22:35:12.157  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] c.n.eureka.DefaultEurekaServerContext    : Shutting down ...
+2020-12-15 22:35:12.159  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.batchSize.Will start computing stats again.
+2020-12-15 22:35:12.160  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.executionTime.Will start computing stats again.
+2020-12-15 22:35:12.161  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.executionTime.Will start computing stats again.
+2020-12-15 22:35:12.161  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] com.netflix.servo.monitor.StatsMonitor   : Attempting to get the value for an expired monitor: eurekaServer.replication.batchSize.Will start computing stats again.
+2020-12-15 22:35:12.170  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] c.n.eureka.DefaultEurekaServerContext    : Shut down
+2020-12-15 22:35:12.176  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2020-12-15 22:35:12.181  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2020-12-15 22:35:12.182  INFO 19636 --- [RMI TCP Connection(75)-127.0.0.1] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
