@@ -23,7 +23,7 @@ public class MeliOrderBuyer implements Serializable {
 
     private String lastName;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private MeliOrderBuyerBillingInfo meliOrderBuyerBillingInfo;
 
