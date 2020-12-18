@@ -53,16 +53,18 @@ public class MeliOrders implements Serializable {
 
     private String dateCreatedMeli;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Carrier carrier;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "seller_id", foreignKey = @ForeignKey(name = "FK_SELLER_ID"))
     private MeliOrderSeller seller;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @JoinColumn(name = "buyer_id", foreignKey = @ForeignKey(name = "FK_BUYER_ID"))
     private MeliOrderBuyer buyer;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
