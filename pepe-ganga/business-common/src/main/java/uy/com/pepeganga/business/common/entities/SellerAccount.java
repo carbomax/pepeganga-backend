@@ -42,6 +42,7 @@ public class SellerAccount implements Serializable {
 
     private String email;
 
+    @Column(name = "permalink", columnDefinition = "TEXT")
     private String permalink;
 
     private Integer status = 0;
@@ -55,6 +56,8 @@ public class SellerAccount implements Serializable {
     private Short marketplaceId = MarketplaceType.MERCADOLIBRE.getId();
 
     private Long dateLastSynchronization;
+
+    private Long userIdBss;
 
     @PreUpdate
     public void preSynchronization(){
@@ -238,5 +241,13 @@ public class SellerAccount implements Serializable {
 
     public void setDateLastSynchronization(Long dateLastSynchronization) {
         this.dateLastSynchronization = dateLastSynchronization;
+    }
+
+    public Long getUserIdBss() {
+        return userIdBss;
+    }
+
+    public void setUserIdBss(Long userIdBss) {
+        this.userIdBss = userIdBss;
     }
 }
