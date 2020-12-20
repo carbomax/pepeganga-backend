@@ -20,6 +20,8 @@ public class MeliUserAccount {
 
     private List<String> shippingModes;
 
+    private String permalink;
+
 
     @JsonProperty("email")
     public String getEmail() {
@@ -51,4 +53,8 @@ public class MeliUserAccount {
         return shippingModes;
     }
 
+    @JsonProperty("permalink")
+    public String getPermalink() {
+        return permalink;
+    }
 }

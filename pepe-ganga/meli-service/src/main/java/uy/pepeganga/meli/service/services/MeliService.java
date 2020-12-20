@@ -75,16 +75,25 @@ public class MeliService  implements IMeliService{
     @Override
     public SellerAccount updateMeliAccount(Integer accountId, SellerAccount sellerAccount) {
         SellerAccount accountToUpdated = findAccountById(accountId);
-        accountToUpdated.setNickname(sellerAccount.getNickname());
+        accountToUpdated.setBusinessName(sellerAccount.getBusinessName());
         accountToUpdated.setBusinessDescription(sellerAccount.getBusinessDescription());
         return sellerAccountRepository.save(accountToUpdated);
     }
 
     @Override
     public void deleteMeliAccount(Integer accountId) {
-        findAccountById(accountId);
-        sellerAccountRepository.deleteById(accountId);
-
+        SellerAccount sellerAccountFounded = findAccountById(accountId);
+        if(sellerAccountRepository.existsPublication(sellerAccountFounded.getId()) > 0){
+            throw new ResponseStatusException(HttpStatus.IM_USED, String.format("This seller account %d has publications", accountId));
+        }
+        SellerAccount accountToSave = new SellerAccount();
+        accountToSave.setId(sellerAccountFounded.getId());
+        accountToSave.setProfile(sellerAccountFounded.getProfile());
+        accountToSave.setUserIdBss(sellerAccountFounded.getUserIdBss());
+        accountToSave.setBusinessDescription(sellerAccountFounded.getBusinessDescription());
+        accountToSave.setBusinessName(sellerAccountFounded.getBusinessName());
+        accountToSave.setStatus(0);
+        sellerAccountRepository.save(accountToSave);
     }
 
     @Override

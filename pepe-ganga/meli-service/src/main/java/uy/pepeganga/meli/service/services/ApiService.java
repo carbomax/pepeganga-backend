@@ -11,7 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
@@ -90,12 +91,13 @@ public class ApiService implements IApiService {
             } else {
                 MeliAutheticationResponse meliAutheticationResponse = getTokenByCode(code);
                 logger.info("By account id: {}, Meli token response: user id:  {}", accountId, meliAutheticationResponse.getUserId());
-                if (sellerAccountToUpdate.getUserId() != null && !sellerAccountToUpdate.getUserId().equals(meliAutheticationResponse.getUserId())) {
-                    logger.error("Account with id: {} not acceptable with meli user: {} and seller account: {}", accountId, meliAutheticationResponse.getUserId(), sellerAccountToUpdate.getUserId());
-                    map.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_ACCEPTABLE.value(), String.format("Account with id: %s not acceptable", accountId)));
-                } else if (sellerAccountToUpdate.getUserId() == null && sellerAccountRepository.findByUserId(meliAutheticationResponse.getUserId()) != null) {
+
+                if (sellerAccountRepository.existsAnotherAccountWithThisUserId(sellerAccountToUpdate.getId(), meliAutheticationResponse.getUserId()) > 0) {
                     logger.error("Exist a account with userMeliIdL: {}", meliAutheticationResponse.getUserId());
                     map.put(ERROR, new ApiMeliModelException(HttpStatus.CONFLICT.value(), String.format("Exist a account with userMeliIdL: %s", meliAutheticationResponse.getUserId())));
+                } else if (sellerAccountToUpdate.getUserIdBss() != null && !sellerAccountToUpdate.getUserIdBss().equals(meliAutheticationResponse.getUserId())) {
+                    logger.error("Account with id: {} not acceptable with meli user: {} and seller account: {}", accountId, meliAutheticationResponse.getUserId(), sellerAccountToUpdate.getUserId());
+                    map.put(ERROR, new ApiMeliModelException(HttpStatus.NOT_ACCEPTABLE.value(), String.format("Account with id: %s not acceptable", accountId)));
                 } else {
                     // Updating account
                     sellerAccountToUpdate.setAccessToken(meliAutheticationResponse.getAccesToken());
@@ -104,6 +106,7 @@ public class ApiService implements IApiService {
                     sellerAccountToUpdate.setExpiresIn(meliAutheticationResponse.getExpiresIn());
                     sellerAccountToUpdate.setUserId(meliAutheticationResponse.getUserId());
                     sellerAccountToUpdate.setRefreshToken(meliAutheticationResponse.getRefreshToken());
+                    sellerAccountToUpdate.setUserIdBss(meliAutheticationResponse.getUserId());
                     sellerAccountToUpdate.setStatus(MeliStatusAccount.AUTHORIZED.getCode());
                     sellerAccountToUpdate.setExpirationDate(DateTimeUtilsBss.plusCurrentTimeMilleSeconds(meliAutheticationResponse.getExpiresIn(), DateTimePlusType.SECOND));
                     map.put("response", sellerAccountRepository.save(sellerAccountToUpdate));
@@ -143,6 +146,7 @@ public class ApiService implements IApiService {
                 sellerAccountToUpdate.setUserType(meliUserAccount.getUserType());
                 sellerAccountToUpdate.setPoints(meliUserAccount.getPoints());
                 sellerAccountToUpdate.setMe2(isMe2(meliUserAccount.getShippingModes()));
+                sellerAccountToUpdate.setPermalink(meliUserAccount.getPermalink());
                 map.put("response", sellerAccountRepository.save(sellerAccountToUpdate));
             } catch (ApiException e) {
 
@@ -174,6 +178,7 @@ public class ApiService implements IApiService {
             account.setTokenType(meliAutheticationResponse.getTokenType());
             account.setExpiresIn(meliAutheticationResponse.getExpiresIn());
             account.setUserId(meliAutheticationResponse.getUserId());
+            account.setUserIdBss(meliAutheticationResponse.getUserId());
             account.setRefreshToken(meliAutheticationResponse.getRefreshToken());
             account.setExpirationDate(DateTimeUtilsBss.plusCurrentTimeMilleSeconds(account.getExpiresIn(), DateTimePlusType.SECOND));
             account.setStatus(MeliStatusAccount.SYNCHRONIZED.getCode());
@@ -181,11 +186,11 @@ public class ApiService implements IApiService {
 
             return sellerAccountRepository.save(account);
         } catch (Exception e) {
-            if(e.getCause() instanceof  ApiException){
+            if (e.getCause() instanceof ApiException) {
                 logger.error("Error refresh token with meli request Code: {}, ResponseBody: {}", ((ApiException) e.getCause()).getCode(), ((ApiException) e.getCause()).getResponseBody());
-                throw  new TokenException(((ApiException) e.getCause()).getCode(),((ApiException) e.getCause()).getResponseBody(), e.getCause());
+                throw new TokenException(((ApiException) e.getCause()).getCode(), ((ApiException) e.getCause()).getResponseBody(), e.getCause());
             }
-           throw  new TokenException(e.getMessage(), e);
+            throw new TokenException(e.getMessage(), e);
         }
 
     }
@@ -254,21 +259,21 @@ public class ApiService implements IApiService {
     //Servicios Públicos de Mercado Libre
     @Override
     public Map<String, Object> getStatusPublication(String idPublication) {
-      Map<String, Object> response = new HashMap<>();
-        try{
-          Object obj = restTemplate.getForEntity(String.format(ApiResources.ROOT + "/" + ApiResources.ITEMS + "/%s", idPublication), Object.class);
-          response.put("response", obj);
-          return response;
-      }catch (Exception e){
-           response.put(MELI_ERROR, e.getCause());
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Object obj = restTemplate.getForEntity(String.format(ApiResources.ROOT + "/" + ApiResources.ITEMS + "/%s", idPublication), Object.class);
+            response.put("response", obj);
+            return response;
+        } catch (Exception e) {
+            response.put(MELI_ERROR, e.getCause());
         }
         return response;
     }
 
-    private int isMe2(List<String> shippingModes){
+    private int isMe2(List<String> shippingModes) {
         try {
             return shippingModes.contains("me2") ? 1 : 0;
-        }catch (ClassCastException | NullPointerException e){
+        } catch (ClassCastException | NullPointerException e) {
             return 2;
         }
     }
