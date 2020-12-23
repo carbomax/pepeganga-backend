@@ -453,7 +453,7 @@ public class MeliService  implements IMeliService{
             }
             return response;
         }catch (IllegalArgumentException e){
-            logger.error("The status: {} you provide is not correct");
+            logger.error("The status: you provide is not correct");
             response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status that you provide is not correct")));
             return response;
         } catch (TokenException e) {
@@ -462,11 +462,11 @@ public class MeliService  implements IMeliService{
             return response;
         }catch (ApiException e) {
             if(e.getCode() == 409){
-                logger.error(String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication), e.getCode());
-                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication)));
+                logger.error(String.format("You must wait a few seconds for the change to update to, publicationId: %s, code: {}, responseBody: {}", idPublication), e.getCode(), e.getResponseBody());
+                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("You must wait a few seconds for the change to update to, publicationId: %s", idPublication)));
             }else{
-                logger.error(String.format("Publication cannot be deleted, publicationId: {}", idPublication), e.getCode());
-                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("Publication cannot be deleted, publicationId: {}", idPublication)));
+                logger.error(String.format("Publication cannot be deleted, publicationId: %s, code: {}, responseBody: {}", idPublication), e.getCode(), e.getResponseBody());
+                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("Publication cannot be deleted, publicationId: %s", idPublication)));
             }
             return response;
         }
