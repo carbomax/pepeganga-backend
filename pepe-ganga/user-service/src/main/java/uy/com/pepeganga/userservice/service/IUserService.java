@@ -3,8 +3,10 @@ package uy.com.pepeganga.userservice.service;
 import org.springframework.data.domain.Page;
 import uy.com.pepeganga.business.common.entities.Profile;
 import uy.com.pepeganga.business.common.entities.User;
+import uy.com.pepeganga.userservice.models.ResetPassword;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IUserService {
 
@@ -24,4 +26,8 @@ public interface IUserService {
 
 
     boolean isValidTokenToResetPassword(String token);
+
+    boolean isUserEnabledByToken(String token);
+
+    Map<String, Object> changePassword(ResetPassword resetPassword);
 }

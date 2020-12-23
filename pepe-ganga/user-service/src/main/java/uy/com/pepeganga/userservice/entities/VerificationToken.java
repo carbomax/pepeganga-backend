@@ -11,7 +11,7 @@ import java.util.Date;
 @Table
 public class VerificationToken {
 
-    private static final int EXPIRATION = 60;
+    private static final int EXPIRATION = 60 * 24;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

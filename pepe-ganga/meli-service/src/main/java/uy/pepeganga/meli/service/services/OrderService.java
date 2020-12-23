@@ -137,12 +137,10 @@ public class OrderService implements IOrderService {
         if (profile.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
         } else {
-            List<String> accounts;
+            List<String> accounts = new ArrayList<>();
             List<Role>  rolesProfile = profile.get().getUser().getRoles();
             boolean isOperatorOrAdmin = rolesProfile.stream().anyMatch(role -> role.getName().equals(RoleType.OPERATOR.getBusinessRole()) || role.getName().equals(RoleType.ADMIN.getBusinessRole()) );
-            if(isOperatorOrAdmin){
-                accounts = sellerAccountRepository.findAll().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
-            } else {
+            if(!isOperatorOrAdmin){
                 accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
             }
 
@@ -164,8 +162,12 @@ public class OrderService implements IOrderService {
 
 
             }
-
-            Page<MeliOrders> orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+            Page<MeliOrders> orders;
+            if(isOperatorOrAdmin){
+                orders = ordersRepository.findAllOrders(statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+            } else {
+                orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+            }
             List<Long> shipments = new ArrayList<>();
             orders.getContent().forEach(order -> {
                 if (order.getShippingId() != null && order.getShippingId() > 0) {
@@ -306,6 +308,7 @@ public class OrderService implements IOrderService {
         for (Notification notification : notifications) {
             if (notificationRepository.existsByResource(notification.getResource().trim())) {
                 boolean error = false;
+                boolean errorCreating = false;
                 logger.info("Processing notification: topic: {}, applicationId: {}, userId: {}", notification.getTopic(), notification.getApplicationId(), notification.getUserId());
                 try {
                     // check if exist a value for account
@@ -330,11 +333,15 @@ public class OrderService implements IOrderService {
                         error = true;
                     }
 
-                } catch (Exception e) {
+                } catch (ApiException | TokenException e) {
+
                     error = true;
                     logger.error(String.format("Error meli api request  message: %s", e.getMessage()), e);
 
-                } finally {
+                } catch (OrderCreateException e) {
+                    errorCreating = true;
+
+                }  finally {
                     if (notification.getBusinessAttempts() > ORDER_ATTEMPTS) {
                         if (notificationRepository.existsByResource(notification.getResource())) {
                             notificationRepository.deleteAllByResource(notification.getResource());
@@ -345,7 +352,10 @@ public class OrderService implements IOrderService {
                         notification.setBusinessAttempts(notification.getBusinessAttempts() + 1);
                         notificationRepository.save(notification);
                         logger.info("Order notification set business attempts to: {} by meli request error before", notification.getBusinessAttempts() + 1);
-                    } else {
+                    }else if (errorCreating) {
+                        logger.error("Error creating resource order: {}, userId: {}", notification.getResource(), notification.getUserId());
+                    }
+                    else {
                         if (notificationRepository.existsByResource(notification.getResource())) {
                             notificationRepository.deleteAllByResource(notification.getResource());
                             logger.info("Deleting notification by success id: {}, resource: {}", notification.getId(), notification.getResource());
@@ -455,14 +465,15 @@ public class OrderService implements IOrderService {
 
             if (Objects.nonNull(stockProcessorFounded)) {
                 StockProcessor stockProcessor = new StockProcessor();
-                // Add 1 to expected Stock.
+                // Add quantity to expected Stock.
+                Integer quantity = order.getOrderItems().get(0).getQuantity();
                 if (order.getStatus().equals(OrderStatusType.PAID.getStatus())) {
-                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
-                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() - 1);
+                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + quantity);
+                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() - quantity);
                     stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
                 } else if (order.getStatus().equals(OrderStatusType.CANCELLED.getStatus())) {
-                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() - 1);
-                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() + 1);
+                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() - quantity);
+                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() + quantity);
                     stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
                 }
 
@@ -553,8 +564,9 @@ public class OrderService implements IOrderService {
 
                     if (Objects.nonNull(stockProcessorFounded)) {
                         StockProcessor processor = new StockProcessor();
-                        // Add 1 to expected Stock.
-                        stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
+                        // Add quantity to expected Stock.
+                        stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + dmOrderItems.getQuantity());
+                        stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() - dmOrderItems.getQuantity());
                         processor = stockProcessorRepository.save(stockProcessorFounded);
                         // updating checking table to scheduler
                         updateCheckingStockProcessor(processor);
