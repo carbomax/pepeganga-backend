@@ -45,4 +45,8 @@ public interface IApiService {
     Object updateStock(ChangeStockRequest request, String token, String idPublicationMeli) throws ApiException;
 
     Map<String, Object> getStatusPublication(String idPublication);
+
+    Object isFlexInItem(String idPublicationMeli, String token) throws ApiException;
+
+    Object disableFlexInItem(String idPublicationMeli, String token) throws ApiException;
 }
