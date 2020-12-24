@@ -59,7 +59,8 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 			 
 			 CargaArticulosPaginadoExecuteResponse response = (CargaArticulosPaginadoExecuteResponse) getWebServiceTemplate()
 			        .marshalSendAndReceive("http://201.217.140.35/agile/aCargaArticulosPaginado.aspx", request);
-			
+
+			 logger.info("Obteniendo grupos de 100 items del almacen");
 			 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
 			 responseList.addAll(partialList);
 			 part++;
@@ -71,8 +72,7 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 		 		
 		 return responseList;
   	}
-	
-	/*Implementar aca evento para que esto se ejecute solo cada cierto tiempo*/
+
 	public boolean storeItems(UpdatesOfSystem data) {
 		try{
 			List<Item> itemList = getItems();
@@ -85,6 +85,7 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 				updateSysRepo.save(data);
 				return false;
 			}
+			logger.info("Almacenando items del almacén en base datos");
 			itemClient.saveAll(itemList);
 			logger.info("Items saved successfully: {}", itemList.size());
 			return true;
