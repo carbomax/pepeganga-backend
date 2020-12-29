@@ -23,5 +23,6 @@ public interface DetailsPublicationMeliRepository extends JpaRepository<DetailsP
 
     List<DetailsPublicationsMeli> findAllBySku(String sku);
 
-
+    @Query(value = "select count(*) from detailspublicationsmeli where status = 'active' and deleted = 0", nativeQuery = true)
+    Long getCountActivePublications();
 }

@@ -42,9 +42,15 @@ public class DateTimeUtilsBss {
     }
 
     public static Long getLongDateTimeAtCurrentTime(){
-        return Long.parseLong(String.format("%d%d%d", DateTimeUtilsBss.getDateTimeAtCurrentTime().getYear(), DateTimeUtilsBss.getDateTimeAtCurrentTime().getMonthOfYear(), DateTimeUtilsBss.getDateTimeAtCurrentTime().getDayOfMonth()));
+        return Long.parseLong(String.format("%d%s%s", DateTimeUtilsBss.getDateTimeAtCurrentTime().getYear(),
+                helperZeroBeforeMonthOrDay(DateTimeUtilsBss.getDateTimeAtCurrentTime().getMonthOfYear()) ,
+                helperZeroBeforeMonthOrDay(DateTimeUtilsBss.getDateTimeAtCurrentTime().getDayOfMonth())));
     }
 
+
+    public static String helperZeroBeforeMonthOrDay(int number){
+        return number / 10 >= 1 ? String.valueOf(number) : "0".concat(String.valueOf(number));
+    }
 
 }
 
