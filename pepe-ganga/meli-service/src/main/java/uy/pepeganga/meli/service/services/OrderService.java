@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
@@ -23,6 +22,8 @@ import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
 import uy.pepeganga.meli.service.models.orders.DMOrderShipping;
+import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
+import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
 import uy.pepeganga.meli.service.utils.MeliUtils;
@@ -501,7 +502,7 @@ public class OrderService implements IOrderService {
         DateTime currentTime = DateTimeUtilsBss.getDateTimeAtCurrentTime();
         if (orderToUpdate.getDateCreated() == null || orderToUpdate.getBusinessDateCreated() == null || orderToUpdate.getBusinessDateCreated() <= 0 || orderToUpdate.getDateCreated().equals("")) {
             orderToUpdate.setBusinessDateCreated(Long.parseLong(String.format("%d%d%d", currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth())));
-            orderToUpdate.setDateCreated(String.format("%d-%d-%d", currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth()));
+            orderToUpdate.setDateCreated(String.format("%d-%s-%s", currentTime.getYear(), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getMonthOfYear()), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getDayOfMonth())));
         }
         return orderToUpdate;
     }
@@ -606,5 +607,19 @@ public class OrderService implements IOrderService {
         return tokenExpiration;
     }
 
+    @Override
+    public List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo){
+        return ordersRepository.getSalesByBusinessDateCreated(dateFrom, dateTo);
+    }
+
+    @Override
+    public Long getCountAllSales() {
+        return ordersRepository.getCountAllSales();
+    }
+
+    @Override
+    public IBetterSkuDto getBetterSku() {
+        return ordersRepository.getBetterSku();
+    }
 
 }
