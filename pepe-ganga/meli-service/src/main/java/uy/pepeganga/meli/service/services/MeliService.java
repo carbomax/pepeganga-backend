@@ -21,6 +21,7 @@ import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
+import uy.pepeganga.meli.service.utils.FlexResponse;
 import uy.pepeganga.meli.service.utils.MapResponseConstants;
 import uy.pepeganga.meli.service.utils.MeliErrorCodeReference;
 import uy.pepeganga.meli.service.utils.MeliUtils;
@@ -307,6 +308,8 @@ public class MeliService  implements IMeliService{
                 }
             }
             detailsPublicationRepository.saveAll(detailsToUpdate);
+            // Si alguna publicación tiene posibilidad de envios Flex, lo deshabilito
+            disableFlexItems(detailsToUpdate, accountId);
         }
     return true;
     }
@@ -462,7 +465,7 @@ public class MeliService  implements IMeliService{
             }
             return response;
         }catch (IllegalArgumentException e){
-            logger.error("The status: {} you provide is not correct");
+            logger.error("The status: you provide is not correct");
             response.put(MapResponseConstants.ERROR, new ApiMeliModelException(HttpStatus.BAD_REQUEST.value(), String.format("The status that you provide is not correct")));
             return response;
         } catch (TokenException e) {
@@ -471,11 +474,11 @@ public class MeliService  implements IMeliService{
             return response;
         }catch (ApiException e) {
             if(e.getCode() == 409){
-                logger.error(String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication), e.getCode());
-                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("You must wait a few seconds for the change to update to, publicationId: {}", idPublication)));
+                logger.error(String.format("You must wait a few seconds for the change to update to, publicationId: %s, code: {}, responseBody: {}", idPublication), e.getCode(), e.getResponseBody());
+                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("You must wait a few seconds for the change to update to, publicationId: %s", idPublication)));
             }else{
-                logger.error(String.format("Publication cannot be deleted, publicationId: {}", idPublication), e.getCode());
-                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("Publication cannot be deleted, publicationId: {}", idPublication)));
+                logger.error(String.format("Publication cannot be deleted, publicationId: %s, code: {}, responseBody: {}", idPublication), e.getCode(), e.getResponseBody());
+                response.put(MapResponseConstants.MELI_ERROR, new ApiMeliModelException(e.getCode(), String.format("Publication cannot be deleted, publicationId: %s", idPublication)));
             }
             return response;
         }
@@ -904,6 +907,48 @@ public class MeliService  implements IMeliService{
             updateSysRepo.save(data);
         }
 
+    }
+
+    @Override
+    public void disableFlexItems(List<DetailsPublicationsMeli> publicationsList, Integer accountId) {
+        try {
+            if (!publicationsList.isEmpty()) {
+                Optional<SellerAccount> accountFounded = getAccountMeli(accountId, false);
+                if (accountFounded.isEmpty()) {
+                    logger.error(String.format("Not Found, Account with id %s not found: ", accountId));
+                    throw new Exception(String.format("Account with id: %s not found", accountId));
+                } else if (MeliUtils.isExpiredToken(accountFounded.get())) {
+                    accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
+                }
+                for (DetailsPublicationsMeli item: publicationsList) {
+                    if (item.getStatus().equals(MeliStatusPublications.ACTIVE.getValue()) || item.getStatus().equals(MeliStatusPublications.PAUSED.getValue())) {
+                        try {
+                            Object obj = apiService.isFlexInItem(item.getIdPublicationMeli(), accountFounded.get().getAccessToken());
+                            MeliResponseBodyException detailC = mapper.convertValue(obj, MeliResponseBodyException.class);
+                            //Si tiene habilitado envios Flex?
+                            if (detailC.getStatus() == FlexResponse.No_Content.getStatus()) {
+                                Object obj1 = apiService.disableFlexInItem(item.getIdPublicationMeli(), accountFounded.get().getAccessToken());
+                                MeliResponseBodyException detailD = mapper.convertValue(obj, MeliResponseBodyException.class);
+                                if (detailD.getStatus() == FlexResponse.No_Content.getStatus()) {
+                                    logger.info(String.format("FLEX shipping disabled for publication: %s ", item.getIdPublicationMeli()));
+                                } else {
+                                    logger.warn(String.format("The disable FLEX send operation produces the following message: %s, to the publicaction: %s", detailD.getError(), item.getIdPublicationMeli()));
+                                }
+                            }
+                        }catch (ApiException e){
+                            logger.warn(String.format("The disable FLEX send operation produces the following message: %s, to the publicaction: %s", e.getResponseBody(), item.getIdPublicationMeli()));
+                            logger.info(String.format("If error's code is 404 then the Item have not Flex or not exist."));
+                        }
+                    }
+                }
+            }
+        }catch (ApiException e) {
+            logger.error(" Error de Mercado Libre: {}", e.getResponseBody());
+        }catch (TokenException e) {
+            logger.error(" Error getting token Meli Response: {}", e.getMessage());
+        }catch (Exception e) {
+            logger.error(" Error in the proccess: {}", e.getMessage());
+        }
     }
 
     /**** Metodos auxiliares ****/

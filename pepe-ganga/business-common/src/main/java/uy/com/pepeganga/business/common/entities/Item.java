@@ -86,6 +86,9 @@ public class Item implements Serializable {
 	@Column(name="talle")
 	private String talle;
 
+	@Column(name="updated")
+	private Boolean updated = false;
+
 	@ManyToOne
 	@JoinColumn(name = "family_id")
 	private Family family;
@@ -304,6 +307,14 @@ public class Item implements Serializable {
 
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
+	}
+
+	public Boolean isUpdated() {
+		return updated;
+	}
+
+	public void setUpdated(Boolean updated) {
+		this.updated = updated;
 	}
 
 	@Override

@@ -256,6 +256,14 @@ public class ApiService implements IApiService {
         return restClientApiUy.resourcePost(String.format(ApiResources.ITEMS + "/%s" + "/relist", idPublicationMeli), token, request);
     }
 
+    public Object isFlexInItem(String idPublicationMeli, String token) throws ApiException {
+        return restClientApiUy.resourceGet(String.format(ApiResources.SITES + "/MLU/shipping/selfservice/items" + "/%s", idPublicationMeli), token);
+    }
+
+    public Object disableFlexInItem(String idPublicationMeli, String token) throws ApiException {
+        return restClientApiUy.resourceDelete(String.format(ApiResources.SITES + "/MLU/shipping/selfservice/items" + "/%s", idPublicationMeli), token);
+    }
+
     //Servicios Públicos de Mercado Libre
     @Override
     public Map<String, Object> getStatusPublication(String idPublication) {

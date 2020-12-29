@@ -65,4 +65,6 @@ public interface IMeliService {
 
     void synchronizationPublications(List<DetailsPublicationsMeli> detailsList);
 
+    void disableFlexItems(List<DetailsPublicationsMeli> publicationsList, Integer accountId);
+
 }
