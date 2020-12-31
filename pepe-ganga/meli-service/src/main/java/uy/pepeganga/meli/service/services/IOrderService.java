@@ -38,4 +38,6 @@ public interface IOrderService {
     Long getCountAllSales();
 
     IBetterSkuDto getBetterSku();
+
+    List<IBetterSkuDto> getBettersSku(Integer size);
 }
