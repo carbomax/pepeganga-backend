@@ -622,4 +622,9 @@ public class OrderService implements IOrderService {
         return ordersRepository.getBetterSku();
     }
 
+    @Override
+    public List<IBetterSkuDto> getBettersSku(Integer size) {
+        return ordersRepository.getBettersSku(size);
+    }
+
 }

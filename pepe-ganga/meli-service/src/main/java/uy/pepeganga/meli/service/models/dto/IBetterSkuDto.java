@@ -5,4 +5,6 @@ public interface IBetterSkuDto {
     int getCount();
 
     String getSku();
+
+    String getName();
 }
