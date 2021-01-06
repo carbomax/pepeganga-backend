@@ -8,9 +8,7 @@ import uy.pepeganga.meli.service.models.dto.StockVsTotalItemDto;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.StockProcessorRepository;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class StatisticService implements IStatisticService{
@@ -42,6 +40,11 @@ public class StatisticService implements IStatisticService{
     @Override
     public IBetterSkuDto getBetterSku() {
         return orderService.getBetterSku();
+    }
+
+    @Override
+    public List<IBetterSkuDto> getBettersSku(Integer size) {
+        return orderService.getBettersSku(size);
     }
 
     @Override

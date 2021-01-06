@@ -39,4 +39,7 @@ public interface OrdersRepository extends JpaRepository<MeliOrders, Long> {
 
     @Query(value = "select max(css.sum) as count, css.seller_sku as sku from (select sum(i.quantity) as sum, i.seller_sku from meli_order_item i, meli_orders o where i.meli_orders_id = o.id and o.status = 'paid' and i.seller_sku is not null group by i.seller_sku) as css", nativeQuery = true)
     IBetterSkuDto getBetterSku();
+
+    @Query(value = "select css.sum as count, css.seller_sku as sku, css.art_descrip_catalogo as name from (select sum(i.quantity) as sum, i.seller_sku, it.art_descrip_catalogo from meli_order_item i, meli_orders o, item it where i.meli_orders_id = o.id and o.status = 'paid' and i.seller_sku is not null and it.sku = i.seller_sku group by i.seller_sku) as css order by count desc limit :size", nativeQuery = true)
+    List<IBetterSkuDto> getBettersSku(Integer size);
 }

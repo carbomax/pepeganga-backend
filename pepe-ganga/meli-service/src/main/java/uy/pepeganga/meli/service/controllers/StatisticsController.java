@@ -3,10 +3,7 @@ package uy.pepeganga.meli.service.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
 import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
 import uy.pepeganga.meli.service.models.dto.StockVsTotalItemDto;
@@ -44,6 +41,11 @@ public class StatisticsController {
     @GetMapping("/better-sku")
     public ResponseEntity<IBetterSkuDto> getBetterSku(){
         return new ResponseEntity<>(statisticService.getBetterSku(), HttpStatus.OK);
+    }
+
+    @GetMapping("/better-sku/{size}")
+    public ResponseEntity<List<IBetterSkuDto>> getBettersSku(@PathVariable Integer size){
+        return new ResponseEntity<>(statisticService.getBettersSku(size), HttpStatus.OK);
     }
 
     @GetMapping("/stock-vs-total-items")
