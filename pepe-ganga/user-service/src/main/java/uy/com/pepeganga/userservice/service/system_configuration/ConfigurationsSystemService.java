@@ -52,7 +52,7 @@ public class ConfigurationsSystemService implements IConfigurationsSystemService
 
             //object for synchronization configuration
             JSONObject synchrConfig = new JSONObject();
-            synchrConfig.put("synchronization_time", "");
+            synchrConfig.put("synchronization_time", "0 * * ? * *");
             synchrConfig.put("stock_risk", 5);
 
             obj.put("synchronization_config", synchrConfig);
