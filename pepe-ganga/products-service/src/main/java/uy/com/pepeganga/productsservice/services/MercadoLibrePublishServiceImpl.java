@@ -14,6 +14,7 @@ import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
+import uy.com.pepeganga.business.common.utils.methods.ConfigurationsSystem;
 import uy.com.pepeganga.productsservice.gridmodels.*;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.RiskTime;
@@ -32,6 +33,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Autowired
 	RiskTime property;
+	ConfigurationsSystem configService;
 
 	@Autowired
 	MercadoLibrePublishRepository mlPublishRepo;
@@ -62,6 +64,15 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Autowired
 	CheckingStockProcessorRepository checkingStockRepo;
+
+	public MercadoLibrePublishServiceImpl() {
+		this.configService = new ConfigurationsSystem();
+	}
+
+	private Integer getStockRisk() {
+		Integer stock_risk = Integer.parseInt(this.configService.getSynchronizationConfig().get("stock_risk").toString());
+		return stock_risk == null ? 0 : stock_risk;
+	}
 
 	// Method to fill the details of marketplace card
 	@Override
@@ -138,7 +149,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setFamilyDesc(product.get().getFamily().getDescription());
 					mlp.setStates(States.NOPUBLISHED.getId());
 					mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
-					mlp.setSpecialPaused(product.get().getStockActual() <= property.getRiskTime() ? 1 : 0);
+					mlp.setSpecialPaused(product.get().getStockActual() <= getStockRisk() ? 1 : 0);
 					prodToStore.add(mlp);
 				}
 			}

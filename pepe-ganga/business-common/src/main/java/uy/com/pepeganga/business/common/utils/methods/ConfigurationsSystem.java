@@ -38,6 +38,28 @@ public class ConfigurationsSystem {
         return null;
     }
 
+    public JSONObject getPublicationConfig() {
+        JSONObject obj = readAllJsonFile();
+        JSONObject objResult = new JSONObject(obj);
+        if (obj != null) {
+            JSONObject objPubli = new JSONObject();
+            return (JSONObject) obj.get("publication_config");
+        } else {
+            return null;
+        }
+    }
+
+    public JSONObject getSynchronizationConfig() {
+        JSONObject obj = readAllJsonFile();
+        JSONObject objResult = new JSONObject(obj);
+        if (obj != null) {
+            JSONObject objPubli = new JSONObject();
+            return (JSONObject) obj.get("synchronization_config");
+        } else {
+            return null;
+        }
+    }
+
     // *** ***** Metodos auxiliares *** ***** //
 
     //Construye ruta y crea el directorio si no existe
