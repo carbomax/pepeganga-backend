@@ -1,8 +1,6 @@
 package uy.pepeganga.meli.service.services;
 
-import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
-import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
-import uy.pepeganga.meli.service.models.dto.StockVsTotalItemDto;
+import uy.pepeganga.meli.service.models.dto.*;
 
 import java.util.List;
 
@@ -20,4 +18,6 @@ public interface IStatisticService {
 
     // Map<stock, total>
     StockVsTotalItemDto getStockVsTotalOfItems();
+
+    List<AnalysisDropDto> getAnalysisDrop(List<String> dates);
 }

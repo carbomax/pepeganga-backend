@@ -4,14 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
-import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
-import uy.pepeganga.meli.service.models.dto.StockVsTotalItemDto;
+import uy.pepeganga.meli.service.models.dto.*;
 import uy.pepeganga.meli.service.services.IOrderService;
 import uy.pepeganga.meli.service.services.IStatisticService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/statistics")
@@ -51,6 +48,11 @@ public class StatisticsController {
     @GetMapping("/stock-vs-total-items")
     public ResponseEntity<StockVsTotalItemDto> getStockVsTotalOfItems(){
         return new ResponseEntity<>(statisticService.getStockVsTotalOfItems(), HttpStatus.OK);
+    }
+
+    @GetMapping("/analysis-drop")
+    public ResponseEntity<List<AnalysisDropDto>> getAnalysisDrop(@RequestParam List<String> dates){
+        return new ResponseEntity<>(statisticService.getAnalysisDrop(dates), HttpStatus.OK);
     }
 
 }

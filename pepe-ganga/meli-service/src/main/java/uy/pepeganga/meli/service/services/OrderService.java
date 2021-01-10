@@ -19,6 +19,7 @@ import uy.com.pepeganga.business.common.utils.enums.RoleType;
 import uy.pepeganga.meli.service.exceptions.OrderCreateException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
+import uy.pepeganga.meli.service.models.dto.ISalesAndAmountBySeller;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
 import uy.pepeganga.meli.service.models.orders.DMOrderShipping;
@@ -625,6 +626,11 @@ public class OrderService implements IOrderService {
     @Override
     public List<IBetterSkuDto> getBettersSku(Integer size) {
         return ordersRepository.getBettersSku(size);
+    }
+
+    @Override
+    public List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo) {
+        return ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo);
     }
 
 }

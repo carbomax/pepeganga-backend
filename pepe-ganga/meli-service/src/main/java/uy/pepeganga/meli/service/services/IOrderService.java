@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
 import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
 import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
+import uy.pepeganga.meli.service.models.dto.ISalesAndAmountBySeller;
 
 import java.util.List;
 import java.util.Map;
@@ -40,4 +41,6 @@ public interface IOrderService {
     IBetterSkuDto getBetterSku();
 
     List<IBetterSkuDto> getBettersSku(Integer size);
+
+    List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo);
 }
