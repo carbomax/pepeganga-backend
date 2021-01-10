@@ -11,6 +11,8 @@ import uy.com.pepeganga.notification.service.repository.NotificationRepository;
 @Service
 public class NotificationService implements uy.com.pepeganga.notification.service.service.INotificationService {
 
+    private static final String TOPIC = "orders";
+
     @Autowired
     NotificationRepository repository;
 
@@ -18,14 +20,16 @@ public class NotificationService implements uy.com.pepeganga.notification.servic
     public Notification saveNotification(NotificationRequest request) {
         if(request != null){
             Notification notification = new Notification();
-            notification.setApplicationId(request.getApplicationId());
-            notification.setUserId(request.getUserId());
-            notification.setAttempts(request.getAttempts());
-            notification.setReceived(request.getReceived());
-            notification.setSent(request.getSent());
-            notification.setResource(request.getResource());
-            notification.setTopic(request.getTopic());
-            return repository.save(notification);
+            if(request.getTopic().contains(TOPIC)){
+                notification.setApplicationId(request.getApplicationId());
+                notification.setUserId(request.getUserId());
+                notification.setAttempts(request.getAttempts());
+                notification.setReceived(request.getReceived());
+                notification.setSent(request.getSent());
+                notification.setResource(request.getResource());
+                notification.setTopic(request.getTopic());
+                return repository.save(notification);
+            } else return notification;
         } else throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE);
 
     }
