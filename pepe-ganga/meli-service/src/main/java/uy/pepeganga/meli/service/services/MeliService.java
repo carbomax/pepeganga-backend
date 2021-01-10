@@ -281,7 +281,7 @@ public class MeliService  implements IMeliService{
     //Global Method to that use "createOrUpdateDetailPublicationsMeli" and "createPublication" methods to store and publish
     // one product in ML
     @Override
-    public boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException {
+    public boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin, int flex) throws NoSuchFieldException {
         List<DetailsPublicationsMeli> detailsToUpdate = new ArrayList<>();
 
         if(createOrUpdateDetailPublicationsMeli(items, accountId, idMargin)){
@@ -308,8 +308,10 @@ public class MeliService  implements IMeliService{
                 }
             }
             detailsPublicationRepository.saveAll(detailsToUpdate);
-            // Si alguna publicación tiene posibilidad de envios Flex, lo deshabilito
-            disableFlexItems(detailsToUpdate, accountId);
+            // Deshabilito la opcion ´flex´ si está desabilitado en la configuracion
+            if(flex == 0) {
+                disableFlexItems(detailsToUpdate, accountId);
+            }
         }
     return true;
     }

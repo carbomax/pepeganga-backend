@@ -1,7 +1,5 @@
 package uy.pepeganga.meli.service.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import meli.ApiException;
 import meli.model.Item;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
-import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
@@ -55,7 +52,7 @@ public class MeliController {
     public ResponseEntity<Map<String, Object>> createPublication(@RequestBody Item item, @PathVariable Integer accountId){
         return new ResponseEntity<>(meliService.createPublication(item, accountId), HttpStatus.CREATED);
     }
-
+/*
     @PostMapping("/publications-list/{accountId}")
     public ResponseEntity<List<Map<String, Object>>> createPublicationList(@RequestBody List<Item> items, @PathVariable Integer accountId, @RequestParam Short idMargin){
         try {
@@ -65,11 +62,11 @@ public class MeliController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
     }
-
+*/
     @PostMapping("/publications-flow/{accountId}")
-    public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin){
+    public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin, @RequestParam int flex){
         try {
-            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin), HttpStatus.CREATED);
+            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin, flex), HttpStatus.CREATED);
         }
         catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
