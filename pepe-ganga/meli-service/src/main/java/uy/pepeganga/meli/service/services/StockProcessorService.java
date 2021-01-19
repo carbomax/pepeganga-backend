@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import uy.com.pepeganga.business.common.entities.CheckingStockProcessor;
 import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
@@ -243,7 +244,13 @@ public class StockProcessorService implements IStockProcessorService {
                 if (checkingProcessed.get() <= 0) {
                     // Deleting of checking table
                     logger.info("Deleting checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
-                    checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
+
+
+                    try{
+                        checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
+                    } catch (EmptyResultDataAccessException e) {
+                        logger.warn("Not deleted checkingStockProcessor with sku: {} because it is already deleted. Exception: {}", checkingStockProcessor.getSku(), e.getMessage());
+                    }
                     logger.info("Deleted checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
                 } else {
                     logger.info("checkingStockProcessor with sku: {}, not deleted by counter: {}", checkingStockProcessor.getSku(), checkingProcessed.get());
