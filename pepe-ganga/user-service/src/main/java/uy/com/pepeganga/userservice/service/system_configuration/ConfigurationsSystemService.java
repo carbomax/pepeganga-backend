@@ -6,19 +6,30 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import uy.com.pepeganga.userservice.client.RestTemplateConfiguration;
 import uy.com.pepeganga.userservice.models.system_config.SystemConfig;
+import uy.com.pepeganga.userservice.repository.IConfigurationSystemRepository;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@EnableAsync
 @Service
 public class ConfigurationsSystemService implements IConfigurationsSystemService {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationsSystemService.class);
     String directory = "PepeGangaSystemConfig";
 
+    @Autowired
+    IConfigurationSystemRepository configSysRepo;
+
+    @Autowired
+    RestTemplateConfiguration restTemplate;
 
     public Map<String, Object> saveScheduleDatabaseUpdate(String formatDays, List<LocalTime> hours, boolean running) {
 /*
@@ -77,6 +88,7 @@ public class ConfigurationsSystemService implements IConfigurationsSystemService
     public JSONObject updateAttributesFromJsonFile(SystemConfig model) {
         try {
             if(model != null) {
+                boolean syncStock = false;
                 JSONObject obj = readAllJsonFile();
                 JSONObject objResult = new JSONObject(obj);
                 if (obj != null) {
@@ -96,13 +108,19 @@ public class ConfigurationsSystemService implements IConfigurationsSystemService
                             objSynch.put("synchronization_time", model.getSynchronization_config().getSynchronization_time());
                             objSynch.put("stock_risk", model.getSynchronization_config().getStock_risk());
                             objResult.put("synchronization_config", objSynch);
+                            syncStock = true;
                         }
                     }
                     FileWriter file = new FileWriter(String.valueOf(buildURI(true)));
-                        file.write(String.valueOf(objResult));
-                        file.flush();
-                        file.close();
-                        return objResult;
+                    file.write(String.valueOf(objResult));
+                    file.flush();
+                    file.close();
+
+                    //To update stock in consuming
+                    if(syncStock == true && configSysRepo.getLastData().getEndDate() != null) {
+                        updateStockClient();
+                    }
+                    return objResult;
                 }
             }
         }catch (FileNotFoundException e) {
@@ -161,4 +179,24 @@ public class ConfigurationsSystemService implements IConfigurationsSystemService
         SimpleDateFormat formateador = new SimpleDateFormat("dd-MM-yyyy");
         return formateador.format(now);
     }
+
+    private static final String UPDATE_RISK = "http://consuming-store-service/api/sync/update_stock";
+
+    private String updateStockClient() {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+            HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+            ResponseEntity<String> result = restTemplate.getRestTemplate().exchange(UPDATE_RISK, HttpMethod.GET, entity, String.class);
+            return result.toString();
+        }catch (Exception e){
+            logger.warn(String.format("Timeout error waiting for response from consuming service to update stock of publications with synchronization {} Error: "), e.getMessage());
+        return "Error";
+        }
+    }
+
+
+
+
 }
+
