@@ -6,21 +6,19 @@ import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.userservice.models.system_config.SystemConfig;
 import uy.com.pepeganga.userservice.service.system_configuration.IConfigurationsSystemService;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/systemConfig")
 public class SystemConfigController {
 
     @Autowired
-    IConfigurationsSystemService configService;
+    private IConfigurationsSystemService configService;
 
-    @GetMapping("create")
+    @GetMapping("/create")
     public boolean createFile() {
         return configService.createJsonFile();
     }
 
-    @PutMapping("update")
+    @PutMapping("/update")
     public JSONObject updateAttributesFromFile(@RequestBody SystemConfig model) {
         return configService.updateAttributesFromJsonFile(model);
     }
@@ -29,4 +27,5 @@ public class SystemConfigController {
     public JSONObject readAllJsonFile() {
         return configService.readAllJsonFile();
     }
+
 }

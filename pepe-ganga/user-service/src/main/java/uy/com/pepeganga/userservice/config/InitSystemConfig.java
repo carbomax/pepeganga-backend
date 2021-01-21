@@ -6,8 +6,9 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import uy.com.pepeganga.userservice.service.system_configuration.IConfigurationsSystemService;
 
+
 @Component
-public class InitSystemConfig  implements ApplicationListener<ApplicationReadyEvent> {
+public class InitSystemConfig implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
     IConfigurationsSystemService configSevice;

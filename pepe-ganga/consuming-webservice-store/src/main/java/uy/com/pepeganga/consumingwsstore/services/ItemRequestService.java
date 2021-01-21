@@ -42,40 +42,49 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 		itemClient.delete(item);
 	}
 	
-	public List<Item> getItems() {
+	public List<Item> getItems(UpdatesOfSystem data) {
 		
 		boolean finish = false;
 		List<Item> responseList = new ArrayList<>();
 		 
 		 CargaArticulosPaginadoExecute request = new CargaArticulosPaginadoExecute();
 		 SDTArticulosWebPagina stdItems = new SDTArticulosWebPagina();		
-		 
-		 short part = 1;
-		 do {
-			 
-			 stdItems.setParte(part);
-			 stdItems.setCantidad(100);			 
-			 request.setSdtarticuloswebpagina(stdItems);
-			 
-			 CargaArticulosPaginadoExecuteResponse response = (CargaArticulosPaginadoExecuteResponse) getWebServiceTemplate()
-			        .marshalSendAndReceive("http://201.217.140.35/agile/aCargaArticulosPaginado.aspx", request);
+		 try {
+			 short part = 1;
+			 do {
 
-			 logger.info("Obteniendo grupos de 100 items del almacen");
-			 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
-			 responseList.addAll(partialList);
-			 part++;
+				 stdItems.setParte(part);
+				 stdItems.setCantidad(100);
+				 request.setSdtarticuloswebpagina(stdItems);
 
-			 if(response.getSdtarticuloswebpagina().getArticulos().getArticulo().size() < 100 )
-				 finish = true;
-			 
-		} while (!finish);
-		 		
-		 return responseList;
+				 CargaArticulosPaginadoExecuteResponse response = (CargaArticulosPaginadoExecuteResponse) getWebServiceTemplate()
+						 .marshalSendAndReceive("http://201.217.140.35/agile/aCargaArticulosPaginado.aspx", request);
+
+				 logger.info("Obteniendo grupos de 100 items del almacen");
+				 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
+				 responseList.addAll(partialList);
+				 part++;
+
+				 if (response.getSdtarticuloswebpagina().getArticulos().getArticulo().size() < 100)
+					 finish = true;
+
+			 } while (!finish);
+
+			 return responseList;
+		 }catch (Exception e) {
+			 logger.error(String.format("Error Obteniendo items del almacen, Msg: %s, Error: ", e.getMessage()), e);
+			 String data1 = data.getMessage();
+			 data.setMessage(String.format(data1 + " Error Obteniendo items del almacen, Error: %s;", e.getMessage()));
+			 data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());
+			 data.setFinishedSync(false);
+			 updateSysRepo.save(data);
+			 return null;
+		 }
   	}
 
 	public boolean storeItems(UpdatesOfSystem data) {
 		try{
-			List<Item> itemList = getItems();
+			List<Item> itemList = getItems(data);
 			if(itemList == null || itemList.isEmpty()) {
 				logger.warn("No se lograron obtener productos del servicio del almacén");
 				String data1 = data.getMessage();
@@ -90,7 +99,7 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 			logger.info("Items saved successfully: {}", itemList.size());
 			return true;
 		}catch (Exception e){
-			logger.error("Error almacenando items del almacén en base datos", e.getMessage());
+			logger.error("Error almacenando items del almacén en base datos", e);
 			String data1 = data.getMessage();
 			data.setMessage(data1 + " No se lograron obtener productos del servicio del almacén;");
 			data.setEndDate(DateTimeUtilsBss.getDateTimeAtCurrentTime().toDate());

@@ -3,8 +3,6 @@ package uy.com.pepeganga.userservice.service.system_configuration;
 import org.json.simple.JSONObject;
 import org.joda.time.LocalTime;
 import uy.com.pepeganga.userservice.models.system_config.SystemConfig;
-
-import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,4 +15,5 @@ public interface IConfigurationsSystemService {
     JSONObject updateAttributesFromJsonFile(SystemConfig model);
 
     JSONObject readAllJsonFile();
+
 }
