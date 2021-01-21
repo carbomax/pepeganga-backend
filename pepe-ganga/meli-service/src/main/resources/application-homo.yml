@@ -13,7 +13,7 @@ spring:
     url: jdbc:mysql://database-homo-prod.c9ir9n4tc2qb.us-east-2.rds.amazonaws.com:3306/pepegangadb
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
 eureka:
   instance:
     instance-id: ${spring.application.name}:${eureka.instance.instance_id:${random.value}}
@@ -38,10 +38,10 @@ meli:
     url: https://api.mercadolibre.com
     invoice:
       url: https://api.mercadolibre.com/shipment_labels?shipment_ids=XXX&response_type=pdf&access_token=
-    client: 3756313271086728
-    secret: QjgI9XjbZEd7petHtAVnwFhKpLvnyK6l
-    redirect: https://pepeganga-d4ce6.web.app/home/meli-accounts
+    client: 5381382874135569
+    secret: ach1Wz5swsZTrQVJ9UTdKcAkg1Rsc0UA
+    redirect: https://localhost:4200/home/meli-accounts
     expiration:
       token: 30
   order:
-    attempts: 3
+    attempts: 1

@@ -21,28 +21,43 @@ public interface OrdersRepository extends JpaRepository<MeliOrders, Long> {
     MeliOrders findByOrderId(String orderId);
 
     @Transactional(readOnly = true)
-    @Query(value = "select o.* from meli_orders o join meli_order_seller s join meli_order_buyer b where o.seller_id = s.id and s.seller_id in(:accounts) and o.buyer_id = b.id and o.status in (:statusFilter) and o.operator_business_status in(:operatorBssStatus) and b.first_name like %:nameClient% and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo order by o.id desc",
+    @Query(value = "select o.* from meli_orders o join meli_order_seller s join meli_order_buyer b where o.seller_id = s.id and s.seller_id in(:accounts) and o.buyer_id = b.id and o.status in (:statusFilter) and o.operator_business_status in(:operatorBssStatus) and b.first_name like %:nameClient% and s.firsts_name like %:nameSeller% and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo order by o.id desc",
             countQuery = "select count(*) from meli_orders", nativeQuery = true)
-    Page<MeliOrders> findBySellerId(List<String> accounts, List<String> statusFilter, String nameClient,  Long dateFrom, Long dateTo, List<Integer> operatorBssStatus,  Pageable pageable);
+    Page<MeliOrders> findBySellerId(List<String> accounts, List<String> statusFilter, String nameClient, String nameSeller,  Long dateFrom, Long dateTo, List<Integer> operatorBssStatus,  Pageable pageable);
 
 
     @Transactional(readOnly = true)
-    @Query(value = "select o.* from meli_orders o join meli_order_seller s join meli_order_buyer b where o.seller_id = s.id  and o.buyer_id = b.id and o.status in (:statusFilter) and o.operator_business_status in(:operatorBssStatus) and b.first_name like %:nameClient% and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo order by o.id desc",
+    @Query(value = "select o.* from meli_orders o join meli_order_seller s join meli_order_buyer b where o.seller_id = s.id  and o.buyer_id = b.id and o.status in (:statusFilter) and o.operator_business_status in(:operatorBssStatus) and b.first_name like %:nameClient% and s.firsts_name like %:nameSeller% and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo order by o.id desc",
             countQuery = "select count(*) from meli_orders", nativeQuery = true)
-    Page<MeliOrders> findAllOrders( List<String> statusFilter, String nameClient,  Long dateFrom, Long dateTo, List<Integer> operatorBssStatus,  Pageable pageable);
+    Page<MeliOrders> findAllOrders( List<String> statusFilter, String nameClient,  String nameSeller, Long dateFrom, Long dateTo, List<Integer> operatorBssStatus,  Pageable pageable);
 
 
     @Query(value = "select count(*) as count, business_date_created as dateCreatedBss, date_created as dateCreated from meli_orders o, meli_order_item i, selleraccount a, meli_order_seller s  where o.id = i.meli_orders_id and o.seller_id = s.id and a.user_id_bss = s.seller_id and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo and o.status = 'paid' group by o.business_date_created, o.date_created order by o.business_date_created", nativeQuery = true)
     List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo);
 
-    @Query(value = "select count(*) from meli_orders o, meli_order_seller s, meli_order_item i, selleraccount a where o.id = i.meli_orders_id and o.status = 'paid' and o.business_date_created between 0 and 999999999 and o.seller_id = s.id and a.user_id_bss = s.seller_id\n", nativeQuery = true)
-    Long getCountAllSales();
+    @Query(value = "select count(*) from meli_orders o, meli_order_seller s, meli_order_item i, selleraccount a where o.id = i.meli_orders_id and o.status = 'paid' and o.business_date_created between 0 and 999999999 and o.seller_id = s.id and a.user_id_bss = s.seller_id", nativeQuery = true)
+    Long getCountAllSalesPaid();
 
-    @Query(value = "select max(css.sum) as count, css.seller_sku as sku from (select sum(i.quantity) as sum, i.seller_sku from meli_order_item i, meli_orders o where i.meli_orders_id = o.id and o.status = 'paid' and i.seller_sku is not null group by i.seller_sku) as css", nativeQuery = true)
+    @Query(value = "select count(*) from meli_orders o, meli_order_seller s, meli_order_item i, selleraccount a where o.id = i.meli_orders_id and o.status = 'paid' and o.business_date_created between 0 and 999999999 and o.seller_id = s.id and a.user_id_bss = s.seller_id and a.user_id_bss = :sellerId", nativeQuery = true)
+    Long getCountAllSalesPaid(Long sellerId);
+
+    @Query(value = "select count(*) from meli_orders o, meli_order_seller s, meli_order_item i, selleraccount a where o.id = i.meli_orders_id and o.status = 'cancelled' and o.business_date_created between 0 and 999999999 and o.seller_id = s.id and a.user_id_bss = s.seller_id", nativeQuery = true)
+    Long getCountAllSalesCancelled();
+
+    @Query(value = "select count(*) from meli_orders o, meli_order_seller s, meli_order_item i, selleraccount a where o.id = i.meli_orders_id and o.status = 'cancelled' and o.business_date_created between 0 and 999999999 and o.seller_id = s.id and a.user_id_bss = s.seller_id and a.user_id_bss = :sellerId", nativeQuery = true)
+    Long getCountAllSalesCancelled(Long sellerId);
+
+    @Query(value = "select sum(i.quantity) as count, i.seller_sku as sku from meli_order_item i, meli_orders o, meli_order_seller s where i.meli_orders_id = o.id and o.status = 'paid' and o.seller_id = s.id and i.seller_sku is not null group by i.seller_sku order by count desc limit 1", nativeQuery = true)
     IBetterSkuDto getBetterSku();
 
-    @Query(value = "select css.sum as count, css.seller_sku as sku, css.art_descrip_catalogo as name from (select sum(i.quantity) as sum, i.seller_sku, it.art_descrip_catalogo from meli_order_item i, meli_orders o, item it where i.meli_orders_id = o.id and o.status = 'paid' and i.seller_sku is not null and it.sku = i.seller_sku group by i.seller_sku) as css order by count desc limit :size", nativeQuery = true)
+    @Query(value = "select sum(i.quantity) as count, i.seller_sku as sku from meli_order_item i, meli_orders o, meli_order_seller s where i.meli_orders_id = o.id and o.status = 'paid' and o.seller_id = s.id and s.seller_id = :sellerId and i.seller_sku is not null group by i.seller_sku order by count desc limit 1", nativeQuery = true)
+    IBetterSkuDto getBetterSku(Long sellerId);
+
+    @Query(value = "select css.sum as count, css.seller_sku as sku, css.art_descrip_catalogo as name from (select sum(i.quantity) as sum, i.seller_sku, it.art_descrip_catalogo from meli_order_item i, meli_orders o,  item it where i.meli_orders_id = o.id and o.status = 'paid' and i.seller_sku is not null and it.sku = i.seller_sku group by i.seller_sku) as css order by count desc limit :size", nativeQuery = true)
     List<IBetterSkuDto> getBettersSku(Integer size);
+
+    @Query(value = "select css.sum as count, css.seller_sku as sku, css.art_descrip_catalogo as name from (select sum(i.quantity) as sum, i.seller_sku, it.art_descrip_catalogo from meli_order_item i, meli_orders o, meli_order_seller s, item it where i.meli_orders_id = o.id and o.seller_id = s.id and o.status = 'paid' and i.seller_sku is not null and it.sku = i.seller_sku and s.seller_id = :sellerId group by i.seller_sku) as css order by count desc limit :size", nativeQuery = true)
+    List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId);
 
     @Query(value = "select sum(o.paid_amount) as amount,\n" +
             "       count(s.seller_id) as salesCount,\n" +

@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface IStatisticService {
 
-    Long getCountAllSales();
+    CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId);
 
     List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo);
 
-    Long getCountActivePublications();
+    Long getCountActivePublications(Long sellerId);
 
-    IBetterSkuDto getBetterSku();
+    IBetterSkuDto getBetterSku(Long sellerId);
 
-    List<IBetterSkuDto> getBettersSku(Integer size);
+    List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId);
 
     // Map<stock, total>
     StockVsTotalItemDto getStockVsTotalOfItems();

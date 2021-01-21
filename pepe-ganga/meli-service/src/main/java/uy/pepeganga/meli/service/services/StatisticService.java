@@ -29,8 +29,8 @@ public class StatisticService implements IStatisticService{
     SellerAccountRepository sellerAccountRepository;
 
     @Override
-    public Long getCountAllSales() {
-        return orderService.getCountAllSales();
+    public CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId) {
+        return orderService.getCountAllSales(sellerId);
     }
 
     @Override
@@ -39,18 +39,18 @@ public class StatisticService implements IStatisticService{
     }
 
     @Override
-    public Long getCountActivePublications() {
-        return publicationMeliRepository.getCountActivePublications();
+    public Long getCountActivePublications(Long sellerId) {
+        return Objects.isNull(sellerId) ? publicationMeliRepository.getCountActivePublications() : publicationMeliRepository.getCountActivePublications(sellerId);
     }
 
     @Override
-    public IBetterSkuDto getBetterSku() {
-        return orderService.getBetterSku();
+    public IBetterSkuDto getBetterSku(Long sellerId) {
+        return orderService.getBetterSku(sellerId);
     }
 
     @Override
-    public List<IBetterSkuDto> getBettersSku(Integer size) {
-        return orderService.getBettersSku(size);
+    public List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId) {
+        return orderService.getBettersSku(size, sellerId);
     }
 
     @Override

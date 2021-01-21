@@ -38,9 +38,10 @@ public class OrderController {
     @GetMapping("/by-all-profile-accounts/{profileId}")
     public ResponseEntity<Page<MeliOrders>> getAllOrdersByProfile(@PathVariable Integer profileId, @RequestParam List<String> statusFilter,
                                                                   @RequestParam(defaultValue = "") String nameClient,
+                                                                  @RequestParam(defaultValue = "") String nameSeller,
                                                                   @RequestParam(defaultValue = "0") Long dateFrom,  @RequestParam(defaultValue = "99999999") Long dateTo,
                                                                   @RequestParam int page, @RequestParam int size, @RequestParam List<String> operatorBusinessStatus){
-        return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, dateFrom, dateTo, page, size, operatorBusinessStatus), HttpStatus.OK);
+        return new ResponseEntity<>(orderService.getAllOrdersByProfile(profileId, statusFilter, nameClient, nameSeller, dateFrom, dateTo, page, size, operatorBusinessStatus), HttpStatus.OK);
     }
 
     @PutMapping("/update-carrier/{orderId}/{carrierId}")
