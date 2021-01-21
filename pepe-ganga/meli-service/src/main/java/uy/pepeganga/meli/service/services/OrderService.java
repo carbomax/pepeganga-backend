@@ -19,6 +19,7 @@ import uy.com.pepeganga.business.common.utils.enums.RoleType;
 import uy.pepeganga.meli.service.exceptions.OrderCreateException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
+import uy.pepeganga.meli.service.models.dto.CountPaidAndCancellerSalesDto;
 import uy.pepeganga.meli.service.models.dto.ISalesAndAmountBySeller;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
@@ -133,7 +134,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus) {
+    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, String nameSeller, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus) {
         Optional<Profile> profile = profileRepository.findById(profileId);
 
         if (profile.isEmpty()) {
@@ -143,7 +144,7 @@ public class OrderService implements IOrderService {
             List<Role>  rolesProfile = profile.get().getUser().getRoles();
             boolean isOperatorOrAdmin = rolesProfile.stream().anyMatch(role -> role.getName().equals(RoleType.OPERATOR.getBusinessRole()) || role.getName().equals(RoleType.ADMIN.getBusinessRole()) );
             if(!isOperatorOrAdmin){
-                accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
+                accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserIdBss())).map(result -> String.valueOf(result.getUserIdBss())).collect(Collectors.toList());
             }
 
             List<Integer> operatorBssStatus = new ArrayList<>();
@@ -166,9 +167,9 @@ public class OrderService implements IOrderService {
             }
             Page<MeliOrders> orders;
             if(isOperatorOrAdmin){
-                orders = ordersRepository.findAllOrders(statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+                orders = ordersRepository.findAllOrders(statusFilter, nameClient.trim(), nameSeller.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
             } else {
-                orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+                orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), nameSeller.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
             }
             List<Long> shipments = new ArrayList<>();
             orders.getContent().forEach(order -> {
@@ -502,7 +503,7 @@ public class OrderService implements IOrderService {
     private MeliOrders transformDateOrderCreated(MeliOrders orderToUpdate) {
         DateTime currentTime = DateTimeUtilsBss.getDateTimeAtCurrentTime();
         if (orderToUpdate.getDateCreated() == null || orderToUpdate.getBusinessDateCreated() == null || orderToUpdate.getBusinessDateCreated() <= 0 || orderToUpdate.getDateCreated().equals("")) {
-            orderToUpdate.setBusinessDateCreated(Long.parseLong(String.format("%d%d%d", currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth())));
+            orderToUpdate.setBusinessDateCreated(Long.parseLong(String.format("%d%s%s", currentTime.getYear(), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getMonthOfYear()), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getDayOfMonth()))));
             orderToUpdate.setDateCreated(String.format("%d-%s-%s", currentTime.getYear(), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getMonthOfYear()), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getDayOfMonth())));
         }
         return orderToUpdate;
@@ -614,18 +615,36 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Long getCountAllSales() {
-        return ordersRepository.getCountAllSales();
+    public CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId) {
+        CountPaidAndCancellerSalesDto dto = new CountPaidAndCancellerSalesDto();
+        if(Objects.isNull(sellerId)){
+            dto.setPaid(ordersRepository.getCountAllSalesPaid());
+            dto.setCancelled(ordersRepository.getCountAllSalesCancelled());
+        } else {
+            dto.setPaid(ordersRepository.getCountAllSalesPaid(sellerId));
+            dto.setCancelled(ordersRepository.getCountAllSalesCancelled(sellerId));
+        }
+        return dto;
     }
 
     @Override
-    public IBetterSkuDto getBetterSku() {
-        return ordersRepository.getBetterSku();
+    public IBetterSkuDto getBetterSku(Long sellerId) {
+        if(Objects.isNull(sellerId)){
+            return ordersRepository.getBetterSku();
+        } else {
+            return ordersRepository.getBetterSku(sellerId);
+        }
+
     }
 
     @Override
-    public List<IBetterSkuDto> getBettersSku(Integer size) {
-        return ordersRepository.getBettersSku(size);
+    public List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId) {
+        if(Objects.isNull(sellerId)){
+            return ordersRepository.getBettersSku(size);
+        } else {
+            return ordersRepository.getBettersSku(size, sellerId);
+        }
+
     }
 
     @Override

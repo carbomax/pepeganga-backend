@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.pepeganga.meli.service.services.IOrderService;
 import uy.pepeganga.meli.service.services.IStockProcessorService;
 
@@ -31,7 +30,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "${scheduler.cron.stock}")
     @Async
-    public void schedulingStockProcessor(){
+    public void schedulingStockProcessor() {
         logger.info("Processing Stock processor scheduler....");
         stockProcessorService.schedulingStockProcessor();
         logger.info("Finishing Stock processor scheduler....");

@@ -18,7 +18,11 @@ eureka:
   client:
     service-url:
         defaultZone: http://eureka-server:8761/eureka
-
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: error
 feign:
   client:
     config:

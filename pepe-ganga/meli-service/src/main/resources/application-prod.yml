@@ -23,7 +23,7 @@ logging:
   level:
     org:
       hibernate:
-        SQL: debug
+        SQL: error
   file:
     name: ./log/meli-service.log
 

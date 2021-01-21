@@ -26,23 +26,23 @@ public class StatisticsController {
     }
 
     @GetMapping("/count-all-sales")
-    public ResponseEntity<Long> getCountAllSales(){
-        return new ResponseEntity<>(statisticService.getCountAllSales(), HttpStatus.OK);
+    public ResponseEntity<CountPaidAndCancellerSalesDto> getCountAllSales(@RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getCountAllSales(sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/count-active-publications")
-    public ResponseEntity<Long> getCountActivePublications(){
-        return new ResponseEntity<>(statisticService.getCountActivePublications(), HttpStatus.OK);
+    public ResponseEntity<Long> getCountActivePublications(@RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getCountActivePublications(sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/better-sku")
-    public ResponseEntity<IBetterSkuDto> getBetterSku(){
-        return new ResponseEntity<>(statisticService.getBetterSku(), HttpStatus.OK);
+    public ResponseEntity<IBetterSkuDto> getBetterSku(@RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getBetterSku(sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/better-sku/{size}")
-    public ResponseEntity<List<IBetterSkuDto>> getBettersSku(@PathVariable Integer size){
-        return new ResponseEntity<>(statisticService.getBettersSku(size), HttpStatus.OK);
+    public ResponseEntity<List<IBetterSkuDto>> getBettersSku(@PathVariable Integer size, @RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getBettersSku(size, sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/stock-vs-total-items")
