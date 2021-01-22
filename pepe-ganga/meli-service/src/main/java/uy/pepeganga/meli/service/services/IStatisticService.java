@@ -8,7 +8,7 @@ public interface IStatisticService {
 
     CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId);
 
-    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo);
+    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId);
 
     Long getCountActivePublications(Long sellerId);
 
@@ -19,5 +19,5 @@ public interface IStatisticService {
     // Map<stock, total>
     StockVsTotalItemDto getStockVsTotalOfItems();
 
-    List<AnalysisDropDto> getAnalysisDrop(List<String> dates);
+    List<AnalysisDropDto> getAnalysisDrop(List<String> dates, Long sellerId);
 }

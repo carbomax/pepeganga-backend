@@ -610,8 +610,8 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo){
-        return ordersRepository.getSalesByBusinessDateCreated(dateFrom, dateTo);
+    public List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId){
+        return Objects.isNull(sellerId) ? ordersRepository.getSalesByBusinessDateCreated(dateFrom, dateTo) : ordersRepository.getSalesByBusinessDateCreated(dateFrom, dateTo, sellerId);
     }
 
     @Override
@@ -639,17 +639,12 @@ public class OrderService implements IOrderService {
 
     @Override
     public List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId) {
-        if(Objects.isNull(sellerId)){
-            return ordersRepository.getBettersSku(size);
-        } else {
-            return ordersRepository.getBettersSku(size, sellerId);
-        }
-
+        return Objects.isNull(sellerId) ? ordersRepository.getBettersSku(size) : ordersRepository.getBettersSku(size, sellerId);
     }
 
     @Override
-    public List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo) {
-        return ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo);
+    public List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId) {
+        return Objects.isNull(sellerId) ? ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo) : ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo, sellerId);
     }
 
 }

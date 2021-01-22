@@ -13,7 +13,7 @@ spring:
       connection-timeout: 30000
       idle-timeout: 60000
       max-lifetime: 1800000
-      maximum-pool-size: 5
+      maximum-pool-size: 10
       minimum-idle: 2
   jpa:
     hibernate:
