@@ -35,7 +35,7 @@ public interface IOrderService {
 
     boolean updateOperatorBusinessStatus(Long orderId, Integer status);
 
-    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo);
+    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId);
 
     CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId);
 
@@ -43,5 +43,5 @@ public interface IOrderService {
 
     List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId);
 
-    List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo);
+    List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId);
 }

@@ -20,6 +20,7 @@ public class ScheduledTasks {
      @Autowired
      private IStockProcessorService stockProcessorService;
 
+
     @Scheduled(cron = "${scheduler.cron.notification}")
     @Async
     public void processingOrdersNotification(){

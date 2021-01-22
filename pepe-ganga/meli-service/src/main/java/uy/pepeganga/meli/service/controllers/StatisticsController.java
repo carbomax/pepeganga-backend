@@ -21,8 +21,10 @@ public class StatisticsController {
     IStatisticService statisticService;
 
     @GetMapping("/all-sales-by-date-and-count")
-    public ResponseEntity<List<OrdersByDateCreatedAndCountDto>> getSalesByBusinessDateCreated(@RequestParam(defaultValue = "0", required = false) Long dateFrom, @RequestParam(defaultValue = "99999999", required = false) Long dateTo ){
-        return new ResponseEntity<>(statisticService.getSalesByBusinessDateCreated(dateFrom, dateTo), HttpStatus.OK);
+    public ResponseEntity<List<OrdersByDateCreatedAndCountDto>> getSalesByBusinessDateCreated(  @RequestParam(required = false) Long sellerId,
+                                                                                                @RequestParam(defaultValue = "0", required = false) Long dateFrom,
+                                                                                                @RequestParam(defaultValue = "99999999", required = false) Long dateTo ){
+        return new ResponseEntity<>(statisticService.getSalesByBusinessDateCreated(dateFrom, dateTo, sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/count-all-sales")
@@ -51,8 +53,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/analysis-drop")
-    public ResponseEntity<List<AnalysisDropDto>> getAnalysisDrop(@RequestParam List<String> dates){
-        return new ResponseEntity<>(statisticService.getAnalysisDrop(dates), HttpStatus.OK);
+    public ResponseEntity<List<AnalysisDropDto>> getAnalysisDrop(@RequestParam List<String> dates, @RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getAnalysisDrop(dates, sellerId), HttpStatus.OK);
     }
 
 }

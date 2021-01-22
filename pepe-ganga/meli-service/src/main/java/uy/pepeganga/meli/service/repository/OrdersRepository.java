@@ -35,6 +35,9 @@ public interface OrdersRepository extends JpaRepository<MeliOrders, Long> {
     @Query(value = "select count(*) as count, business_date_created as dateCreatedBss, date_created as dateCreated from meli_orders o, meli_order_item i, selleraccount a, meli_order_seller s  where o.id = i.meli_orders_id and o.seller_id = s.id and a.user_id_bss = s.seller_id and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo and o.status = 'paid' group by o.business_date_created, o.date_created order by o.business_date_created", nativeQuery = true)
     List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo);
 
+    @Query(value = "select count(*) as count, business_date_created as dateCreatedBss, date_created as dateCreated from meli_orders o, meli_order_item i, selleraccount a, meli_order_seller s  where o.id = i.meli_orders_id and o.seller_id = s.id and a.user_id_bss = s.seller_id and s.seller_id = :sellerId and o.business_date_created >= :dateFrom and o.business_date_created <= :dateTo and o.status = 'paid' group by o.business_date_created, o.date_created order by o.business_date_created", nativeQuery = true)
+    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId);
+
     @Query(value = "select count(*) from meli_orders o, meli_order_seller s, meli_order_item i, selleraccount a where o.id = i.meli_orders_id and o.status = 'paid' and o.business_date_created between 0 and 999999999 and o.seller_id = s.id and a.user_id_bss = s.seller_id", nativeQuery = true)
     Long getCountAllSalesPaid();
 
@@ -72,4 +75,19 @@ public interface OrdersRepository extends JpaRepository<MeliOrders, Long> {
             "  and o.business_date_created between :dateFrom and :dateTo\n" +
             "group by s.seller_id, a.business_name", nativeQuery = true)
     List<ISalesAndAmountBySeller> getSalesAndAmountSellerByDate(long dateFrom, long dateTo);
+
+    @Query(value = "select sum(o.paid_amount) as amount,\n" +
+            "       count(s.seller_id) as salesCount,\n" +
+            "       s.seller_id        as sellerId,\n" +
+            "       a.business_name    as sellerName\n" +
+            "from meli_orders o,\n" +
+            "     meli_order_seller s,\n" +
+            "     selleraccount a\n" +
+            "where o.seller_id = s.id\n" +
+            "  and s.seller_id = a.user_id_bss\n" +
+            "  and a.user_id_bss = :sellerId\n" +
+            "  and o.status = 'paid'\n" +
+            "  and o.business_date_created between :dateFrom and :dateTo\n" +
+            "group by s.seller_id, a.business_name", nativeQuery = true)
+    List<ISalesAndAmountBySeller> getSalesAndAmountSellerByDate(long dateFrom, long dateTo, Long sellerId);
 }
