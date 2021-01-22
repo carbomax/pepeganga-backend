@@ -1,6 +1,8 @@
 package uy.com.pepeganga.productsservice.services;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService {
+
+	private static final Logger logger = LoggerFactory.getLogger(MercadoLibrePublishServiceImpl.class);
 
 	@Autowired
 	RiskTime property;
@@ -167,7 +171,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 		if (!prodToStore.isEmpty())
 			for (MercadoLibrePublications mercadoLibrePublications : prodToStore) {
-				mlPublishRepo.save(mercadoLibrePublications);
+				try {
+					mlPublishRepo.save(mercadoLibrePublications);
+				}catch (Exception e){
+					logger.error(String.format("Error storing product with sku: %s in the table: MercadoLibrePublications, Method: storeProductToPublish(), Error: ", mercadoLibrePublications.getSku()), e);
+				}
 			}
 
 		return select;
