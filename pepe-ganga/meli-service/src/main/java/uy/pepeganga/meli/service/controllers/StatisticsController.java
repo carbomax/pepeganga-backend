@@ -21,28 +21,30 @@ public class StatisticsController {
     IStatisticService statisticService;
 
     @GetMapping("/all-sales-by-date-and-count")
-    public ResponseEntity<List<OrdersByDateCreatedAndCountDto>> getSalesByBusinessDateCreated(@RequestParam(defaultValue = "0", required = false) Long dateFrom, @RequestParam(defaultValue = "99999999", required = false) Long dateTo ){
-        return new ResponseEntity<>(statisticService.getSalesByBusinessDateCreated(dateFrom, dateTo), HttpStatus.OK);
+    public ResponseEntity<List<OrdersByDateCreatedAndCountDto>> getSalesByBusinessDateCreated(  @RequestParam(required = false) Long sellerId,
+                                                                                                @RequestParam(defaultValue = "0", required = false) Long dateFrom,
+                                                                                                @RequestParam(defaultValue = "99999999", required = false) Long dateTo ){
+        return new ResponseEntity<>(statisticService.getSalesByBusinessDateCreated(dateFrom, dateTo, sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/count-all-sales")
-    public ResponseEntity<Long> getCountAllSales(){
-        return new ResponseEntity<>(statisticService.getCountAllSales(), HttpStatus.OK);
+    public ResponseEntity<CountPaidAndCancellerSalesDto> getCountAllSales(@RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getCountAllSales(sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/count-active-publications")
-    public ResponseEntity<Long> getCountActivePublications(){
-        return new ResponseEntity<>(statisticService.getCountActivePublications(), HttpStatus.OK);
+    public ResponseEntity<Long> getCountActivePublications(@RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getCountActivePublications(sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/better-sku")
-    public ResponseEntity<IBetterSkuDto> getBetterSku(){
-        return new ResponseEntity<>(statisticService.getBetterSku(), HttpStatus.OK);
+    public ResponseEntity<IBetterSkuDto> getBetterSku(@RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getBetterSku(sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/better-sku/{size}")
-    public ResponseEntity<List<IBetterSkuDto>> getBettersSku(@PathVariable Integer size){
-        return new ResponseEntity<>(statisticService.getBettersSku(size), HttpStatus.OK);
+    public ResponseEntity<List<IBetterSkuDto>> getBettersSku(@PathVariable Integer size, @RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getBettersSku(size, sellerId), HttpStatus.OK);
     }
 
     @GetMapping("/stock-vs-total-items")
@@ -51,8 +53,8 @@ public class StatisticsController {
     }
 
     @GetMapping("/analysis-drop")
-    public ResponseEntity<List<AnalysisDropDto>> getAnalysisDrop(@RequestParam List<String> dates){
-        return new ResponseEntity<>(statisticService.getAnalysisDrop(dates), HttpStatus.OK);
+    public ResponseEntity<List<AnalysisDropDto>> getAnalysisDrop(@RequestParam List<String> dates, @RequestParam(required = false) Long sellerId){
+        return new ResponseEntity<>(statisticService.getAnalysisDrop(dates, sellerId), HttpStatus.OK);
     }
 
 }

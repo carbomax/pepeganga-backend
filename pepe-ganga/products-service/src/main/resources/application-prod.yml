@@ -19,7 +19,7 @@ logging:
   level:
     org:
       hibernate:
-        SQL: debug
+        SQL: error
   file:
     name: ./log/products-service.log
 

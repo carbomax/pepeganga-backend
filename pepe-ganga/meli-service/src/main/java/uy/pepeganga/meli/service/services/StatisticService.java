@@ -29,28 +29,28 @@ public class StatisticService implements IStatisticService{
     SellerAccountRepository sellerAccountRepository;
 
     @Override
-    public Long getCountAllSales() {
-        return orderService.getCountAllSales();
+    public CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId) {
+        return orderService.getCountAllSales(sellerId);
     }
 
     @Override
-    public List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo) {
-        return orderService.getSalesByBusinessDateCreated(dateFrom, dateTo);
+    public List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId) {
+        return orderService.getSalesByBusinessDateCreated(dateFrom, dateTo, sellerId);
     }
 
     @Override
-    public Long getCountActivePublications() {
-        return publicationMeliRepository.getCountActivePublications();
+    public Long getCountActivePublications(Long sellerId) {
+        return Objects.isNull(sellerId) ? publicationMeliRepository.getCountActivePublications() : publicationMeliRepository.getCountActivePublications(sellerId);
     }
 
     @Override
-    public IBetterSkuDto getBetterSku() {
-        return orderService.getBetterSku();
+    public IBetterSkuDto getBetterSku(Long sellerId) {
+        return orderService.getBetterSku(sellerId);
     }
 
     @Override
-    public List<IBetterSkuDto> getBettersSku(Integer size) {
-        return orderService.getBettersSku(size);
+    public List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId) {
+        return orderService.getBettersSku(size, sellerId);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class StatisticService implements IStatisticService{
     }
 
     @Override
-    public List<AnalysisDropDto> getAnalysisDrop(List<String> dates) {
+    public List<AnalysisDropDto> getAnalysisDrop(List<String> dates, Long sellerId) {
 
         Map<String, Long> map =  new HashMap<>();
         dates.forEach(s ->  map.put(s,Long.parseLong(s.concat("01").replace("-", ""))));
@@ -74,7 +74,7 @@ public class StatisticService implements IStatisticService{
             analysisDropDto.setDate(key);
             AtomicInteger totalSales = new AtomicInteger(0);
             AtomicDouble totalAmount = new AtomicDouble(0);
-            List<SalesAndAmountBySellerDto> salesAndAmountBySeller= orderService.getAnalysisDrop(value, value + 30).stream()
+            List<SalesAndAmountBySellerDto> salesAndAmountBySeller = orderService.getAnalysisDrop(value, value + 30, sellerId).stream()
                     .map( item -> {
                         SalesAndAmountBySellerDto salesAndAmountBySellerDto = new SalesAndAmountBySellerDto();
                         salesAndAmountBySellerDto.setSellerId(item.getSellerId());

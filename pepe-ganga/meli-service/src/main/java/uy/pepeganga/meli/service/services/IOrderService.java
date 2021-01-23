@@ -2,6 +2,7 @@ package uy.pepeganga.meli.service.services;
 
 import org.springframework.data.domain.Page;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
+import uy.pepeganga.meli.service.models.dto.CountPaidAndCancellerSalesDto;
 import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
 import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
 import uy.pepeganga.meli.service.models.dto.ISalesAndAmountBySeller;
@@ -18,7 +19,7 @@ public interface IOrderService {
     Object delete();
 
     // Real implementation
-    Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus);
+    Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, String nameSeller, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus);
 
     boolean updateCarrier(Long orderId, int carrierId);
 
@@ -34,13 +35,13 @@ public interface IOrderService {
 
     boolean updateOperatorBusinessStatus(Long orderId, Integer status);
 
-    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo);
+    List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId);
 
-    Long getCountAllSales();
+    CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId);
 
-    IBetterSkuDto getBetterSku();
+    IBetterSkuDto getBetterSku(Long sellerId);
 
-    List<IBetterSkuDto> getBettersSku(Integer size);
+    List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId);
 
-    List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo);
+    List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId);
 }
