@@ -117,9 +117,9 @@ public class ConfigurationsSystemService implements IConfigurationsSystemService
                     file.close();
 
                     //To update stock in consuming
-                    if(syncStock == true && configSysRepo.getLastData().getEndDate() != null) {
+                  /*  if(syncStock == true && configSysRepo.getLastData().getEndDate() != null) {
                         updateStockClient();
-                    }
+                    }*/
                     return objResult;
                 }
             }
