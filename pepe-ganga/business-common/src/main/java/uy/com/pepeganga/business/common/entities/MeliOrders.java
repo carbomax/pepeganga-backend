@@ -53,6 +53,9 @@ public class MeliOrders implements Serializable {
 
     private String dateCreatedMeli;
 
+    // 0 - Not sent, 1 - Sent
+    private Integer sentToErp;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Carrier carrier;
@@ -284,5 +287,13 @@ public class MeliOrders implements Serializable {
 
     public void setDateCreatedMeli(String dateCreatedMeli) {
         this.dateCreatedMeli = dateCreatedMeli;
+    }
+
+    public Integer getSentToErp() {
+        return sentToErp;
+    }
+
+    public void setSentToErp(Integer sentToErp) {
+        this.sentToErp = sentToErp;
     }
 }

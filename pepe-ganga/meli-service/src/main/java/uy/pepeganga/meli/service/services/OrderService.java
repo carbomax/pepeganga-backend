@@ -100,7 +100,7 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public void schedulingOrdersV2() {
+    public synchronized void schedulingOrdersV2() {
         // Get All notifications
         List<Notification> notifications = notificationRepository.findByTopic(NotificationTopic.ORDERS_V2.getTopicName().trim());
         if (notifications != null) {
