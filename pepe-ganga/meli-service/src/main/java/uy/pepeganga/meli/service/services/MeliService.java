@@ -1,9 +1,6 @@
 package uy.pepeganga.meli.service.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.JsonParser;
 import meli.ApiException;
 import meli.model.*;
 import meli.model.Item;
@@ -513,6 +510,47 @@ public class MeliService  implements IMeliService{
              return response;
          }
     }
+
+    @Override
+    //Elimina las publicaciones de la lista o toda las publicaciones de una cuenta si la lista está vacia
+    public Map<String, Object> deleteSetPublications(Integer accountId, List<Integer> idPublicationsList) {
+
+            List<DetailsPublicationsMeli> detailsList;
+            Map<String, Object> response = new HashMap<>();
+            AtomicBoolean entry = new AtomicBoolean(false);
+        try {
+            if (idPublicationsList.isEmpty()) { //Se eliminan todas las publicaciones correspondientes a la cuenta
+                detailsList = detailsPublicationRepository.findAllByAccountMeli(accountId);
+            } else { //Se eliminan sólo las publicaciones seleccionadas correspondientes a la cuenta
+                detailsList = detailsPublicationRepository.findAllById(idPublicationsList);
+            }
+            //Sincroniza el estado actual de cada publicacion seleccionada
+            synchronizationPublications(detailsList); //OJO--verificar que sucede si el estado es Fail
+
+            detailsList.forEach(d -> {
+                if (d.getStatus().equals(MeliStatusPublications.FAIL.getValue())) {
+                    if (!deletePublicationFailed(d.getId()).containsKey("response")) {
+                        entry.set(true);
+                        response.put(ActionResult.PARTIAL.getValue(), "Algunas publicaciones no fueron eliminadas. Consulte con el administrador.");
+                    }
+                } else {
+                    if (!deletePublication(d.getAccountMeli(), d.getStatus(), d.getIdPublicationMeli()).containsKey("response")) {
+                        entry.set(true);
+                        response.put(ActionResult.PARTIAL.getValue(), "Algunas publicaciones no fueron eliminadas. Consulte con el administrador.");
+                    }
+                }
+            });
+            if(entry.get() == false) {
+                response.put(ActionResult.DONE.getValue(), "Todos las publicaciones fueron eliminadas.");
+            }
+            return response;
+        }catch (Exception e){
+            logger.error(String.format("The publication cannot to be deleted. Method: deleteSetPublications(), Msg: %s, Error: ", e.getMessage()), e);
+            response.put(ActionResult.BAD.getValue(), String.format("Las publicaciones no fueron eliminadas. Error: %s", e.getMessage()));
+            return response;
+        }
+    }
+
     @Override
     public Map<String, Object> republishPublication(Integer accountId, String idPublication) {
         Map<String, Object> response = new HashMap<>();
@@ -758,6 +796,7 @@ public class MeliService  implements IMeliService{
         }
     }
 
+    //Sincroniza las publicaciones del sistema con Mercado Libre. (Actualiza los estados y el precio si tuvo algún cambio)
     @Override
     public Map<String, Object> synchronizePublication(Integer idProfile, List<Integer> idDetailsPublicationsList) {
 
@@ -784,6 +823,7 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
+    //Sincroniza los estados de las publicaciones en Meli
     public void synchronizationPublications(List<DetailsPublicationsMeli> detailsList) {
         List<DetailsPublicationsMeli> toUpdate = new ArrayList<>();
         //Sincroniza los estados de las publicaciones en ML con la base datos
@@ -964,6 +1004,7 @@ public class MeliService  implements IMeliService{
         return accountMeli;
     }
 
+    //Actualiza los precios de las publicaciones activas en Meli
     private Map<String, Object> updatePriceMeliOfActivePublications(Integer idProfile, List<DetailsPublicationsMeli> detailsPublicationList){
         //Update all publications in ML if these are in 'active' status
         Map<String, Object> response = new HashMap<>();
