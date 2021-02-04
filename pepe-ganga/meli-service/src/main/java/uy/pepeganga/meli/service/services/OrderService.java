@@ -651,34 +651,48 @@ public class OrderService implements IOrderService {
 
     @Override
     public List<OrderDto> getRecentOrdersByBatch(int quantity) {
-        List<MeliOrderItemDto> meliOrderItemDtoList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            meliOrderItemDtoList.add(MeliOrderItemDto.builder()
-                    .itemId(String.valueOf(i))
-                    .description("DevHighLevel Test")
-                    .price(100*i)
-                    .quantity(3*i).build());
+        List<MeliOrders> orders = ordersRepository.findAllBySentToErp(quantity);
+        if(orders.isEmpty()){
+            return Collections.emptyList();
+        } else {
+            List<OrderDto> ordersDto = new ArrayList<>();
+            orders.forEach(meliOrders -> {
+                List<MeliOrderItemDto> meliOrderItemDtos = new ArrayList<>();
+                meliOrders.getItems().forEach(item -> meliOrderItemDtos.add(MeliOrderItemDto.builder()
+                        .itemId(item.getItemId())
+                        .price(item.getUnitPrice())
+                        .quantity(item.getQuantity())
+                        .description(item.getTitle())
+                        .observations(item.getTitle()).build()));
+                SellerAccount sellerAccount = sellerAccountRepository.findByUserIdBss(meliOrders.getSeller().getSellerId());
+                if(!meliOrderItemDtos.isEmpty() && !Objects.isNull(sellerAccount) && !Objects.isNull(sellerAccount.getProfile())){
+                    ordersDto.add(
+                            OrderDto.builder()
+                                    .address(sellerAccount.getProfile().getAddress())
+                                    .date(meliOrders.getBusinessDateCreated())
+                                    .email(sellerAccount.getProfile().getUser().getEmail())
+                                    .department("")
+                                    .rut(Long.parseLong(sellerAccount.getProfile().getRut()))
+                                    .ci(sellerAccount.getProfile().getCi())
+                                    .sellerName(meliOrders.getSeller().getFirstsName().concat(" ").concat(meliOrders.getSeller().getLastName()))
+                                    .coin(meliOrders.getCurrencyId().trim().equals("UYU") ? 1 : 2)
+                                    .location("")
+                                    .orderId(Long.parseLong(meliOrders.getOrderId().trim()))
+                                    .sellerId(meliOrders.getSeller().getSellerId())
+                                    .observation("PEPEGANGA_DROP")
+                                    .items(meliOrderItemDtos).build()
+                    );
+                } else {
+                    logger.info("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
+                            meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount.getProfile()));
+                }
+
+            });
+            return ordersDto;
+
         }
 
-        OrderDto orderToSend = OrderDto.builder()
-                .ci(66666666)
-                .address("Address Tes")
-                .coin(1)
-                .date(19910506)
-                .email("test@test.com")
-                .department("Montevideo")
-                .rut(3333333333333L)
-                .ci(33333333333333L)
-                .sellerName("Test name")
-                .location("Location Test")
-                .orderId(3333)
-                .sellerId(333333333)
-                .observation("DevHighLevelTest")
-                .items(meliOrderItemDtoList)
-                .build();
-        List<OrderDto> orders = new ArrayList<>();
-        orders.add(orderToSend);
-        return orders;
+
     }
 
 }

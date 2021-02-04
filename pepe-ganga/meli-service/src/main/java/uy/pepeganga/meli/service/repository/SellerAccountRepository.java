@@ -23,4 +23,7 @@ public interface SellerAccountRepository extends JpaRepository<SellerAccount, In
     @Query(value = "select count(*) from detailspublicationsmeli d, selleraccount s where d.account_meli = :accountId and s.id = d.account_meli and  deleted = 0", nativeQuery = true)
     Integer existsPublication(Integer accountId);
 
+
+    SellerAccount findByUserIdBss(Long userIdBss);
+
 }
