@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.models.MeliOrderItemDto;
+import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.NotificationTopic;
 import uy.com.pepeganga.business.common.utils.enums.RoleType;
@@ -645,6 +647,38 @@ public class OrderService implements IOrderService {
     @Override
     public List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId) {
         return Objects.isNull(sellerId) ? ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo) : ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo, sellerId);
+    }
+
+    @Override
+    public List<OrderDto> getRecentOrdersByBatch(int quantity) {
+        List<MeliOrderItemDto> meliOrderItemDtoList = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            meliOrderItemDtoList.add(MeliOrderItemDto.builder()
+                    .itemId(String.valueOf(i))
+                    .description("DevHighLevel Test")
+                    .price(100*i)
+                    .quantity(3*i).build());
+        }
+
+        OrderDto orderToSend = OrderDto.builder()
+                .ci(66666666)
+                .address("Address Tes")
+                .coin(1)
+                .date(19910506)
+                .email("test@test.com")
+                .department("Montevideo")
+                .rut(3333333333333L)
+                .ci(33333333333333L)
+                .sellerName("Test name")
+                .location("Location Test")
+                .orderId(3333)
+                .sellerId(333333333)
+                .observation("DevHighLevelTest")
+                .items(meliOrderItemDtoList)
+                .build();
+        List<OrderDto> orders = new ArrayList<>();
+        orders.add(orderToSend);
+        return orders;
     }
 
 }

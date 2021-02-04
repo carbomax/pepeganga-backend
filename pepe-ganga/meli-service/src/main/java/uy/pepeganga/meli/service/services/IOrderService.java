@@ -2,6 +2,7 @@ package uy.pepeganga.meli.service.services;
 
 import org.springframework.data.domain.Page;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
+import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.pepeganga.meli.service.models.dto.CountPaidAndCancellerSalesDto;
 import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
 import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
@@ -44,4 +45,6 @@ public interface IOrderService {
     List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId);
 
     List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId);
+
+    List<OrderDto> getRecentOrdersByBatch(int quantity);
 }

@@ -24,8 +24,19 @@ feign:
   client:
     config:
       default:
-        connectTimeout: 160000
-        readTimeout: 160000
+        connectTimeout: 12000
+        readTimeout: 14000
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 50000
+ribbon:
+  ConnectTimeout: 10000
+  ReadTimeout: 15000
 
 #El directorio debe crearse en el home del usuario o sección
 risk_time: 5
