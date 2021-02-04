@@ -10,10 +10,10 @@ public class MeliServiceClient implements IMeliServiceClient {
 
     @Autowired
     MeliServiceClient meliClient;
-    
+
     @Override
     public List<OrderDto> getRecentOrdersByBatch(int quantity) {
 
-        return null;
+        return meliClient.getRecentOrdersByBatch(quantity);
     }
 }
