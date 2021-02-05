@@ -2,10 +2,12 @@ package uy.pepeganga.meli.service.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
+import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.pepeganga.meli.service.services.IOrderService;
 
 import java.util.List;
@@ -79,5 +81,10 @@ public class OrderController {
     @GetMapping("/url-invoice/{orderId}")
     public ResponseEntity<Map<String, Object>> getInvoiceUrl(@PathVariable  Long orderId){
         return new ResponseEntity<>(orderService.getInvoiceUrl(orderId), HttpStatus.OK);
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<List<OrderDto>> getRecentOrdersByBatch(@RequestParam(defaultValue = "5", required = false) int quantity){
+        return new ResponseEntity<>(orderService.getRecentOrdersByBatch(quantity), HttpStatus.OK);
     }
 }
