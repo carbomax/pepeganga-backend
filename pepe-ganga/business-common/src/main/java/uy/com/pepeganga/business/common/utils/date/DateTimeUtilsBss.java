@@ -2,6 +2,10 @@ package uy.com.pepeganga.business.common.utils.date;
 
 import org.joda.time.*;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 
@@ -50,6 +54,16 @@ public class DateTimeUtilsBss {
 
     public static String helperZeroBeforeMonthOrDay(int number){
         return number / 10 >= 1 ? String.valueOf(number) : "0".concat(String.valueOf(number));
+    }
+
+    public static XMLGregorianCalendar convertToXMLGregorianCalendar(Long date) throws DatatypeConfigurationException {
+        // to Gregorian Calendar
+        GregorianCalendar gc = new GregorianCalendar();
+        gc.setTimeInMillis(date);
+
+        // to XML Gregorian Calendar
+        XMLGregorianCalendar xc = DatatypeFactory.newInstance().newXMLGregorianCalendar(gc);
+        return xc;
     }
 
 }
