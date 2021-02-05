@@ -466,6 +466,8 @@ public class OrderService implements IOrderService {
         orderToUpdate.setCurrencyIdTaxes(order.getTaxes().getCurrencyId());
         orderToUpdate.setPaidAmount(order.getPaidAmount());
         if (!orderToUpdate.getStatus().equals(order.getStatus())) {
+            // Set to sent to ERP.
+            orderToUpdate.setSentToErp(0);
             StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(order.getOrderItems().get(0).getItem().getSellerSku());
 
             if (Objects.nonNull(stockProcessorFounded)) {
@@ -561,6 +563,7 @@ public class OrderService implements IOrderService {
                 Carrier carrier = new Carrier();
                 carrier.setId(0);
                 orderToCreate.setCarrier(carrier);
+                orderToCreate.setSentToErp(0);
                 ordersRepository.save(orderToCreate);
 
                 // Update stock
@@ -666,22 +669,26 @@ public class OrderService implements IOrderService {
                         .observations(item.getTitle()).build()));
                 SellerAccount sellerAccount = sellerAccountRepository.findByUserIdBss(meliOrders.getSeller().getSellerId());
                 if(!meliOrderItemDtos.isEmpty() && !Objects.isNull(sellerAccount) && !Objects.isNull(sellerAccount.getProfile())){
-                    ordersDto.add(
-                            OrderDto.builder()
-                                    .address(sellerAccount.getProfile().getAddress())
-                                    .date(meliOrders.getBusinessDateCreated())
-                                    .email(sellerAccount.getProfile().getUser().getEmail())
-                                    .department("")
-                                    .rut(Long.parseLong(sellerAccount.getProfile().getRut()))
-                                    .ci(sellerAccount.getProfile().getCi())
-                                    .sellerName(meliOrders.getSeller().getFirstsName().concat(" ").concat(meliOrders.getSeller().getLastName()))
-                                    .coin(meliOrders.getCurrencyId().trim().equals("UYU") ? 1 : 2)
-                                    .location("")
-                                    .orderId(Long.parseLong(meliOrders.getOrderId().trim()))
-                                    .sellerId(meliOrders.getSeller().getSellerId())
-                                    .observation("PEPEGANGA_DROP")
-                                    .items(meliOrderItemDtos).build()
-                    );
+                    try{
+                        ordersDto.add(
+                                OrderDto.builder()
+                                        .address(sellerAccount.getProfile().getAddress())
+                                        .date(meliOrders.getBusinessDateCreated())
+                                        .email(sellerAccount.getProfile().getUser().getEmail())
+                                        .department("")
+                                        .rut(Long.parseLong(sellerAccount.getProfile().getRut()))
+                                        .ci(sellerAccount.getProfile().getCi())
+                                        .sellerName(meliOrders.getSeller().getFirstsName().concat(" ").concat(meliOrders.getSeller().getLastName()))
+                                        .coin(meliOrders.getCurrencyId().trim().equals("UYU") ? 1 : 2)
+                                        .location("")
+                                        .orderId(Long.parseLong(meliOrders.getOrderId().trim()))
+                                        .sellerId(meliOrders.getSeller().getSellerId())
+                                        .observation("PEPEGANGA_DROP")
+                                        .items(meliOrderItemDtos).build()
+                        );
+                    }catch (Exception e){
+                        logger.info("Order {} cannot be informed because occurred a exception: {}", meliOrders.getOrderId(), e.getMessage());
+                    }
                 } else {
                     logger.info("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
                             meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount.getProfile()));
