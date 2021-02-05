@@ -52,17 +52,7 @@ public class MeliController {
     public ResponseEntity<Map<String, Object>> createPublication(@RequestBody Item item, @PathVariable Integer accountId){
         return new ResponseEntity<>(meliService.createPublication(item, accountId), HttpStatus.CREATED);
     }
-/*
-    @PostMapping("/publications-list/{accountId}")
-    public ResponseEntity<List<Map<String, Object>>> createPublicationList(@RequestBody List<Item> items, @PathVariable Integer accountId, @RequestParam Short idMargin){
-        try {
-            return new ResponseEntity<>(meliService.createPublicationList(items, accountId), HttpStatus.CREATED);
-        }
-        catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-    }
-*/
+
     @PostMapping("/publications-flow/{accountId}")
     public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin, @RequestParam int flex){
         try {
@@ -118,13 +108,11 @@ public class MeliController {
         return new ResponseEntity<>(meliService.republishMultiplePublications(multiples), HttpStatus.OK);
     }
 
-    //@Async
     @PostMapping("/update-price-async")
     public void updatePricePublicationAsync(@RequestBody Margin margin, @RequestParam Integer idProfile){
         meliService.updatePricePublication(margin, idProfile);
     }
 
-    //@Async
     @GetMapping("/synchronize-publications")
     public ResponseEntity<Map<String, Object>> synchronizePublication(@RequestParam Integer idProfile, @RequestParam List<Integer> idDetailsPublicationsList){
         return new ResponseEntity<>(meliService.synchronizePublication(idProfile, idDetailsPublicationsList), HttpStatus.OK);
