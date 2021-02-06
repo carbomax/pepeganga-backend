@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import uy.com.pepeganga.business.common.models.MeliOrderItemDto;
 import uy.com.pepeganga.business.common.models.OrderDto;
@@ -15,6 +16,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class PurchaseOrders extends WebServiceGatewaySupport implements IPurchaseOrders {
 
     @Autowired

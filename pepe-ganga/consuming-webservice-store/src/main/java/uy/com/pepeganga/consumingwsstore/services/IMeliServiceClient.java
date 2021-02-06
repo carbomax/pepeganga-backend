@@ -7,4 +7,6 @@ import java.util.List;
 public interface IMeliServiceClient {
 
     List<OrderDto> getRecentOrdersByBatch(int quantity);
+
+    void executePurchaseOrder();
 }
