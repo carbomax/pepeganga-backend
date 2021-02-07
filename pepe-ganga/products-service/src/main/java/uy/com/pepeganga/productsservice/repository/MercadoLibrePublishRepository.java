@@ -34,4 +34,8 @@ public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibr
 	@Query(value = "select * from mercadolibrepublications ml where ml.sku = ?1 and ml.profile_id = ?2", nativeQuery = true)
 	MercadoLibrePublications findByItemAndProfile(String sku, Integer profile);
 
+	@Transactional(readOnly = true)
+	@Query(value = "select count(*) from mercadolibrepublications ml where ml.sku = :sku  and ml.profile_id = :profileId", nativeQuery = true)
+	Integer countByProfileIdAndSku(Integer profileId, String sku);
+
 }

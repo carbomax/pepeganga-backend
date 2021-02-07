@@ -25,8 +25,8 @@ public class ItemController {
 	@GetMapping("/items-by-filters/{page}/{size}")
 	public ResponseEntity<PageItemGrid> getItemsByFilters(@RequestParam String sku, @RequestParam String nameProduct,
 			@RequestParam Short categoryId, @RequestParam Short familyId, @RequestParam double minPrice, @RequestParam double maxPrice,
-			@PathVariable int page, @PathVariable int size) {		
-		return new ResponseEntity<>(itemService.getItemsByFiltersAndPaginator(sku, nameProduct, categoryId, familyId, minPrice, maxPrice, PageRequest.of(page, size)), HttpStatus.OK);
+			@PathVariable int page, @PathVariable int size, @RequestParam(defaultValue = "0") Integer profileId) {
+		return new ResponseEntity<>(itemService.getItemsByFiltersAndPaginator(sku, nameProduct, categoryId, familyId, minPrice, maxPrice, profileId, PageRequest.of(page, size)), HttpStatus.OK);
 	}
 
 }
