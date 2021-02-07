@@ -42,5 +42,7 @@ public interface MercadoLibrePublishService {
 	Boolean deleteProductsOfStore(List<Integer> product);
 
 	Boolean deleteProductOfStore(Integer product);
+
+	boolean existProductInMeliStorage(Integer profileId, String sku);
 }
 
