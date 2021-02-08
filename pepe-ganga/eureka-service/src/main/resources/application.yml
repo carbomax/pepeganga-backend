@@ -3,9 +3,17 @@
 spring:
   application:
     name: eureka-service
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 server:
   port: 8761
+  tomcat:
+    max-swallow-size: 20971520
+    max-http-form-post-size: 20971520
 eureka:
   instance:
     prefer-ip-address: true
