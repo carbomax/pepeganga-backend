@@ -13,6 +13,10 @@ import java.util.List;
 public interface IMeliOrderRepository extends JpaRepository<MeliOrders, Long> {
     @Transactional
     @Modifying(clearAutomatically = true)
-    @Query("update MeliOrders mo set mo.sentToErp = 1 where mo.orderId in (:orderIds) ")
-    void updateFieldSentToERPToAll(List<String> orderIds, int value);
+    @Query("update MeliOrders mo set mo.sentToErp = :sentToErp, mo.countFails = :countFails where mo.orderId in (:orderIds) ")
+    void updateFieldSentToERPToAll(List<String> orderIds, Integer sentToErp, Short countFails);
+
+    @Transactional
+    @Query(value = "select * from meli_orders mo where mo.orderId in (:orderIds) ", nativeQuery = true)
+    List<MeliOrders> findAllByOrderIds(List<String> orderIds);
 }

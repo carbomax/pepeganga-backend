@@ -11,7 +11,6 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.methods.ConfigurationsSystem;
 import uy.com.pepeganga.consumingwsstore.client.MeliFeignClient;
-import uy.com.pepeganga.consumingwsstore.entities.*;
 import uy.com.pepeganga.consumingwsstore.models.Pair;
 import uy.com.pepeganga.consumingwsstore.models.RiskTime;
 import uy.com.pepeganga.consumingwsstore.repositories.*;
@@ -418,78 +417,5 @@ public class ScheduledSyncService implements IScheduledSyncService{
     private Integer getStockRisk() {
         Integer stock_risk = Integer.parseInt(this.configService.getSynchronizationConfig().get("stock_risk").toString());
         return stock_risk == null ? 0 : stock_risk;
-    }
-
-    private boolean saveOrDeleteItemsTable(List<Item> list, String action){
-        logger.info("Starting to synchronization from TempItems to Item table in database");
-        try {
-            if(action.equals("deleting")) {
-                if(list.size() != 0)
-                    itemRepo.deleteAll(list);
-            }else if(action.equals("saving")){
-                itemRepo.saveAll(list);
-            }
-            logger.info("The synchronization from TempItems to Item table in database completed...");
-            return true;
-        }catch (Exception e){
-            logger.error("The synchronization from TempItems to Item table in database throw a error");
-            logger.error(String.format("Error %s Item table {}", action), e.getMessage());
-            updateTableLogs(String.format("Error %s Item table {}", action) + e.getMessage(), true);
-            return false;
-        }
-    }
-    private boolean saveOrDeleteBrandsTable(List<Brand> list, String action){
-        logger.info("Starting to synchronization from TempBrand to Brand table in database");
-        try {
-            if(action.equals("deleting")) {
-                if(list.size() != 0)
-                    brandRepo.deleteAll(list);
-            }else if(action.equals("saving")){
-                brandRepo.saveAll(list);
-            }
-            logger.info("The synchronization from TempBrand to Brand table in database completed...");
-            return true;
-        }catch (Exception e){
-            logger.error("The synchronization from TempBrand to Brand table in database throw a error");
-            logger.error(String.format("Error %s Brand table {}", action), e.getMessage());
-            updateTableLogs(String.format("Error %s Brand table {}", action) + e.getMessage(), true);
-            return false;
-        }
-    }
-    private boolean saveOrDeleteFamiliesTable(List<Family> list, String action){
-        logger.info("Starting to synchronization from TempFamilies to Families table in database");
-        try {
-            if(action.equals("deleting")) {
-                if(list.size() != 0)
-                    familyRepo.deleteAll(list);
-            }else if(action.equals("saving")){
-                familyRepo.saveAll(list);
-            }
-            logger.info("The synchronization from TempFamilies to Families table in database completed...");
-            return true;
-        }catch (Exception e){
-            logger.error("The synchronization from TempFamilies to Families table in database throw a error");
-            logger.error(String.format("Error %s Family table {}", action), e.getMessage());
-            updateTableLogs(String.format("Error %s Family table {}", action) + e.getMessage(), true);
-            return false;
-        }
-    }
-    private boolean saveOrDeleteCategoriesTable(List<Category> list, String action){
-        logger.info("Starting to synchronization from TempCategories to Categories table in database");
-        try {
-            if(action.equals("deleting")) {
-                if(list.size() != 0)
-                    categoryRepo.deleteAll(list);
-            }else if(action.equals("saving")){
-                categoryRepo.saveAll(list);
-            }
-            logger.info("The synchronization from TempCategories to Categories table in database completed...");
-            return true;
-        }catch (Exception e){
-            logger.error("The synchronization from TempCategories to Categories table in database throw a error");
-            logger.error(String.format("Error %s Category table {}", action), e.getMessage());
-            updateTableLogs(String.format("Error %s Category table {}", action) + e.getMessage(), true);
-            return false;
-        }
     }
 }

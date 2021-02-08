@@ -56,6 +56,8 @@ public class MeliOrders implements Serializable {
     // 0 - Not sent, 1 - Sent
     private Integer sentToErp;
 
+    private Short countFails = 0;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Carrier carrier;
@@ -295,5 +297,13 @@ public class MeliOrders implements Serializable {
 
     public void setSentToErp(Integer sentToErp) {
         this.sentToErp = sentToErp;
+    }
+
+    public Short getCountFails() {
+        return countFails;
+    }
+
+    public void setCountFails(Short countFails) {
+        this.countFails = countFails;
     }
 }

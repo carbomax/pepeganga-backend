@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import uy.com.pepeganga.business.common.entities.*;
-import uy.com.pepeganga.consumingwsstore.entities.*;
 import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtLineasSubFliasSdtLineaSubFlias;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtSubFliasSdtSubFlia;
