@@ -468,6 +468,7 @@ public class OrderService implements IOrderService {
         if (!orderToUpdate.getStatus().equals(order.getStatus())) {
             // Set to sent to ERP.
             orderToUpdate.setSentToErp(0);
+            orderToUpdate.setCountFails((short)0);
             StockProcessor stockProcessorFounded = stockProcessorRepository.findBySku(order.getOrderItems().get(0).getItem().getSellerSku());
 
             if (Objects.nonNull(stockProcessorFounded)) {
