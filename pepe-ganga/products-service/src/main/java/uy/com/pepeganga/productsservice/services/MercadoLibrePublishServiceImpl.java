@@ -1,6 +1,8 @@
 package uy.com.pepeganga.productsservice.services;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +16,7 @@ import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
+import uy.com.pepeganga.business.common.utils.methods.ConfigurationsSystem;
 import uy.com.pepeganga.productsservice.gridmodels.*;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.RiskTime;
@@ -30,8 +33,11 @@ import java.util.stream.Collectors;
 @Service
 public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishService {
 
+	private static final Logger logger = LoggerFactory.getLogger(MercadoLibrePublishServiceImpl.class);
+
 	@Autowired
 	RiskTime property;
+	ConfigurationsSystem configService;
 
 	@Autowired
 	MercadoLibrePublishRepository mlPublishRepo;
@@ -62,6 +68,15 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 	@Autowired
 	CheckingStockProcessorRepository checkingStockRepo;
+
+	public MercadoLibrePublishServiceImpl() {
+		this.configService = new ConfigurationsSystem();
+	}
+
+	private Integer getStockRisk() {
+		Integer stock_risk = Integer.parseInt(this.configService.getSynchronizationConfig().get("stock_risk").toString());
+		return stock_risk == null ? 0 : stock_risk;
+	}
 
 	// Method to fill the details of marketplace card
 	@Override
@@ -102,9 +117,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 		Profile profile = new Profile();
 		profile.setId(idProfile);
-
+/*
 		if (marketplace == MarketplaceType.MERCADOLIBRE.getId())
-			itemService = new ItemServiceImpl(productsRepository);
+			itemService = new ItemServiceImpl(productsRepository);*/
 
 		SelectedProducResponse select = new SelectedProducResponse();
 		List<String> prodExists = new ArrayList<>();
@@ -138,7 +153,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setFamilyDesc(product.get().getFamily().getDescription());
 					mlp.setStates(States.NOPUBLISHED.getId());
 					mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
-					mlp.setSpecialPaused(product.get().getStockActual() <= property.getRiskTime() ? 1 : 0);
+					mlp.setSpecialPaused(product.get().getStockActual() <= getStockRisk() ? 1 : 0);
 					prodToStore.add(mlp);
 				}
 			}
@@ -156,7 +171,11 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 		if (!prodToStore.isEmpty())
 			for (MercadoLibrePublications mercadoLibrePublications : prodToStore) {
-				mlPublishRepo.save(mercadoLibrePublications);
+				try {
+					mlPublishRepo.save(mercadoLibrePublications);
+				}catch (Exception e){
+					logger.error(String.format("Error storing product with sku: %s in the table: MercadoLibrePublications, Method: storeProductToPublish(), Error: ", mercadoLibrePublications.getSku()), e);
+				}
 			}
 
 		return select;
@@ -577,5 +596,10 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		//detailsPublicationsMeliRepository.updateMLPublicationsField(product);
 		mlPublishRepo.deleteById(product);
 		return true;
+	}
+
+	@Override
+	public boolean existProductInMeliStorage(Integer profileId, String sku) {
+		return mlPublishRepo.countByProfileIdAndSku(profileId, sku) > 0;
 	}
 }

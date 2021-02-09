@@ -20,6 +20,7 @@ public class ScheduledTasks {
      @Autowired
      private IStockProcessorService stockProcessorService;
 
+
     @Scheduled(cron = "${scheduler.cron.notification}")
     @Async
     public void processingOrdersNotification(){
@@ -30,7 +31,7 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "${scheduler.cron.stock}")
     @Async
-    public void schedulingStockProcessor(){
+    public void schedulingStockProcessor() {
         logger.info("Processing Stock processor scheduler....");
         stockProcessorService.schedulingStockProcessor();
         logger.info("Finishing Stock processor scheduler....");

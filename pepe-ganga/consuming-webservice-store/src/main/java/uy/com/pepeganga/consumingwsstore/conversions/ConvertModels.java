@@ -62,7 +62,8 @@ public class ConvertModels {
 			itemResp.setArtDescripML(artResp.getArtDescripML());
 			itemResp.setMedidaEmpaque(artResp.getMedidaEmpaque());
 			itemResp.setCapacidad(artResp.getCapacidad());
-			itemResp.setTalle(artResp.getTalle());			
+			itemResp.setTalle(artResp.getTalle());
+			itemResp.setUpdated(true);
 			
 			if(artResp.getFamiliaId() != 0 )
 				itemResp.setFamily(createFamilyInstance(artResp.getFamiliaId()));	

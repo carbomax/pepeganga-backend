@@ -14,5 +14,7 @@ public class ApiResources {
 
     public static final String ROOT = "https://api.mercadolibre.com";
 
+    public static final String SITES = "sites";
+
 
 }

@@ -33,7 +33,7 @@ public interface IMeliService {
 
     List<Map<String, Object>> createPublicationList(List<Item> items, Integer accountId ) throws Exception;
 
-    boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException;
+    boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin, int flex) throws NoSuchFieldException;
 
     boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin);
 
@@ -53,6 +53,8 @@ public interface IMeliService {
 
     Map<String, Object> deletePublicationFailed(Integer id);
 
+    Map<String, Object> deleteSetPublications(Integer accountId, List<Integer> idPublicationsList);
+
     Map<String, Object> republishPublication(Integer accountId, String idPublication);
 
     Map<String, Object> republishMultiplePublications(List<ChangeMultipleStatusRequest> multiple);
@@ -64,5 +66,7 @@ public interface IMeliService {
     void updateStock(List<Pair> pairs, Long idData);
 
     void synchronizationPublications(List<DetailsPublicationsMeli> detailsList);
+
+    void disableFlexItems(List<DetailsPublicationsMeli> publicationsList, Integer accountId);
 
 }

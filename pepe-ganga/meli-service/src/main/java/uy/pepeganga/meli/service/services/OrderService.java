@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
@@ -20,9 +19,13 @@ import uy.com.pepeganga.business.common.utils.enums.RoleType;
 import uy.pepeganga.meli.service.exceptions.OrderCreateException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.ApiMeliModelException;
+import uy.pepeganga.meli.service.models.dto.CountPaidAndCancellerSalesDto;
+import uy.pepeganga.meli.service.models.dto.ISalesAndAmountBySeller;
 import uy.pepeganga.meli.service.models.orders.DMOrder;
 import uy.pepeganga.meli.service.models.orders.DMOrderItems;
 import uy.pepeganga.meli.service.models.orders.DMOrderShipping;
+import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
+import uy.pepeganga.meli.service.models.dto.OrdersByDateCreatedAndCountDto;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.ApiResources;
 import uy.pepeganga.meli.service.utils.MeliUtils;
@@ -131,19 +134,17 @@ public class OrderService implements IOrderService {
     }
 
     @Override
-    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus) {
+    public Page<MeliOrders> getAllOrdersByProfile(Integer profileId, List<String> statusFilter, String nameClient, String nameSeller, Long dateFrom, Long dateTo, int page, int size, List<String> operatorBusinessStatus) {
         Optional<Profile> profile = profileRepository.findById(profileId);
 
         if (profile.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("User not updated with id %s", profileId));
         } else {
-            List<String> accounts;
+            List<String> accounts = new ArrayList<>();
             List<Role>  rolesProfile = profile.get().getUser().getRoles();
             boolean isOperatorOrAdmin = rolesProfile.stream().anyMatch(role -> role.getName().equals(RoleType.OPERATOR.getBusinessRole()) || role.getName().equals(RoleType.ADMIN.getBusinessRole()) );
-            if(isOperatorOrAdmin){
-                accounts = sellerAccountRepository.findAll().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
-            } else {
-                accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserId())).map(result -> String.valueOf(result.getUserId())).collect(Collectors.toList());
+            if(!isOperatorOrAdmin){
+                accounts = profile.get().getSellerAccounts().stream().filter(sellerAccount -> Objects.nonNull(sellerAccount.getUserIdBss())).map(result -> String.valueOf(result.getUserIdBss())).collect(Collectors.toList());
             }
 
             List<Integer> operatorBssStatus = new ArrayList<>();
@@ -164,8 +165,12 @@ public class OrderService implements IOrderService {
 
 
             }
-
-            Page<MeliOrders> orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+            Page<MeliOrders> orders;
+            if(isOperatorOrAdmin){
+                orders = ordersRepository.findAllOrders(statusFilter, nameClient.trim(), nameSeller.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+            } else {
+                orders = ordersRepository.findBySellerId(accounts, statusFilter, nameClient.trim(), nameSeller.trim(), dateFrom, dateTo, operatorBssStatus, PageRequest.of(page, size));
+            }
             List<Long> shipments = new ArrayList<>();
             orders.getContent().forEach(order -> {
                 if (order.getShippingId() != null && order.getShippingId() > 0) {
@@ -306,6 +311,7 @@ public class OrderService implements IOrderService {
         for (Notification notification : notifications) {
             if (notificationRepository.existsByResource(notification.getResource().trim())) {
                 boolean error = false;
+                boolean errorCreating = false;
                 logger.info("Processing notification: topic: {}, applicationId: {}, userId: {}", notification.getTopic(), notification.getApplicationId(), notification.getUserId());
                 try {
                     // check if exist a value for account
@@ -330,11 +336,15 @@ public class OrderService implements IOrderService {
                         error = true;
                     }
 
-                } catch (Exception e) {
+                } catch (ApiException | TokenException e) {
+
                     error = true;
                     logger.error(String.format("Error meli api request  message: %s", e.getMessage()), e);
 
-                } finally {
+                } catch (OrderCreateException e) {
+                    errorCreating = true;
+
+                }  finally {
                     if (notification.getBusinessAttempts() > ORDER_ATTEMPTS) {
                         if (notificationRepository.existsByResource(notification.getResource())) {
                             notificationRepository.deleteAllByResource(notification.getResource());
@@ -345,7 +355,10 @@ public class OrderService implements IOrderService {
                         notification.setBusinessAttempts(notification.getBusinessAttempts() + 1);
                         notificationRepository.save(notification);
                         logger.info("Order notification set business attempts to: {} by meli request error before", notification.getBusinessAttempts() + 1);
-                    } else {
+                    }else if (errorCreating) {
+                        logger.error("Error creating resource order: {}, userId: {}", notification.getResource(), notification.getUserId());
+                    }
+                    else {
                         if (notificationRepository.existsByResource(notification.getResource())) {
                             notificationRepository.deleteAllByResource(notification.getResource());
                             logger.info("Deleting notification by success id: {}, resource: {}", notification.getId(), notification.getResource());
@@ -455,14 +468,15 @@ public class OrderService implements IOrderService {
 
             if (Objects.nonNull(stockProcessorFounded)) {
                 StockProcessor stockProcessor = new StockProcessor();
-                // Add 1 to expected Stock.
+                // Add quantity to expected Stock.
+                Integer quantity = order.getOrderItems().get(0).getQuantity();
                 if (order.getStatus().equals(OrderStatusType.PAID.getStatus())) {
-                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
-                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() - 1);
+                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + quantity);
+                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() - quantity);
                     stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
                 } else if (order.getStatus().equals(OrderStatusType.CANCELLED.getStatus())) {
-                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() - 1);
-                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() + 1);
+                    stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() - quantity);
+                    stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() + quantity);
                     stockProcessor = stockProcessorRepository.save(stockProcessorFounded);
                 }
 
@@ -489,8 +503,8 @@ public class OrderService implements IOrderService {
     private MeliOrders transformDateOrderCreated(MeliOrders orderToUpdate) {
         DateTime currentTime = DateTimeUtilsBss.getDateTimeAtCurrentTime();
         if (orderToUpdate.getDateCreated() == null || orderToUpdate.getBusinessDateCreated() == null || orderToUpdate.getBusinessDateCreated() <= 0 || orderToUpdate.getDateCreated().equals("")) {
-            orderToUpdate.setBusinessDateCreated(Long.parseLong(String.format("%d%d%d", currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth())));
-            orderToUpdate.setDateCreated(String.format("%d-%d-%d", currentTime.getYear(), currentTime.getMonthOfYear(), currentTime.getDayOfMonth()));
+            orderToUpdate.setBusinessDateCreated(Long.parseLong(String.format("%d%s%s", currentTime.getYear(), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getMonthOfYear()), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getDayOfMonth()))));
+            orderToUpdate.setDateCreated(String.format("%d-%s-%s", currentTime.getYear(), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getMonthOfYear()), DateTimeUtilsBss.helperZeroBeforeMonthOrDay(currentTime.getDayOfMonth())));
         }
         return orderToUpdate;
     }
@@ -553,8 +567,9 @@ public class OrderService implements IOrderService {
 
                     if (Objects.nonNull(stockProcessorFounded)) {
                         StockProcessor processor = new StockProcessor();
-                        // Add 1 to expected Stock.
-                        stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + 1);
+                        // Add quantity to expected Stock.
+                        stockProcessorFounded.setExpectedStock(stockProcessorFounded.getExpectedStock() + dmOrderItems.getQuantity());
+                        stockProcessorFounded.setRealStock(stockProcessorFounded.getRealStock() - dmOrderItems.getQuantity());
                         processor = stockProcessorRepository.save(stockProcessorFounded);
                         // updating checking table to scheduler
                         updateCheckingStockProcessor(processor);
@@ -594,5 +609,42 @@ public class OrderService implements IOrderService {
         return tokenExpiration;
     }
 
+    @Override
+    public List<OrdersByDateCreatedAndCountDto> getSalesByBusinessDateCreated(Long dateFrom, Long dateTo, Long sellerId){
+        return Objects.isNull(sellerId) ? ordersRepository.getSalesByBusinessDateCreated(dateFrom, dateTo) : ordersRepository.getSalesByBusinessDateCreated(dateFrom, dateTo, sellerId);
+    }
+
+    @Override
+    public CountPaidAndCancellerSalesDto getCountAllSales(Long sellerId) {
+        CountPaidAndCancellerSalesDto dto = new CountPaidAndCancellerSalesDto();
+        if(Objects.isNull(sellerId)){
+            dto.setPaid(ordersRepository.getCountAllSalesPaid());
+            dto.setCancelled(ordersRepository.getCountAllSalesCancelled());
+        } else {
+            dto.setPaid(ordersRepository.getCountAllSalesPaid(sellerId));
+            dto.setCancelled(ordersRepository.getCountAllSalesCancelled(sellerId));
+        }
+        return dto;
+    }
+
+    @Override
+    public IBetterSkuDto getBetterSku(Long sellerId) {
+        if(Objects.isNull(sellerId)){
+            return ordersRepository.getBetterSku();
+        } else {
+            return ordersRepository.getBetterSku(sellerId);
+        }
+
+    }
+
+    @Override
+    public List<IBetterSkuDto> getBettersSku(Integer size, Long sellerId) {
+        return Objects.isNull(sellerId) ? ordersRepository.getBettersSku(size) : ordersRepository.getBettersSku(size, sellerId);
+    }
+
+    @Override
+    public List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId) {
+        return Objects.isNull(sellerId) ? ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo) : ordersRepository.getSalesAndAmountSellerByDate(dateFrom, dateTo, sellerId);
+    }
 
 }

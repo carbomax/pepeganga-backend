@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import uy.com.pepeganga.business.common.entities.CheckingStockProcessor;
 import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
@@ -12,6 +13,7 @@ import uy.com.pepeganga.business.common.entities.StockProcessor;
 import uy.com.pepeganga.business.common.utils.enums.ChangeStatusPublicationType;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
 import uy.com.pepeganga.business.common.utils.enums.States;
+import uy.com.pepeganga.business.common.utils.methods.ConfigurationsSystem;
 import uy.pepeganga.meli.service.repository.CheckingStockProcessorRepository;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.MercadoLibrePublishRepository;
@@ -20,7 +22,6 @@ import uy.pepeganga.meli.service.utils.MapResponseConstants;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -31,11 +32,21 @@ public class StockProcessorService implements IStockProcessorService {
     @Value("${meli.risk}")
     private String meliRisk;
 
+    ConfigurationsSystem configService;
     private static Integer RISK;
 
     @Value("${meli.risk}")
     public void setMeliRisk(String meliRisk) {
         StockProcessorService.RISK = Integer.parseInt(meliRisk);
+    }
+
+    public StockProcessorService() {
+        this.configService = new ConfigurationsSystem();
+    }
+
+    private Integer getStockRisk() {
+        Integer stock_risk = Integer.parseInt(this.configService.getSynchronizationConfig().get("stock_risk").toString());
+        return stock_risk == null ? 0 : stock_risk;
     }
 
     @Autowired
@@ -91,7 +102,7 @@ public class StockProcessorService implements IStockProcessorService {
                 logger.info("Synchronizing publications ended....");
 
                 // Check if this is in the risk zone
-                if ((checkingStockProcessor.getRealStock() - checkingStockProcessor.getExpectedStock()) <= StockProcessorService.RISK) {
+                if ((checkingStockProcessor.getRealStock() - checkingStockProcessor.getExpectedStock()) <= getStockRisk()/*StockProcessorService.RISK*/) {
                     // Pausar con estado especial todas las publicaciones y  bloquear los item no publicados correspondientes.
 
                     // bloqueamos o mandamos a eliminar todos los items no publicados
@@ -233,7 +244,13 @@ public class StockProcessorService implements IStockProcessorService {
                 if (checkingProcessed.get() <= 0) {
                     // Deleting of checking table
                     logger.info("Deleting checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
-                    checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
+
+
+                    try{
+                        checkingStockProcessorRepository.deleteById(checkingStockProcessor.getId());
+                    } catch (EmptyResultDataAccessException e) {
+                        logger.warn("Not deleted checkingStockProcessor with sku: {} because it is already deleted. Exception: {}", checkingStockProcessor.getSku(), e.getMessage());
+                    }
                     logger.info("Deleted checkingStockProcessor with sku: {}", checkingStockProcessor.getSku());
                 } else {
                     logger.info("checkingStockProcessor with sku: {}, not deleted by counter: {}", checkingStockProcessor.getSku(), checkingProcessed.get());

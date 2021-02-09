@@ -4,11 +4,18 @@ logging:
 
 server:
   port: 9999
+  tomcat:
+    max-swallow-size: 20971520
+    max-http-form-post-size: 20971520
 
 spring:
   application:
     name: zuul-service
-    
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 eureka:
   instance:
