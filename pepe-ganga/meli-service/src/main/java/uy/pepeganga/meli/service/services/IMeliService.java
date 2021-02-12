@@ -6,9 +6,11 @@ import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
 import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
+import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
+import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
@@ -69,4 +71,7 @@ public interface IMeliService {
 
     void disableFlexItems(List<DetailsPublicationsMeli> publicationsList, Integer accountId);
 
+    List<MeliSellerAccountFlexDto> getAccountsEnabledOrDisabledFlexByAdmin();
+
+    MeliSellerAccountFlexDto updateAccountsEnabledOrDisabledFlexByAdmin(int accountId, int enableFlex) throws PGException;
 }

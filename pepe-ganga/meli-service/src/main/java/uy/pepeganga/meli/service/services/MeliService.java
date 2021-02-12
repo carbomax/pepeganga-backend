@@ -11,11 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
+import uy.pepeganga.meli.service.exceptions.MeliAccountNotFoundException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.*;
+import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.FlexResponse;
@@ -991,6 +994,36 @@ public class MeliService  implements IMeliService{
         }catch (Exception e) {
             logger.error(" Error in the proccess: {}", e.getMessage());
         }
+    }
+
+    @Override
+    public List<MeliSellerAccountFlexDto> getAccountsEnabledOrDisabledFlexByAdmin() {
+        List<SellerAccount> sellerAccounts = sellerAccountRepository.findAllBySynchronizedAccount();
+        return sellerAccounts.stream().map(sellerAccount -> {
+            MeliSellerAccountFlexDto flexDto = new MeliSellerAccountFlexDto();
+            flexDto.setEnabledFlex(sellerAccount.getEnabledFlexByAdmin() > 0);
+            flexDto.setProfileName(sellerAccount.getProfile().getBusinessName());
+            flexDto.setAccountName(sellerAccount.getBusinessName());
+            flexDto.setId(sellerAccount.getId());
+            return flexDto;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public MeliSellerAccountFlexDto updateAccountsEnabledOrDisabledFlexByAdmin(int accountId, int enableFlex) throws PGException {
+        Optional<SellerAccount> sellerAccount = sellerAccountRepository.findById(accountId);
+       if(sellerAccount.isEmpty()){
+           throw new MeliAccountNotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
+       }
+        sellerAccount.get().setEnabledFlexByAdmin(enableFlex);
+       SellerAccount accountSaved = sellerAccountRepository.save(sellerAccount.get());
+       MeliSellerAccountFlexDto dto = new MeliSellerAccountFlexDto();
+
+       dto.setEnabledFlex(accountSaved.getEnabledFlexByAdmin() > 0);
+       dto.setId(accountSaved.getId());
+       dto.setProfileName(accountSaved.getProfile().getBusinessName());
+       dto.setAccountName(accountSaved.getBusinessName());
+       return dto;
     }
 
     /**** Metodos auxiliares ****/

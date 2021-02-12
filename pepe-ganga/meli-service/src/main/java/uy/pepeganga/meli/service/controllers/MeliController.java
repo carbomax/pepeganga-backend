@@ -8,9 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.Margin;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.com.pepeganga.business.common.exceptions.PGException;
+import uy.pepeganga.meli.service.exceptions.MeliAccountNotFoundException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
+import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.services.IMeliService;
 
@@ -47,6 +50,17 @@ public class MeliController {
         meliService.deleteMeliAccount(accountId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @GetMapping("/enabled-disabled-flex-by-admin")
+    public ResponseEntity<List<MeliSellerAccountFlexDto>> getAccountsEnabledOrDisabledFlexByAdmin(){
+        return new ResponseEntity<>(meliService.getAccountsEnabledOrDisabledFlexByAdmin(), HttpStatus.OK);
+    }
+
+    @PutMapping("/enabled-disabled-flex-by-admin/{accountId}")
+    public ResponseEntity<MeliSellerAccountFlexDto> updateAccountsEnabledOrDisabledFlexByAdmin(@PathVariable int accountId, @RequestParam int enableFlex) throws PGException {
+        return new ResponseEntity<>(meliService.updateAccountsEnabledOrDisabledFlexByAdmin(accountId, enableFlex), HttpStatus.OK);
+    }
+
 
     @PostMapping("/publications/{accountId}")
     public ResponseEntity<Map<String, Object>> createPublication(@RequestBody Item item, @PathVariable Integer accountId){
