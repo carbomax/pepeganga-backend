@@ -117,9 +117,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 
 		Profile profile = new Profile();
 		profile.setId(idProfile);
-
+/*
 		if (marketplace == MarketplaceType.MERCADOLIBRE.getId())
-			itemService = new ItemServiceImpl(productsRepository);
+			itemService = new ItemServiceImpl(productsRepository);*/
 
 		SelectedProducResponse select = new SelectedProducResponse();
 		List<String> prodExists = new ArrayList<>();
@@ -596,5 +596,10 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		//detailsPublicationsMeliRepository.updateMLPublicationsField(product);
 		mlPublishRepo.deleteById(product);
 		return true;
+	}
+
+	@Override
+	public boolean existProductInMeliStorage(Integer profileId, String sku) {
+		return mlPublishRepo.countByProfileIdAndSku(profileId, sku) > 0;
 	}
 }

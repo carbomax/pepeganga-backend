@@ -2,3 +2,5 @@
 /pepe-ganga.iml
 target/
 /log/
+/eureka-service/log/eureka-server.log.2021-01-21.0.gz
+/meli-service/log/meli-service.log

@@ -10,7 +10,7 @@ import java.util.List;
 public class ItemGrid implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -23,6 +23,8 @@ public class ItemGrid implements Serializable {
 	private double priceUSD;
 	
 	private long currentStock;
+
+	private boolean existInMeliStore;
 
 	private List<Category> categories;
 
@@ -94,5 +96,11 @@ public class ItemGrid implements Serializable {
 		this.currentStock = currentStock;
 	}
 
-	
+	public boolean isExistInMeliStore() {
+		return existInMeliStore;
+	}
+
+	public void setExistInMeliStore(boolean existInMeliStore) {
+		this.existInMeliStore = existInMeliStore;
+	}
 }
