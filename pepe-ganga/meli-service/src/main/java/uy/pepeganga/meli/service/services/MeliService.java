@@ -15,7 +15,7 @@ import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
-import uy.pepeganga.meli.service.exceptions.MeliAccountNotFoundException;
+import uy.pepeganga.meli.service.exceptions.NotFoundException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
@@ -53,6 +53,9 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     ProfileRepository profileRepository;
+
+    @Autowired
+    IMeliCategoryME2Repository categoryME2Repository;
 
     @Autowired
     IUpdatesSystemRepository updateSysRepo;
@@ -1013,7 +1016,7 @@ public class MeliService  implements IMeliService{
     public MeliSellerAccountFlexDto updateAccountsEnabledOrDisabledFlexByAdmin(int accountId, int enableFlex) throws PGException {
         Optional<SellerAccount> sellerAccount = sellerAccountRepository.findById(accountId);
        if(sellerAccount.isEmpty()){
-           throw new MeliAccountNotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
+           throw new NotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
        }
         sellerAccount.get().setEnabledFlexByAdmin(enableFlex);
        SellerAccount accountSaved = sellerAccountRepository.save(sellerAccount.get());
@@ -1024,6 +1027,25 @@ public class MeliService  implements IMeliService{
        dto.setProfileName(accountSaved.getProfile().getBusinessName());
        dto.setAccountName(accountSaved.getBusinessName());
        return dto;
+    }
+//pendiente de errores
+    @Override
+    public List<MeliCategoryME2> getListCategoriesME2() {
+        return categoryME2Repository.findAll();
+    }
+    //pendiente de errores
+    @Override
+    public List<MeliCategoryME2> saveCategoriesME2(List<MeliCategoryME2> categoriesME2List) {
+        return categoryME2Repository.saveAll(categoriesME2List);
+    }
+    //pendiente de errores
+    @Override
+    public Boolean deleteCategoryME2(MeliCategoryME2 category) throws NotFoundException {
+       /* if(!categoryME2Repository.exists(category)) {
+            throw new NotFoundException("Categoría no encontrada", HttpStatus.NOT_FOUND);
+        }*/
+        categoryME2Repository.delete(category);
+        return true;
     }
 
     /**** Metodos auxiliares ****/
@@ -1107,4 +1129,5 @@ public class MeliService  implements IMeliService{
         }
         return data;
     }
+
 }

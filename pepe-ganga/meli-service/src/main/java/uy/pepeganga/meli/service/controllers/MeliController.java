@@ -7,9 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.Margin;
+import uy.com.pepeganga.business.common.entities.MeliCategoryME2;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.exceptions.PGException;
-import uy.pepeganga.meli.service.exceptions.MeliAccountNotFoundException;
+import uy.pepeganga.meli.service.exceptions.NotFoundException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
@@ -138,4 +139,20 @@ public class MeliController {
     public void updateStock(@RequestBody List<Pair> pairs, @RequestParam Long idData){
         meliService.updateStock(pairs, idData);
     }
+
+    @GetMapping("/categories-me2")
+    public ResponseEntity<List<MeliCategoryME2>> getAllCategoriesME2() {
+        return new ResponseEntity<>(meliService.getListCategoriesME2(), HttpStatus.OK);
+    }
+
+    @PostMapping("/save-categories-me2")
+    public ResponseEntity<List<MeliCategoryME2>> saveCategoriesME2(@RequestBody List<MeliCategoryME2> categoriesList) {
+        return new ResponseEntity<>(meliService.saveCategoriesME2(categoriesList), HttpStatus.OK);
+    }
+
+    @PostMapping("/delete-category-me2")
+    public ResponseEntity<Boolean> deleteCategoriesME2(@RequestBody MeliCategoryME2 category) throws NotFoundException {
+        return new ResponseEntity<>(meliService.deleteCategoryME2(category), HttpStatus.OK);
+    }
+
 }
