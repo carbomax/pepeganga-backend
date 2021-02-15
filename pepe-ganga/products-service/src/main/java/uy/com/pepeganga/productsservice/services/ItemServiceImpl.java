@@ -70,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
 
 	}
 
-	@Cacheable("storage")
+//	@Cacheable("storage")
 	public PageItemGrid getItemsByFiltersAndPaginator(String sku, String nameProduct, Short categoryId, Short familyId,
 			double minPrice,  double maxPrice, Integer profileId , Pageable pageable) {
 		Page<Item> result = this.findAll(sku.trim(), nameProduct.trim(), categoryId,  familyId, minPrice,

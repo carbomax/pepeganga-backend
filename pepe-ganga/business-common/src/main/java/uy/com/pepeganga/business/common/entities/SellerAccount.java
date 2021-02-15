@@ -70,6 +70,10 @@ public class SellerAccount implements Serializable {
     // 0 - No,  1 - Si,  2 - Undefined
     private Integer me2 = 0;
 
+    // 0 - Not enabled / 1 - Enabled
+    @Column(name = "enabled_flex_by_admin")
+    private Integer enabledFlexByAdmin;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id", nullable = false)
     @JsonBackReference
@@ -249,5 +253,13 @@ public class SellerAccount implements Serializable {
 
     public void setUserIdBss(Long userIdBss) {
         this.userIdBss = userIdBss;
+    }
+
+    public Integer getEnabledFlexByAdmin() {
+        return enabledFlexByAdmin;
+    }
+
+    public void setEnabledFlexByAdmin(Integer enabledFlexByAdmin) {
+        this.enabledFlexByAdmin = enabledFlexByAdmin;
     }
 }
