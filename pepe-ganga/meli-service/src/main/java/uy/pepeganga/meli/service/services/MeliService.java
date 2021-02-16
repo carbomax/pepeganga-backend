@@ -73,6 +73,7 @@ public class MeliService  implements IMeliService{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Profile with id: %s not found", profileId));
         }
         sellerAccount.setProfile(profileFound.get());
+        sellerAccount.setEnabledFlexByAdmin(0);
         return sellerAccountRepository.save(sellerAccount);
     }
 
