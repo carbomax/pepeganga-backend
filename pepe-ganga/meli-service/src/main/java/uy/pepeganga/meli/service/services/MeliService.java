@@ -153,6 +153,7 @@ public class MeliService  implements IMeliService{
             shipping.localPickUp(false);
             shipping.freeShipping(false);
             shipping.methods(new ArrayList<>());
+            shipping.tags(new ArrayList<>());
 
             List<SaleTerms> saleTerms = new ArrayList<>();
             saleTerms.add(new SaleTerms("WARRANTY_TYPE")
@@ -313,9 +314,9 @@ public class MeliService  implements IMeliService{
             }
             detailsPublicationRepository.saveAll(detailsToUpdate);
             // Deshabilito la opcion ´flex´ si está desabilitado en la configuracion
-            if(flex == 0) {
+           /* if(flex == 0) {
                 disableFlexItems(detailsToUpdate, accountId);
-            }
+            }*/
         }
     return true;
     }
