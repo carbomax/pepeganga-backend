@@ -264,6 +264,11 @@ public class ApiService implements IApiService {
         return restClientApiUy.resourceDelete(String.format(ApiResources.SITES + "/MLU/shipping/selfservice/items" + "/%s", idPublicationMeli), token);
     }
 
+    @Override
+    public Object showConfigurationSeller(Object request, String token) throws ApiException {
+        return restClientApiUy.resourcePost(String.format(ApiResources.SITES + "%s", "/shipping/selfservice/configuration"), token, request);
+    }
+
     //Servicios Públicos de Mercado Libre
     @Override
     public Map<String, Object> getStatusPublication(String idPublication) {

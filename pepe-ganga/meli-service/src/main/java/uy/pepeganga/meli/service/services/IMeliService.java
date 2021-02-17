@@ -33,7 +33,7 @@ public interface IMeliService {
 
     List<Map<String, Object>> createPublicationList(List<Item> items, Integer accountId ) throws Exception;
 
-    boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin, int flex) throws NoSuchFieldException;
+    boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException;
 
     boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin);
 

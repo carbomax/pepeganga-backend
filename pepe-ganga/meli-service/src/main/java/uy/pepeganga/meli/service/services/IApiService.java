@@ -49,4 +49,6 @@ public interface IApiService {
     Object isFlexInItem(String idPublicationMeli, String token) throws ApiException;
 
     Object disableFlexInItem(String idPublicationMeli, String token) throws ApiException;
+
+    Object showConfigurationSeller(Object request, String token) throws ApiException;
 }

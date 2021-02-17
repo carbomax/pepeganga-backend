@@ -69,9 +69,9 @@ public class MeliController {
     }
 
     @PostMapping("/publications-flow/{accountId}")
-    public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin, @RequestParam int flex){
+    public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin){
         try {
-            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin, flex), HttpStatus.CREATED);
+            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin), HttpStatus.CREATED);
         }
         catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
