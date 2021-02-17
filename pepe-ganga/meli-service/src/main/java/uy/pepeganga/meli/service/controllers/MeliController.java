@@ -11,6 +11,7 @@ import uy.com.pepeganga.business.common.entities.MeliCategoryME2;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.pepeganga.meli.service.exceptions.NotFoundException;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
@@ -154,5 +155,11 @@ public class MeliController {
     public ResponseEntity<Boolean> deleteCategoriesME2(@RequestBody MeliCategoryME2 category) throws NotFoundException {
         return new ResponseEntity<>(meliService.deleteCategoryME2(category), HttpStatus.OK);
     }
+
+    @GetMapping("/account-flex/{accountId}")
+    public ResponseEntity<Boolean> isFlexEnabled(@PathVariable Integer accountId) throws PGException, ApiException, TokenException {
+        return new ResponseEntity<>(meliService.accountWithEnabledFlex(accountId), HttpStatus.OK);
+    }
+
 
 }

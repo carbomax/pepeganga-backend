@@ -20,6 +20,7 @@ import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
 import uy.pepeganga.meli.service.models.meli_account_configuration.MeliAccountConfiguration;
+import uy.pepeganga.meli.service.models.meli_account_configuration.QueryRequest;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.FlexResponse;
@@ -1048,7 +1049,7 @@ public class MeliService  implements IMeliService{
     }
 
     //Ver configuracion del vendedor //  -- tratar excepciones
-    public boolean accountWithEnabledFlex(Object obj, Integer accountId) throws PGException, TokenException, ApiException {
+    public Boolean accountWithEnabledFlex(Integer accountId) throws PGException, TokenException, ApiException {
         Optional<SellerAccount> sellerAccount = sellerAccountRepository.findById(accountId);
         if (sellerAccount.isEmpty()) {
             throw new NotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
@@ -1056,6 +1057,8 @@ public class MeliService  implements IMeliService{
         if(MeliUtils.isExpiredToken(sellerAccount.get())){
             sellerAccount = Optional.ofNullable(apiService.getTokenByRefreshToken(sellerAccount.get()));
         }
+
+        QueryRequest obj = new QueryRequest(sellerAccount.get().getUserId());
         Object accountConfig = apiService.showConfigurationSeller(obj, sellerAccount.get().getAccessToken());
 
         if (!Objects.isNull(accountConfig)){
@@ -1064,11 +1067,15 @@ public class MeliService  implements IMeliService{
                 meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("same_day")
                 && meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("next_day"))
             {
-                //es flex
+                return true;
             }
-
+            else {
+                return false;
+            }
         }
-        return true;
+        else {
+            return false;
+        }
     }
 
     /**** Metodos auxiliares ****/

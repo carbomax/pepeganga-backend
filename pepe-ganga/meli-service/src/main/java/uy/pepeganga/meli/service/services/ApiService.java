@@ -24,6 +24,7 @@ import uy.pepeganga.meli.service.models.ApiMeliModelException;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
 import uy.pepeganga.meli.service.models.MeliResponseBodyException;
 import uy.pepeganga.meli.service.models.MeliUserAccount;
+import uy.pepeganga.meli.service.models.meli_account_configuration.QueryRequest;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
 import uy.pepeganga.meli.service.repository.SellerAccountRepository;
@@ -265,9 +266,10 @@ public class ApiService implements IApiService {
     }
 
     @Override
-    public Object showConfigurationSeller(Object request, String token) throws ApiException {
+    public Object showConfigurationSeller(QueryRequest request, String token) throws ApiException {
         return restClientApiUy.resourcePost(String.format(ApiResources.SITES + "%s", "/shipping/selfservice/configuration"), token, request);
     }
+
 
     //Servicios Públicos de Mercado Libre
     @Override

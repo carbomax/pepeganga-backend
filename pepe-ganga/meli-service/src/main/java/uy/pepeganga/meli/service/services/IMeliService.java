@@ -5,6 +5,7 @@ import meli.model.Item;
 import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.pepeganga.meli.service.exceptions.NotFoundException;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
@@ -78,4 +79,7 @@ public interface IMeliService {
     List<MeliCategoryME2> saveCategoriesME2(List<MeliCategoryME2> categoriesME2List);
 
     Boolean deleteCategoryME2(MeliCategoryME2 category) throws NotFoundException;
+
+    Boolean accountWithEnabledFlex(Integer accountId) throws PGException, TokenException, ApiException;
+
 }
