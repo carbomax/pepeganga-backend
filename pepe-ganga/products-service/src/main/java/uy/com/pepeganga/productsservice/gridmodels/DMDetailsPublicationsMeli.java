@@ -51,6 +51,8 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     private Integer deleted;
 
+    private Integer flex;
+
     private Integer specialPaused;
 
     private int totalElements;
@@ -245,5 +247,13 @@ public class DMDetailsPublicationsMeli implements Serializable {
 
     public void setSpecialPaused(Integer specialPaused) {
         this.specialPaused = specialPaused;
+    }
+
+    public Integer getFlex() {
+        return flex;
+    }
+
+    public void setFlex(Integer flex) {
+        this.flex = flex;
     }
 }

@@ -299,6 +299,21 @@ public class MeliService  implements IMeliService{
                     DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
                     if(!item.getSku().isBlank()){
                         DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(item.getSku(), accountId);
+
+                        List<String> tags = detailM.getShipping().getTags();
+                        if(tags.isEmpty()) {
+                            detailP.setFlex(0); // Sin flex en la publicación -- el usuario no tiene flex habilitado en ML
+                        }
+                        else {
+                            tags.forEach(f -> {
+                                        if (f.equals("self_service_in"))
+                                            detailP.setFlex(1); //Con flex en la publicación -- el usuario tiene flex habilitado en ML
+                                        else
+                                            detailP.setFlex(0); // Sin flex en la publicación -- el usuario tiene flex habilitado en ML
+                                    }
+                            );
+                        }
+
                         detailP.setStatus(detailM.getStatus());
                         detailP.setIdPublicationMeli(detailM.getIdPublication());
                         detailP.setLastUpgrade(detailM.getLastUpdated());
@@ -310,6 +325,7 @@ public class MeliService  implements IMeliService{
                     if(!item.getSku().isBlank()){
                         DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(item.getSku(), accountId);
                         detailP.setStatus("fail");
+                        detailP.setFlex(2); // fail = without parameter
                         detailsToUpdate.add(detailP);
                     }
                 }
