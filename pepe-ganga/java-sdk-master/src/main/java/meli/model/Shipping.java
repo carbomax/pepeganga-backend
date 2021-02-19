@@ -26,6 +26,10 @@ public class Shipping {
     @SerializedName(SERIALIZED_NAME_FREE_METHODS)
     private List<String> freeMethods;
 
+    public static final String SERIALIZED_NAME_TAGS = "tags";
+    @SerializedName(SERIALIZED_NAME_TAGS)
+    private List<String> tags;
+
     @JsonProperty("mode")
     public String getMode() {
         return mode;
@@ -66,14 +70,20 @@ public class Shipping {
         this.freeMethods = freeMethods;
     }
 
+    @JsonProperty("tags")
+    public List<String> getTags() {
+        return tags;
+    }
+
+    @JsonProperty("tags")
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+    }
+
     /*
     public static final String SERIALIZED_NAME_DIMENSIONS = "dimensions";
     @SerializedName(SERIALIZED_NAME_DIMENSIONS)
     private Object dimensions;
-
-    public static final String SERIALIZED_NAME_TAGS = "tags";
-    @SerializedName(SERIALIZED_NAME_TAGS)
-    private List<String> tags;
 
     public static final String SERIALIZED_NAME_LOGISTIC_TYPE = "logistic_type";
     @SerializedName(SERIALIZED_NAME_LOGISTIC_TYPE)

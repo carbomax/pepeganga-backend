@@ -15,10 +15,12 @@ import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
-import uy.pepeganga.meli.service.exceptions.MeliAccountNotFoundException;
+import uy.pepeganga.meli.service.exceptions.NotFoundException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.*;
 import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
+import uy.pepeganga.meli.service.models.meli_account_configuration.MeliAccountConfiguration;
+import uy.pepeganga.meli.service.models.meli_account_configuration.QueryRequest;
 import uy.pepeganga.meli.service.models.publications.*;
 import uy.pepeganga.meli.service.repository.*;
 import uy.pepeganga.meli.service.utils.FlexResponse;
@@ -53,6 +55,9 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     ProfileRepository profileRepository;
+
+    @Autowired
+    IMeliCategoryME2Repository categoryME2Repository;
 
     @Autowired
     IUpdatesSystemRepository updateSysRepo;
@@ -150,6 +155,7 @@ public class MeliService  implements IMeliService{
             shipping.localPickUp(false);
             shipping.freeShipping(false);
             shipping.methods(new ArrayList<>());
+            shipping.tags(new ArrayList<>());
 
             List<SaleTerms> saleTerms = new ArrayList<>();
             saleTerms.add(new SaleTerms("WARRANTY_TYPE")
@@ -282,7 +288,7 @@ public class MeliService  implements IMeliService{
     //Global Method to that use "createOrUpdateDetailPublicationsMeli" and "createPublication" methods to store and publish
     // one product in ML
     @Override
-    public boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin, int flex) throws NoSuchFieldException {
+    public boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException {
         List<DetailsPublicationsMeli> detailsToUpdate = new ArrayList<>();
 
         if(createOrUpdateDetailPublicationsMeli(items, accountId, idMargin)){
@@ -293,6 +299,21 @@ public class MeliService  implements IMeliService{
                     DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
                     if(!item.getSku().isBlank()){
                         DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(item.getSku(), accountId);
+
+                        List<String> tags = detailM.getShipping().getTags();
+                        if(tags.isEmpty()) {
+                            detailP.setFlex(0); // Sin flex en la publicación -- el usuario no tiene flex habilitado en ML
+                        }
+                        else {
+                            tags.forEach(f -> {
+                                        if (f.equals("self_service_in"))
+                                            detailP.setFlex(1); //Con flex en la publicación -- el usuario tiene flex habilitado en ML
+                                        else
+                                            detailP.setFlex(0); // Sin flex en la publicación -- el usuario tiene flex habilitado en ML
+                                    }
+                            );
+                        }
+
                         detailP.setStatus(detailM.getStatus());
                         detailP.setIdPublicationMeli(detailM.getIdPublication());
                         detailP.setLastUpgrade(detailM.getLastUpdated());
@@ -304,15 +325,12 @@ public class MeliService  implements IMeliService{
                     if(!item.getSku().isBlank()){
                         DetailsPublicationsMeli detailP = detailsPublicationRepository.findBySKUAndAccountId(item.getSku(), accountId);
                         detailP.setStatus("fail");
+                        detailP.setFlex(2); // fail = without parameter
                         detailsToUpdate.add(detailP);
                     }
                 }
             }
             detailsPublicationRepository.saveAll(detailsToUpdate);
-            // Deshabilito la opcion ´flex´ si está desabilitado en la configuracion
-            if(flex == 0) {
-                disableFlexItems(detailsToUpdate, accountId);
-            }
         }
     return true;
     }
@@ -1014,7 +1032,7 @@ public class MeliService  implements IMeliService{
     public MeliSellerAccountFlexDto updateAccountsEnabledOrDisabledFlexByAdmin(int accountId, int enableFlex) throws PGException {
         Optional<SellerAccount> sellerAccount = sellerAccountRepository.findById(accountId);
        if(sellerAccount.isEmpty()){
-           throw new MeliAccountNotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
+           throw new NotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
        }
         sellerAccount.get().setEnabledFlexByAdmin(enableFlex);
        SellerAccount accountSaved = sellerAccountRepository.save(sellerAccount.get());
@@ -1025,6 +1043,55 @@ public class MeliService  implements IMeliService{
        dto.setProfileName(accountSaved.getProfile().getBusinessName());
        dto.setAccountName(accountSaved.getBusinessName());
        return dto;
+    }
+//pendiente de errores
+    @Override
+    public List<MeliCategoryME2> getListCategoriesME2() {
+        return categoryME2Repository.findAll();
+    }
+    //pendiente de errores
+    @Override
+    public List<MeliCategoryME2> saveCategoriesME2(List<MeliCategoryME2> categoriesME2List) {
+        return categoryME2Repository.saveAll(categoriesME2List);
+    }
+    //pendiente de errores
+    @Override
+    public Boolean deleteCategoryME2(MeliCategoryME2 category) throws NotFoundException {
+       /* if(!categoryME2Repository.exists(category)) {
+            throw new NotFoundException("Categoría no encontrada", HttpStatus.NOT_FOUND);
+        }*/
+        categoryME2Repository.delete(category);
+        return true;
+    }
+
+    //Ver configuracion del vendedor //  -- tratar excepciones
+    public Boolean accountWithEnabledFlex(Integer accountId) throws PGException, TokenException, ApiException {
+        Optional<SellerAccount> sellerAccount = sellerAccountRepository.findById(accountId);
+        if (sellerAccount.isEmpty()) {
+            throw new NotFoundException("Seller Account Not Found", HttpStatus.NOT_FOUND);
+        }
+        if(MeliUtils.isExpiredToken(sellerAccount.get())){
+            sellerAccount = Optional.ofNullable(apiService.getTokenByRefreshToken(sellerAccount.get()));
+        }
+
+        QueryRequest obj = new QueryRequest(sellerAccount.get().getUserId());
+        Object accountConfig = apiService.showConfigurationSeller(obj, sellerAccount.get().getAccessToken());
+
+        if (!Objects.isNull(accountConfig)){
+            MeliAccountConfiguration meliAccountConfig = mapper.convertValue(accountConfig, MeliAccountConfiguration.class);
+            if(meliAccountConfig.getConfiguration().getAdoption() != null &&
+                meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("same_day")
+                && meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("next_day"))
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
 
     /**** Metodos auxiliares ****/
@@ -1108,4 +1175,5 @@ public class MeliService  implements IMeliService{
         }
         return data;
     }
+
 }
