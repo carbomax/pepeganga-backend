@@ -1003,7 +1003,7 @@ public class MeliService  implements IMeliService{
         return sellerAccounts.stream().map(sellerAccount -> {
             MeliSellerAccountFlexDto flexDto = new MeliSellerAccountFlexDto();
             flexDto.setEnabledFlex(sellerAccount.getEnabledFlexByAdmin() > 0);
-            flexDto.setProfileName(sellerAccount.getProfile().getBusinessName());
+            flexDto.setProfileName(sellerAccount.getProfile().getFirstName());
             flexDto.setAccountName(sellerAccount.getBusinessName());
             flexDto.setId(sellerAccount.getId());
             return flexDto;
