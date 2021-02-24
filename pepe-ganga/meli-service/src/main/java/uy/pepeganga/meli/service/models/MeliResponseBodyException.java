@@ -2,6 +2,9 @@ package uy.pepeganga.meli.service.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.Serializable;
 
@@ -16,6 +19,29 @@ public class MeliResponseBodyException implements Serializable {
 
     private Object[] cause;
 
+    public MeliResponseBodyException() {
+    }
+
+    public MeliResponseBodyException(String responseBody) throws ParseException {
+        JSONParser jsonParser = new JSONParser();
+        JSONObject objJSON = (JSONObject) jsonParser.parse(responseBody);
+        this.message = objJSON.get("message").toString();
+        this.error = objJSON.get("error").toString();
+        this.status = Integer.parseInt(objJSON.get("status").toString());
+    }
+
+    public MeliResponseBodyException(String message, String error, int status) {
+        this.message = message;
+        this.error = error;
+        this.status = status;
+    }
+
+    public MeliResponseBodyException(String message, String error, int status, Object[] cause) {
+        this.message = message;
+        this.error = error;
+        this.status = status;
+        this.cause = cause;
+    }
 
     @JsonProperty("message")
     public String getMessage() {

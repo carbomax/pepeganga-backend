@@ -256,6 +256,20 @@ public class MeliService  implements IMeliService{
                 detail.setImages(iter.getImages());
             }
 
+            List<String> tags = iter.getItem().getShipping().getTags();
+            if(tags == null || tags.isEmpty()) {
+                detail.setFlex(0); // Sin flex en la publicación -- el usuario no tiene flex habilitado en ML
+            }
+            else {
+                for (String f: tags) {
+                    if (f.equals("self_service_in"))
+                        detail.setFlex(1); //Con flex en la publicación -- el usuario tiene flex habilitado en ML
+                    else
+                        detail.setFlex(0); // Sin flex en la publicación -- el usuario tiene flex habilitado en ML
+                }
+
+            }
+
 
             Optional<MercadoLibrePublications> meli = mlPublishRepository.findById(iter.getIdPublicationProduct());
             if(meli.isPresent() && meli.get().getStates() == States.NOPUBLISHED.getId()) {
@@ -974,6 +988,7 @@ public class MeliService  implements IMeliService{
     }
 
     @Override
+    //ahora no se utiliza pero puede utilizarse para adicionarlo al sincronizar
     public void disableFlexItems(List<DetailsPublicationsMeli> publicationsList, Integer accountId) {
         try {
             if (!publicationsList.isEmpty()) {
@@ -1075,13 +1090,34 @@ public class MeliService  implements IMeliService{
         }
 
         QueryRequest obj = new QueryRequest(sellerAccount.get().getUserId());
-        Object accountConfig = apiService.showConfigurationSeller(obj, sellerAccount.get().getAccessToken());
-
+        Object accountConfig = null;
+        try {
+             accountConfig = apiService.showConfigurationSeller(obj, sellerAccount.get().getAccessToken());
+        }catch (ApiException e){
+            //if(e.getCode() == 404 && !e.getResponseBody().isBlank() ) {
+                MeliResponseBodyException exception = null;
+                try {
+                     exception = new MeliResponseBodyException(e.getResponseBody());
+                }catch (ParseException pe){
+                    logger.error("Error parseando exception, Method: accountWithEnabledFlex(), Service: meli-service, Error: ", pe);
+                    throw new PGException(pe.getMessage(), pe.getLocalizedMessage(), pe.getErrorType());
+                }
+               if(exception != null && exception.getMessage().contains("can't get adoption for user") ) {
+                   if(exception.getStatus() == 404 || exception.getStatus() == 400) {
+                     return false; // la excepción indica que el user no tiene "adoption" y significa que no cumple con los requisitos para que ML habilite Flex.
+                   }
+               }
+           // }
+            //En cualquier otro caso, lanzar el error de tipo PGException
+            logger.error("Error desconocido de Mercado Libre, Method: accountWithEnabledFlex(), Service: meli-service, Error: ", e);
+            throw new PGException(exception.getMessage(), exception.getError(), exception.getStatus());
+        }
         if (!Objects.isNull(accountConfig)){
             MeliAccountConfiguration meliAccountConfig = mapper.convertValue(accountConfig, MeliAccountConfiguration.class);
-            if(meliAccountConfig.getConfiguration().getAdoption() != null &&
-                meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("same_day")
-                && meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("next_day"))
+            if((meliAccountConfig.getConfiguration().getAdoption() != null &&
+                meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("same_day")) ||
+                (meliAccountConfig.getConfiguration().getAdoption() != null
+                && meliAccountConfig.getConfiguration().getAdoption().getDelivery_window().equals("next_day")))
             {
                 return true;
             }

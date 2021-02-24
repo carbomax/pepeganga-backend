@@ -267,7 +267,7 @@ public class ApiService implements IApiService {
 
     @Override
     public Object showConfigurationSeller(QueryRequest request, String token) throws ApiException {
-        return restClientApiUy.resourcePost(String.format(ApiResources.SITES + "%s", "/shipping/selfservice/configuration"), token, request);
+        return restClientApiUy.resourcePost("/shipping/selfservice/configuration", token, request);
     }
 
 
