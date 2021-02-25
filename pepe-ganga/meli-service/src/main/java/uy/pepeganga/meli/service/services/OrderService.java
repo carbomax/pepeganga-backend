@@ -682,7 +682,7 @@ public class OrderService implements IOrderService {
                                         .sellerName(meliOrders.getSeller().getFirstsName().concat(" ").concat(meliOrders.getSeller().getLastName()))
                                         .coin(meliOrders.getCurrencyId().trim().equals("UYU") ? 1 : 2)
                                         .location("")
-                                        .orderId(Long.parseLong(meliOrders.getOrderId().trim()))
+                                        .orderId(meliOrders.getId())
                                         .sellerId(sellerAccount.getId())
                                         .observation("PEPEGANGA_DROP")
                                         .items(meliOrderItemDtos).build()
