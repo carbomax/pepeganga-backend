@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+/log/products-service.log.2021-02-15.0.gz
+/log/products-service.log
