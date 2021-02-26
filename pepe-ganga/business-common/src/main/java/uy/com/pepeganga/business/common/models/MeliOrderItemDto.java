@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Builder
 public class MeliOrderItemDto implements Serializable {
 
- private String itemId;
+ private String sellerSKU;
 
  private String description;
 

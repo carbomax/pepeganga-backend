@@ -53,9 +53,10 @@ public class MeliOrders implements Serializable {
 
     private String dateCreatedMeli;
 
-    // 0 - Not sent, 1 - Sent
+    // 0 - Not sent, 1 - Sent, 2 - attempts exhausted
     private Integer sentToErp;
 
+    //values = 0, 1, 2, 3
     private Short countFails = 0;
 
     @ManyToOne(fetch = FetchType.EAGER)

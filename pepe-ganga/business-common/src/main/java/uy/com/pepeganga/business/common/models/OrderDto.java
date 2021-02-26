@@ -2,7 +2,6 @@ package uy.com.pepeganga.business.common.models;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 
 import java.io.Serializable;
 import java.util.List;

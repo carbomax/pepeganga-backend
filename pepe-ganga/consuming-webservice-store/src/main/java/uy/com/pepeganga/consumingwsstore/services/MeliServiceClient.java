@@ -15,7 +15,7 @@ public class MeliServiceClient implements IMeliServiceClient {
     MeliFeignClient meliClient;
 
     @Autowired
-    IPurchaseOrders po;
+    IPurchaseOrdersService po;
 
     @Override
     public List<OrderDto> getRecentOrdersByBatch(int quantity) {

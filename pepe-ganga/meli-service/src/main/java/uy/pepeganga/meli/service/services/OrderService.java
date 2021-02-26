@@ -565,6 +565,7 @@ public class OrderService implements IOrderService {
                 carrier.setId(0);
                 orderToCreate.setCarrier(carrier);
                 orderToCreate.setSentToErp(0);
+                orderToCreate.setCountFails((short)0);
                 ordersRepository.save(orderToCreate);
 
                 // Update stock
@@ -663,7 +664,7 @@ public class OrderService implements IOrderService {
             orders.forEach(meliOrders -> {
                 List<MeliOrderItemDto> meliOrderItemDtos = new ArrayList<>();
                 meliOrders.getItems().forEach(item -> meliOrderItemDtos.add(MeliOrderItemDto.builder()
-                        .itemId(item.getItemId())
+                        .sellerSKU(item.getSellerSku().trim())
                         .price(item.getUnitPrice())
                         .quantity(item.getQuantity())
                         .description(item.getTitle())
@@ -684,7 +685,8 @@ public class OrderService implements IOrderService {
                                         .location("")
                                         .orderId(meliOrders.getId())
                                         .sellerId(sellerAccount.getId())
-                                        .observation("PEPEGANGA_DROP")
+                                        .observation(meliOrders.getObservationBss())
+                                       // .observation("PEPEGANGA_DROP")
                                         .items(meliOrderItemDtos).build()
                         );
                     }catch (Exception e){

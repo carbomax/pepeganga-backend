@@ -1,10 +1,8 @@
 package uy.com.pepeganga.consumingwsstore.services;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
 import uy.com.pepeganga.business.common.models.MeliOrderItemDto;
@@ -17,20 +15,19 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class PurchaseOrders extends WebServiceGatewaySupport implements IPurchaseOrders {
+public class PurchaseOrdersService extends WebServiceGatewaySupport implements IPurchaseOrdersService {
 
     @Autowired
     IMeliOrderRepository meliOrderRepo;
 
-    private static final Logger logger = LoggerFactory.getLogger(PurchaseOrders.class);
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseOrdersService.class);
 
     @Override
     public void registerPurchaseOrders(List<OrderDto> ordersDto){
 
         CargarPedidoWebPpggExecute request = new CargarPedidoWebPpggExecute();
-        List<String> ordersToUpdate = new ArrayList<>();
-        List<String> ordersFails = new ArrayList<>();
+        List<Long> ordersToUpdate = new ArrayList<>();
+        List<Long> ordersFails = new ArrayList<>();
 
         ordersDto.forEach(orderDto -> {
 
@@ -48,14 +45,14 @@ public class PurchaseOrders extends WebServiceGatewaySupport implements IPurchas
                     CargarPedidoWebPpggExecuteResponse response = (CargarPedidoWebPpggExecuteResponse) getWebServiceTemplate()
                             .marshalSendAndReceive("http://201.217.140.35/agile/aCargarPedidoWebPpgg.aspx", request);
 
-                    if(response.getSdtpedidoppggrespuesta().getOk() == "S"){
-                        ordersToUpdate.add(String.valueOf(orderDto.getOrderId()) );
+                    if(response.getSdtpedidoppggrespuesta().getOk().toUpperCase().trim().equals("S") ){
+                        ordersToUpdate.add(orderDto.getOrderId() );
                     }else{
-                        ordersFails.add(String.valueOf(orderDto.getOrderId()));
+                        ordersFails.add(orderDto.getOrderId());
                     }
                 }catch (Exception e){
                     logger.error(String.format("Error Enviando Peticion de orden al servicio, Método: registerPurchaseOrders(), Msg: %s, Error:  ", e.getMessage()), e);
-                    ordersFails.add(String.valueOf(orderDto.getOrderId()));
+                    ordersFails.add(orderDto.getOrderId());
                 }
             } catch (DatatypeConfigurationException e) {
                 logger.error(String.format("Error parsiando datos de la Orden con Id: %s, Metodo: initHead(), Msg: %s, Error: ", orderDto.getOrderId(), e.getMessage()), e);
@@ -68,7 +65,7 @@ public class PurchaseOrders extends WebServiceGatewaySupport implements IPurchas
         }
         //Falló al enviar
         if(!ordersFails.isEmpty()){
-            List<MeliOrders> meliOrdersList = meliOrderRepo.findAllByOrderIds(ordersFails);
+            List<MeliOrders> meliOrdersList = meliOrderRepo.findAllById(ordersFails);
             if(meliOrdersList != null || !meliOrdersList.isEmpty() ){
                 meliOrdersList.forEach(mo -> {
                     if(mo.getSentToErp() != 2) { //Si no tienen los 3 intentos agotados
@@ -111,7 +108,7 @@ public class PurchaseOrders extends WebServiceGatewaySupport implements IPurchas
         ArrayOfSdtPedidoPpggRenglonesSdtPedPpggRenglon orderList = new ArrayOfSdtPedidoPpggRenglonesSdtPedPpggRenglon();
         detailOrderList.forEach(order -> {
             SdtPedidoPpggRenglonesSdtPedPpggRenglon detailsOrder = new SdtPedidoPpggRenglonesSdtPedPpggRenglon();
-            detailsOrder.setArtId(order.getItemId());
+            detailsOrder.setArtId(order.getSellerSKU());
             detailsOrder.setCantidad(order.getQuantity());
             detailsOrder.setDescripcion(order.getDescription());
             detailsOrder.setObservaciones(order.getObservations());

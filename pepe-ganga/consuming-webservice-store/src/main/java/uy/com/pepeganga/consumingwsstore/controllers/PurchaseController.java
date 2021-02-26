@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import uy.com.pepeganga.business.common.models.PurchaseNotification;
 import uy.com.pepeganga.business.common.models.OrderDto;
-import uy.com.pepeganga.consumingwsstore.services.IPurchaseOrders;
+import uy.com.pepeganga.consumingwsstore.services.IPurchaseOrdersService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 public class PurchaseController {
 
     @Autowired
-    IPurchaseOrders purchaseOrdersService;
+    IPurchaseOrdersService purchaseOrdersService;
 
     @PostMapping("/process")
     public ResponseEntity<String> processPurchases(@RequestBody OrderDto ordersDto)  {
