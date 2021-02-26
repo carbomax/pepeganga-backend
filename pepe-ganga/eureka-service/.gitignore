@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/log/eureka-server.log.2021-02-08.0.gz
