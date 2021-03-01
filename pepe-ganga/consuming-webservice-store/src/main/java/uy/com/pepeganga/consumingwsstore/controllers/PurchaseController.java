@@ -3,12 +3,11 @@ package uy.com.pepeganga.consumingwsstore.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.models.PurchaseNotification;
 import uy.com.pepeganga.business.common.models.OrderDto;
+import uy.com.pepeganga.business.common.models.ReasonResponse;
+import uy.com.pepeganga.consumingwsstore.client.MeliFeignClient;
 import uy.com.pepeganga.consumingwsstore.services.IPurchaseOrdersService;
 
 import java.util.ArrayList;
@@ -21,13 +20,22 @@ public class PurchaseController {
     @Autowired
     IPurchaseOrdersService purchaseOrdersService;
 
-    @PostMapping("/process")
-    public ResponseEntity<String> processPurchases(@RequestBody OrderDto ordersDto)  {
-        List<OrderDto> ordersList = new ArrayList<>();
-        ordersList.add(ordersDto);
-        purchaseOrdersService.registerPurchaseOrders(ordersList);
+    @Autowired
+    MeliFeignClient meliFeignClient;
 
-        return new ResponseEntity<>(String.format("Proccesing %s", ordersDto.getOrderId()), HttpStatus.ACCEPTED);
+    @GetMapping("/process/{orderId}")
+    public ResponseEntity<String> processPurchases(@PathVariable Long orderId)  {
+        if(orderId == null) {
+            //throw
+        }
+        OrderDto orderDto = meliFeignClient.getRecentOrdersById(orderId);
+        List<OrderDto> ordersList = new ArrayList<>();
+        ordersList.add(orderDto);
+        List<ReasonResponse> result = purchaseOrdersService.registerPurchaseOrders(ordersList);
+       // if (result.get(0).isSuccess())
+            return new ResponseEntity<>(String.format("{status: Enviado, orderId: %s}", orderDto.getOrderId()), HttpStatus.ACCEPTED);
+       /* else
+            throw new PG*/
     }
 
     @PostMapping("/notification")

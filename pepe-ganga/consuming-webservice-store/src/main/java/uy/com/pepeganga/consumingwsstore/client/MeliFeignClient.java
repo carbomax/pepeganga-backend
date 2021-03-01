@@ -1,10 +1,8 @@
 package uy.com.pepeganga.consumingwsstore.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.com.pepeganga.consumingwsstore.models.Pair;
 
@@ -18,4 +16,7 @@ public interface MeliFeignClient {
 
     @GetMapping("/api/orders/recent")
     List<OrderDto> getRecentOrdersByBatch(@RequestParam(defaultValue = "5", required = false) int quantity);
+
+    @GetMapping("/api/orders/by-id/{id}")
+    OrderDto getRecentOrdersById(@PathVariable Long id);
 }

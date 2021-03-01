@@ -87,4 +87,9 @@ public class OrderController {
     public ResponseEntity<List<OrderDto>> getRecentOrdersByBatch(@RequestParam(defaultValue = "5", required = false) int quantity){
         return new ResponseEntity<>(orderService.getRecentOrdersByBatch(quantity), HttpStatus.OK);
     }
+
+    @GetMapping("/by-id/{id}")
+    public ResponseEntity<OrderDto> getRecentOrdersById(@PathVariable Long id){
+        return new ResponseEntity<>(orderService.getRecentOrderById(id), HttpStatus.OK);
+    }
 }

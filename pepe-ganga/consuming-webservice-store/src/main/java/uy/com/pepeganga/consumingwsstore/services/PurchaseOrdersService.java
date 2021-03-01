@@ -7,6 +7,7 @@ import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
 import uy.com.pepeganga.business.common.models.MeliOrderItemDto;
 import uy.com.pepeganga.business.common.models.OrderDto;
+import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.consumingwsstore.repositories.IMeliOrderRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.purchaseOrders.*;
@@ -23,8 +24,9 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
     private static final Logger logger = LoggerFactory.getLogger(PurchaseOrdersService.class);
 
     @Override
-    public void registerPurchaseOrders(List<OrderDto> ordersDto){
+    public List<ReasonResponse> registerPurchaseOrders(List<OrderDto> ordersDto){
 
+        List<ReasonResponse> result = new ArrayList<>();
         CargarPedidoWebPpggExecute request = new CargarPedidoWebPpggExecute();
         List<Long> ordersToUpdate = new ArrayList<>();
         List<Long> ordersFails = new ArrayList<>();
@@ -47,15 +49,23 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
 
                     if(response.getSdtpedidoppggrespuesta().getOk().toUpperCase().trim().equals("S") ){
                         ordersToUpdate.add(orderDto.getOrderId() );
+                        result.add(new ReasonResponse(true, "{'orderId':'" + orderDto.getOrderId() + "'," +
+                                "'message':'Enviado'}"));
                     }else{
                         ordersFails.add(orderDto.getOrderId());
+                        result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
+                                "'message':'" + response.getSdtpedidoppggrespuesta().getMensajeError() + "'}"));
                     }
                 }catch (Exception e){
                     logger.error(String.format("Error Enviando Peticion de orden al servicio, Método: registerPurchaseOrders(), Msg: %s, Error:  ", e.getMessage()), e);
                     ordersFails.add(orderDto.getOrderId());
+                    result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
+                            "'message':'" + e.getMessage() + "'}"));
                 }
             } catch (DatatypeConfigurationException e) {
                 logger.error(String.format("Error parsiando datos de la Orden con Id: %s, Metodo: initHead(), Msg: %s, Error: ", orderDto.getOrderId(), e.getMessage()), e);
+                result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
+                        "'message':'" + e.getMessage() + "'}"));
             }
 
         });
@@ -83,6 +93,7 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
             }
         }
 
+        return result;
     }
 
     private SDTPedidoPpggCabezal initHead(OrderDto orderDto) throws DatatypeConfigurationException {

@@ -1,9 +1,10 @@
 package uy.com.pepeganga.consumingwsstore.services;
 
 import uy.com.pepeganga.business.common.models.OrderDto;
+import uy.com.pepeganga.business.common.models.ReasonResponse;
 
 import java.util.List;
 
 public interface IPurchaseOrdersService {
-    void registerPurchaseOrders(List<OrderDto> ordersDto);
+    List<ReasonResponse> registerPurchaseOrders(List<OrderDto> ordersDto);
 }

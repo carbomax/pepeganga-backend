@@ -47,4 +47,6 @@ public interface IOrderService {
     List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId);
 
     List<OrderDto> getRecentOrdersByBatch(int quantity);
+
+    OrderDto getRecentOrderById(Long id);
 }

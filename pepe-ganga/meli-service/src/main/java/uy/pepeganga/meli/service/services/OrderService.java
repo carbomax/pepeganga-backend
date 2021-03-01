@@ -660,49 +660,65 @@ public class OrderService implements IOrderService {
         if(orders.isEmpty()){
             return Collections.emptyList();
         } else {
-            List<OrderDto> ordersDto = new ArrayList<>();
-            orders.forEach(meliOrders -> {
-                List<MeliOrderItemDto> meliOrderItemDtos = new ArrayList<>();
-                meliOrders.getItems().forEach(item -> meliOrderItemDtos.add(MeliOrderItemDto.builder()
-                        .sellerSKU(item.getSellerSku().trim())
-                        .price(item.getUnitPrice())
-                        .quantity(item.getQuantity())
-                        .description(item.getTitle())
-                        .observations(item.getTitle()).build()));
-                SellerAccount sellerAccount = sellerAccountRepository.findByUserIdBss(meliOrders.getSeller().getSellerId());
-                if(!meliOrderItemDtos.isEmpty() && !Objects.isNull(sellerAccount) && !Objects.isNull(sellerAccount.getProfile())){
-                    try{
-                        ordersDto.add(
-                                OrderDto.builder()
-                                        .address(sellerAccount.getProfile().getAddress())
-                                        .date(meliOrders.getBusinessDateCreated())
-                                        .email(sellerAccount.getProfile().getUser().getEmail())
-                                        .department("")
-                                        .rut(Long.parseLong(sellerAccount.getProfile().getRut()))
-                                        .ci(sellerAccount.getProfile().getCi())
-                                        .sellerName(meliOrders.getSeller().getFirstsName().concat(" ").concat(meliOrders.getSeller().getLastName()))
-                                        .coin(meliOrders.getCurrencyId().trim().equals("UYU") ? 1 : 2)
-                                        .location("")
-                                        .orderId(meliOrders.getId())
-                                        .sellerId(sellerAccount.getId())
-                                        .observation(meliOrders.getObservationBss())
-                                       // .observation("PEPEGANGA_DROP")
-                                        .items(meliOrderItemDtos).build()
-                        );
-                    }catch (Exception e){
-                        logger.info("Order {} cannot be informed because occurred a exception: {}", meliOrders.getOrderId(), e.getMessage());
-                    }
-                } else {
-                    logger.info("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
-                            meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount.getProfile()));
-                }
-
-            });
+            List<OrderDto> ordersDto = createOrdersDtos(orders);
             return ordersDto;
-
         }
-
 
     }
 
+    @Override
+    public OrderDto getRecentOrderById(Long id) {
+        Optional<MeliOrders> order = ordersRepository.findById(id);
+        if(order.isEmpty()){
+            return null;
+        } else {
+            List<MeliOrders> orders = new ArrayList<>();
+            orders.add(order.get());
+            List<OrderDto> ordersDto = createOrdersDtos(orders);
+            return ordersDto.get(0);
+        }
+
+    }
+
+    private List<OrderDto> createOrdersDtos(List<MeliOrders> ordersList) {
+        List<OrderDto> ordersDto = new ArrayList<>();
+        ordersList.forEach(meliOrders -> {
+            List<MeliOrderItemDto> meliOrderItemDtos = new ArrayList<>();
+            meliOrders.getItems().forEach(item -> meliOrderItemDtos.add(MeliOrderItemDto.builder()
+                    .sellerSKU(item.getSellerSku().trim())
+                    .price(item.getUnitPrice())
+                    .quantity(item.getQuantity())
+                    .description(item.getTitle())
+                    .observations(item.getTitle()).build()));
+            SellerAccount sellerAccount = sellerAccountRepository.findByUserIdBss(meliOrders.getSeller().getSellerId());
+            if(!meliOrderItemDtos.isEmpty() && !Objects.isNull(sellerAccount) && !Objects.isNull(sellerAccount.getProfile())){
+                try{
+                    ordersDto.add(
+                            OrderDto.builder()
+                                    .address(sellerAccount.getProfile().getAddress())
+                                    .date(meliOrders.getBusinessDateCreated())
+                                    .email(sellerAccount.getProfile().getUser().getEmail())
+                                    .department("")
+                                    .rut(Long.parseLong(sellerAccount.getProfile().getRut()))
+                                    .ci(sellerAccount.getProfile().getCi())
+                                    .sellerName(meliOrders.getSeller().getFirstsName().concat(" ").concat(meliOrders.getSeller().getLastName()))
+                                    .coin(meliOrders.getCurrencyId().trim().equals("UYU") ? 1 : 2)
+                                    .location("")
+                                    .orderId(meliOrders.getId())
+                                    .sellerId(sellerAccount.getId())
+                                    .observation(meliOrders.getObservationBss())
+                                    // .observation("PEPEGANGA_DROP")
+                                    .items(meliOrderItemDtos).build()
+                    );
+                }catch (Exception e){
+                    logger.info("Order {} cannot be informed because occurred a exception: {}", meliOrders.getOrderId(), e.getMessage());
+                }
+            } else {
+                logger.info("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
+                        meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount.getProfile()));
+            }
+
+        });
+        return ordersDto;
+    }
 }
