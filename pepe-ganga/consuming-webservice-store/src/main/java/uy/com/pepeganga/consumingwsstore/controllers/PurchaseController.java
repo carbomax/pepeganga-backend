@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.models.PurchaseNotification;
 import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
@@ -28,21 +27,21 @@ public class PurchaseController {
     MeliFeignClient meliFeignClient;
 
     @GetMapping("/process/{orderId}")
-    public ResponseEntity<String> processPurchases(@PathVariable Long orderId) throws ParseException, PGException {
+    public ResponseEntity<ReasonResponse> processPurchases(@PathVariable Long orderId) throws ParseException {
         if(orderId == null) {
-            return new ResponseEntity<>("No se aceptan parámetros nulos", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ReasonResponse(false, "{\"error\":\"No se aceptan valores nulos\", \"causes\":\"el parámetro Id es nulo\"}"), HttpStatus.BAD_REQUEST);
         }
         OrderDto orderDto = meliFeignClient.getRecentOrdersById(orderId);
         List<OrderDto> ordersList = new ArrayList<>();
         ordersList.add(orderDto);
         List<ReasonResponse> result = purchaseOrdersService.registerPurchaseOrders(ordersList);
         if (result.get(0).isSuccess())
-            return new ResponseEntity<>(String.format("{status: Enviado, orderId: %s}", orderDto.getOrderId()), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(result.get(0), HttpStatus.OK);
         else {
             JSONParser jsonParser = new JSONParser();
             JSONObject obj = (JSONObject) jsonParser.parse(result.get(0).getReason());
-            throw new PGException("Error registrando orden en el sistema ERP", obj.get("message").toString(), HttpStatus.FAILED_DEPENDENCY.value() );
-        }
+            return new ResponseEntity<>(new ReasonResponse(false, "{\"error\":\"Error registrando orden en el sistema ERP\", \"causes\":\" " + obj.get("message").toString() + " \"}"), HttpStatus.FAILED_DEPENDENCY);
+           }
 
     }
 

@@ -49,23 +49,21 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
 
                     if(response.getSdtpedidoppggrespuesta().getOk().toUpperCase().trim().equals("S") ){
                         ordersToUpdate.add(orderDto.getOrderId() );
-                        result.add(new ReasonResponse(true, "{'orderId':'" + orderDto.getOrderId() + "'," +
-                                "'message':'Enviado'}"));
+                        result.add(new ReasonResponse(true, " {\"orderId\": " + orderDto.getOrderId() + ", \"message\":\"Enviado\"} "));
                     }else{
                         ordersFails.add(orderDto.getOrderId());
-                        result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
-                                "'message':'" + response.getSdtpedidoppggrespuesta().getMensajeError() + "'}"));
+                        result.add(new ReasonResponse(false, " { \"orderId\":" + orderDto.getOrderId() + ", \"message\":\"" + response.getSdtpedidoppggrespuesta().getMensajeError() + " \"}"));
                     }
                 }catch (Exception e){
                     logger.error(String.format("Error Enviando Peticion de orden al servicio, Método: registerPurchaseOrders(), Msg: %s, Error:  ", e.getMessage()), e);
                     ordersFails.add(orderDto.getOrderId());
-                    result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
-                            "'message':'" + e.getMessage() + "'}"));
+                    result.add(new ReasonResponse(false, "{orderId:" + orderDto.getOrderId() + "," +
+                            "message:" + e.getMessage() + "}"));
                 }
             } catch (DatatypeConfigurationException e) {
                 logger.error(String.format("Error parsiando datos de la Orden con Id: %s, Método: initHead(), Msg: %s, Error: ", orderDto.getOrderId(), e.getMessage()), e);
-                result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
-                        "'message':'" + e.getMessage() + "'}"));
+                result.add(new ReasonResponse(false, "{orderId:" + orderDto.getOrderId() + "," +
+                        "message:" + e.getMessage() + "}"));
             }
 
         });
