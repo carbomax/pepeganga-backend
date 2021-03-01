@@ -63,7 +63,7 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
                             "'message':'" + e.getMessage() + "'}"));
                 }
             } catch (DatatypeConfigurationException e) {
-                logger.error(String.format("Error parsiando datos de la Orden con Id: %s, Metodo: initHead(), Msg: %s, Error: ", orderDto.getOrderId(), e.getMessage()), e);
+                logger.error(String.format("Error parsiando datos de la Orden con Id: %s, Método: initHead(), Msg: %s, Error: ", orderDto.getOrderId(), e.getMessage()), e);
                 result.add(new ReasonResponse(false, "{'orderId':'" + orderDto.getOrderId() + "'," +
                         "'message':'" + e.getMessage() + "'}"));
             }
