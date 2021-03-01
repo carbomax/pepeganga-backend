@@ -6,6 +6,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 
+import java.util.List;
+
 @Repository
 public interface SellerAccountRepository extends JpaRepository<SellerAccount, Integer> {
 
@@ -25,5 +27,8 @@ public interface SellerAccountRepository extends JpaRepository<SellerAccount, In
 
 
     SellerAccount findByUserIdBss(Long userIdBss);
+
+    @Query(value = "select s from SellerAccount s where s.userIdBss is not null and s.userIdBss > 0")
+    List<SellerAccount> findAllBySynchronizedAccount();
 
 }

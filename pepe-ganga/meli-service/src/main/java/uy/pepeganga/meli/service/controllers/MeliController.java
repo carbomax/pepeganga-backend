@@ -7,10 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.Margin;
+import uy.com.pepeganga.business.common.entities.MeliCategoryME2;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
+import uy.com.pepeganga.business.common.exceptions.PGException;
+import uy.pepeganga.meli.service.exceptions.NotFoundException;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
+import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.services.IMeliService;
 
@@ -48,15 +53,26 @@ public class MeliController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @GetMapping("/enabled-disabled-flex-by-admin")
+    public ResponseEntity<List<MeliSellerAccountFlexDto>> getAccountsEnabledOrDisabledFlexByAdmin(){
+        return new ResponseEntity<>(meliService.getAccountsEnabledOrDisabledFlexByAdmin(), HttpStatus.OK);
+    }
+
+    @PutMapping("/enabled-disabled-flex-by-admin/{accountId}")
+    public ResponseEntity<MeliSellerAccountFlexDto> updateAccountsEnabledOrDisabledFlexByAdmin(@PathVariable int accountId, @RequestParam int enableFlex) throws PGException {
+        return new ResponseEntity<>(meliService.updateAccountsEnabledOrDisabledFlexByAdmin(accountId, enableFlex), HttpStatus.OK);
+    }
+
+
     @PostMapping("/publications/{accountId}")
     public ResponseEntity<Map<String, Object>> createPublication(@RequestBody Item item, @PathVariable Integer accountId){
         return new ResponseEntity<>(meliService.createPublication(item, accountId), HttpStatus.CREATED);
     }
 
     @PostMapping("/publications-flow/{accountId}")
-    public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin, @RequestParam int flex){
+    public ResponseEntity<Boolean> createPublicationsFlow(@RequestBody List<ItemModel> items, @PathVariable Integer accountId, @RequestParam Short idMargin){
         try {
-            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin, flex), HttpStatus.CREATED);
+            return new ResponseEntity<>(meliService.createPublicationsFlow(items, accountId, idMargin), HttpStatus.CREATED);
         }
         catch (Exception e){
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -122,4 +138,26 @@ public class MeliController {
     public void updateStock(@RequestBody List<Pair> pairs, @RequestParam Long idData){
         meliService.updateStock(pairs, idData);
     }
+
+    @GetMapping("/categories-me2")
+    public ResponseEntity<List<MeliCategoryME2>> getAllCategoriesME2() {
+        return new ResponseEntity<>(meliService.getListCategoriesME2(), HttpStatus.OK);
+    }
+
+    @PostMapping("/save-categories-me2")
+    public ResponseEntity<List<MeliCategoryME2>> saveCategoriesME2(@RequestBody List<MeliCategoryME2> categoriesList) {
+        return new ResponseEntity<>(meliService.saveCategoriesME2(categoriesList), HttpStatus.OK);
+    }
+
+    @PostMapping("/delete-category-me2")
+    public ResponseEntity<Boolean> deleteCategoriesME2(@RequestBody MeliCategoryME2 category) throws NotFoundException {
+        return new ResponseEntity<>(meliService.deleteCategoryME2(category), HttpStatus.OK);
+    }
+
+    @GetMapping("/account-flex/{accountId}")
+    public ResponseEntity<Boolean> isFlexEnabled(@PathVariable Integer accountId) throws PGException, ApiException, TokenException {
+        return new ResponseEntity<>(meliService.accountWithEnabledFlex(accountId), HttpStatus.OK);
+    }
+
+
 }

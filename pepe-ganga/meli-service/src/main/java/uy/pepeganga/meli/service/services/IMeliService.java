@@ -2,13 +2,14 @@ package uy.pepeganga.meli.service.services;
 
 import meli.ApiException;
 import meli.model.Item;
-import uy.com.pepeganga.business.common.entities.DetailsPublicationsMeli;
-import uy.com.pepeganga.business.common.entities.Margin;
-import uy.com.pepeganga.business.common.entities.SellerAccount;
-import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
+import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.exceptions.PGException;
+import uy.pepeganga.meli.service.exceptions.NotFoundException;
+import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.DetailsPublicationsMeliGrid;
 import uy.pepeganga.meli.service.models.ItemModel;
 import uy.pepeganga.meli.service.models.Pair;
+import uy.pepeganga.meli.service.models.dto.MeliSellerAccountFlexDto;
 import uy.pepeganga.meli.service.models.publications.ChangeMultipleStatusRequest;
 import uy.pepeganga.meli.service.models.publications.DescriptionRequest;
 import uy.pepeganga.meli.service.models.publications.PropertiesWithSalesRequest;
@@ -33,7 +34,7 @@ public interface IMeliService {
 
     List<Map<String, Object>> createPublicationList(List<Item> items, Integer accountId ) throws Exception;
 
-    boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin, int flex) throws NoSuchFieldException;
+    boolean createPublicationsFlow(List<ItemModel> items, Integer accountId, Short idMargin) throws NoSuchFieldException;
 
     boolean createOrUpdateDetailPublicationsMeli(List<ItemModel> items, Integer accountId, Short idMargin);
 
@@ -68,5 +69,17 @@ public interface IMeliService {
     void synchronizationPublications(List<DetailsPublicationsMeli> detailsList);
 
     void disableFlexItems(List<DetailsPublicationsMeli> publicationsList, Integer accountId);
+
+    List<MeliSellerAccountFlexDto> getAccountsEnabledOrDisabledFlexByAdmin();
+
+    MeliSellerAccountFlexDto updateAccountsEnabledOrDisabledFlexByAdmin(int accountId, int enableFlex) throws PGException;
+
+    List<MeliCategoryME2> getListCategoriesME2();
+
+    List<MeliCategoryME2> saveCategoriesME2(List<MeliCategoryME2> categoriesME2List);
+
+    Boolean deleteCategoryME2(MeliCategoryME2 category) throws NotFoundException;
+
+    Boolean accountWithEnabledFlex(Integer accountId) throws PGException, TokenException, ApiException;
 
 }

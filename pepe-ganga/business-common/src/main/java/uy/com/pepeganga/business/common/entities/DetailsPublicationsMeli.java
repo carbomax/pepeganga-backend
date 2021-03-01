@@ -88,6 +88,9 @@ public class DetailsPublicationsMeli implements Serializable {
     // 0 - Not paused, 1 - Paused
     private Integer specialPaused = 0;
 
+    //0 - Not flex, 1 - Flex, 2 - Publication Failed
+    private Integer flex = 0;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -278,6 +281,14 @@ public class DetailsPublicationsMeli implements Serializable {
 
     public void setSpecialPaused(Integer specialPaused) {
         this.specialPaused = specialPaused;
+    }
+
+    public Integer getFlex() {
+        return flex;
+    }
+
+    public void setFlex(Integer flex) {
+        this.flex = flex;
     }
 
     @Override
