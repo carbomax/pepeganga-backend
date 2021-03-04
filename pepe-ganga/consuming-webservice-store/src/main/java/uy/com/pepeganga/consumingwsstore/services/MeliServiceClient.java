@@ -25,7 +25,7 @@ public class MeliServiceClient implements IMeliServiceClient {
 
     @Override
     public void executePurchaseOrder(){
-        List<OrderDto> orderList = getRecentOrdersByBatch(3);
+        List<OrderDto> orderList = getRecentOrdersByBatch(10);
         if(!orderList.isEmpty())
             po.registerPurchaseOrders(orderList);
     }

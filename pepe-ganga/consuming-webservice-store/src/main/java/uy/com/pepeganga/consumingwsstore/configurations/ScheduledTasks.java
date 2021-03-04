@@ -22,6 +22,7 @@ public class ScheduledTasks {
     IMeliServiceClient meliService;
 
     @Scheduled(initialDelay = 5000, fixedRate = 10800000)
+    @Async
     public void syncDataBase(){
         //@Scheduled(cron = "0 * * ? * *")
         logger.info("Initializing updating consuming service....");
@@ -30,6 +31,7 @@ public class ScheduledTasks {
     }
 
     @Scheduled(initialDelay = 5000, fixedRate = 180000)
+    @Async
     public void processPurchases(){
         //@Scheduled(cron = "0 * * ? * *")
         logger.info("Initializing process of Purchase Order Service....");

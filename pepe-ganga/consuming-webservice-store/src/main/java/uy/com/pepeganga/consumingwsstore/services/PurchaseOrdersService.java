@@ -50,9 +50,11 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
                     if(response.getSdtpedidoppggrespuesta().getOk().toUpperCase().trim().equals("S") ){
                         ordersToUpdate.add(orderDto.getOrderId() );
                         result.add(new ReasonResponse(true, " {\"orderId\": " + orderDto.getOrderId() + ", \"message\":\"Enviado\"} "));
+                        logger.info("Orden con Id: {} procesado correctamente", orderDto.getOrderId());
                     }else{
                         ordersFails.add(orderDto.getOrderId());
                         result.add(new ReasonResponse(false, " { \"orderId\":" + orderDto.getOrderId() + ", \"message\":\"" + response.getSdtpedidoppggrespuesta().getMensajeError() + " \"}"));
+                        logger.warn(String.format("Orden con ID: %d devolvió respuesta incorrecta, MSG: %s ", orderDto.getOrderId(), response.getSdtpedidoppggrespuesta().getMensajeError()));
                     }
                 }catch (Exception e){
                     logger.error(String.format("Error Enviando Peticion de orden al servicio, Método: registerPurchaseOrders(), Msg: %s, Error:  ", e.getMessage()), e);
