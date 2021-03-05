@@ -26,6 +26,21 @@ public class ConversionClass {
 		}
         return images;
     }
+
+    public static List<Image> buildImages(List<String> imageList) {
+		if (imageList.isEmpty())
+			return new ArrayList<>();
+
+		List<Image> images = new ArrayList<>();
+		for (int i = 0; i < imageList.size(); i++) {
+			Image img = new Image();
+			img.setPhotos(imageList.get(i));
+			img.setOrder(0);
+			img.setTitle("");
+			images.add(img);
+		}
+		return images;
+	}
     
     public static byte[] joinImages(List<Image> images)
     {

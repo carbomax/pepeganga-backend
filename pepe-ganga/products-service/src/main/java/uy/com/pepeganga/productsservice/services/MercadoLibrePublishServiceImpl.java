@@ -11,12 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
 import uy.com.pepeganga.business.common.utils.enums.ActionResult;
 import uy.com.pepeganga.business.common.utils.enums.MarketplaceType;
 import uy.com.pepeganga.business.common.utils.enums.States;
 import uy.com.pepeganga.business.common.utils.methods.ConfigurationsSystem;
+import uy.com.pepeganga.productsservice.client.UploadfeignClient;
 import uy.com.pepeganga.productsservice.gridmodels.*;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.RiskTime;
@@ -24,10 +26,7 @@ import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.repository.*;
 
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +37,9 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 	@Autowired
 	RiskTime property;
 	ConfigurationsSystem configService;
+
+	@Autowired
+	UploadfeignClient uploadfeign;
 
 	@Autowired
 	MercadoLibrePublishRepository mlPublishRepo;
@@ -152,7 +154,20 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setFamilyId(product.get().getFamily().getId());
 					mlp.setFamilyDesc(product.get().getFamily().getDescription());
 					mlp.setStates(States.NOPUBLISHED.getId());
-					mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
+
+					/*Nuevos cambios para las imagenes -- desde aqui */
+					Map<String, List<String>> urlsMap = null;
+					try {
+						urlsMap = uploadfeign.transferObjectsBucketsProductsToUpload(product.get().getSku(), idProfile, marketplace);
+					}catch (PGException pge) {
+
+					}
+					if(urlsMap != null || !urlsMap.isEmpty())
+						mlp.setImages(ConversionClass.buildImages(urlsMap.get(product.get().getSku())));
+					else
+						mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
+					/*Nuevos cambios para las imagenes -- Fin */
+
 					mlp.setSpecialPaused(product.get().getStockActual() <= getStockRisk() ? 1 : 0);
 					prodToStore.add(mlp);
 				}
