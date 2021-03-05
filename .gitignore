@@ -19,3 +19,6 @@ local.properties
 .loadpath
 .recommenders
 pepe-ganga/business-utils/business-utils.iml
+pepe-ganga/java-sdk-master/.classpath
+pepe-ganga/oauth-service/.settings/org.eclipse.jdt.apt.core.prefs
+pepe-ganga/oauth-service/.settings/org.eclipse.jdt.core.prefs
