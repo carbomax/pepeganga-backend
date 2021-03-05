@@ -1,10 +1,7 @@
 package uy.com.pepeganga.consumingwsstore.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
-
 import uy.com.pepeganga.business.common.entities.Category;
 import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
@@ -13,6 +10,8 @@ import uy.com.pepeganga.consumingwsstore.repositories.ICategoryRepository;
 import uy.com.pepeganga.consumingwsstore.repositories.IUpdatesSystemRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.categories.CargaZafrasExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.categories.CargaZafrasExecuteResponse;
+
+import java.util.List;
 
 
 public class CategoryRequestService extends WebServiceGatewaySupport {	

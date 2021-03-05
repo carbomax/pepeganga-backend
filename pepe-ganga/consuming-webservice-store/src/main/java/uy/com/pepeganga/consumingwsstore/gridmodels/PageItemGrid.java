@@ -1,8 +1,8 @@
 package uy.com.pepeganga.consumingwsstore.gridmodels;
 
-import java.util.List;
-
 import org.springframework.data.domain.Sort;
+
+import java.util.List;
 
 public class PageItemGrid {
 

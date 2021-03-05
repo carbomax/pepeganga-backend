@@ -16,6 +16,7 @@
             <modules>
                 <module>java-sdk-master</module>
                 <module>business-common</module>
+                <module>business-utils</module>
                 <module>eureka-service</module>
                 <module>user-service</module>
                 <module>zuul-service</module>
@@ -33,6 +34,7 @@
             <modules>
                 <module>java-sdk-master</module>
                 <module>business-common</module>
+                <module>business-utils</module>
                 <module>eureka-service</module>
                 <module>user-service</module>
                 <module>zuul-service</module>
@@ -48,6 +50,7 @@
             <modules>
                 <module>java-sdk-master</module>
                 <module>business-common</module>
+                <module>business-utils</module>
                 <module>eureka-service</module>
                 <module>user-service</module>
                 <module>oauth-service</module>

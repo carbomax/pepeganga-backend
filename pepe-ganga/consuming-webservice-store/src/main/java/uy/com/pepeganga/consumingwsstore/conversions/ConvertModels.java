@@ -1,8 +1,4 @@
 package uy.com.pepeganga.consumingwsstore.conversions;
-import static java.util.Objects.isNull;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import uy.com.pepeganga.business.common.entities.*;
@@ -13,6 +9,11 @@ import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPaginaArticul
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtArtFotosSdtArtFoto;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtCategoriasSdtCategoria;
 import uy.com.pepeganga.consumingwsstore.wsdl.marcas.SdtMarcasSdtMarca;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.util.Objects.isNull;
 
 public class ConvertModels {
 
