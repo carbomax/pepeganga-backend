@@ -36,4 +36,6 @@ public class ScheduledTasks {
         stockProcessorService.schedulingStockProcessor();
         logger.info("Finishing Stock processor scheduler....");
     }
+
+
 }

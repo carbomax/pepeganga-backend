@@ -17,6 +17,12 @@ public class ReasonResponse {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
-	
+
+	public ReasonResponse() {
+	}
+
+	public ReasonResponse(boolean success, String reason) {
+		this.success = success;
+		this.reason = reason;
+	}
 }
