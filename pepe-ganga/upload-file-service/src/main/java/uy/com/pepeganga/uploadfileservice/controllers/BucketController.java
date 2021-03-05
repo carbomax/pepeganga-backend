@@ -68,12 +68,12 @@ public class BucketController {
         return new ResponseEntity<>(storageService.getUrlsByProfileMarketplaceSku(folder,sku, profileId, marketplace), HttpStatus.OK);
     }
 
-    @PostMapping("upload-file-to-legacy")
+    @PostMapping("/upload-file-to-legacy")
     public ResponseEntity<String> uploadFileToLegacy(@RequestParam MultipartFile multipartFile) throws PGException {
         return new ResponseEntity<>(storageService.uploadFileToLegacy(multipartFile), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("delete-file-from-upload-bucket")
+    @DeleteMapping("/delete-file-from-upload-bucket")
     public ResponseEntity<Boolean> deleteFileFromUploadBucket(@RequestParam String pathFile) throws PGException {
         return new ResponseEntity<>(storageService.deleteFileFromUploadBucket(pathFile), HttpStatus.OK);
     }
