@@ -82,10 +82,10 @@ public class ItemServiceImpl implements ItemService {
 				}
 			}
 			if (StringUtils.isNotBlank(searchItem.getSku())) {
-				predicates.add(cb.like(root.get("sku").as(String.class), "%" + searchItem.getSku() + "%"));
+				predicates.add(cb.like(root.get("sku").as(String.class), "%" + searchItem.getSku().trim() + "%"));
 			}
 			if (StringUtils.isNotBlank(searchItem.getNameProduct())) {
-				predicates.add(cb.like(root.get("artDescripCatalogo").as(String.class), "%" + searchItem.getNameProduct() + "%"));
+				predicates.add(cb.like(root.get("artDescripCatalogo").as(String.class), "%" + searchItem.getNameProduct().trim() + "%"));
 			}
 			if (searchItem.getCategoryId() != -1) {
 				predicates.add(cb.equal(root.join("categories").get("id").as(Short.class), searchItem.getCategoryId()));
