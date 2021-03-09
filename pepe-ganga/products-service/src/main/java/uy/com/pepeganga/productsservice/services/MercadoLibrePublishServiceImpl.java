@@ -160,7 +160,8 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					try {
 						urlsMap = uploadfeign.transferObjectsBucketsProductsToUpload(product.get().getSku(), idProfile, marketplace);
 					}catch (PGException pge) {
-
+						logger.error("Error obteniendo imagenes del AWS, Method: transferObjectsBucketsProductsToUpload(), Error: {}, Causa: {}", pge.getError(), pge.getCauses());
+						logger.info("Obteniendo imágenes del servicio ERP. Esto es debido a que falló el servicio de imagenes de AWS.");
 					}
 					if(urlsMap != null || !urlsMap.isEmpty())
 						mlp.setImages(ConversionClass.buildImages(urlsMap.get(product.get().getSku())));
