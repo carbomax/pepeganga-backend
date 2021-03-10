@@ -2,6 +2,7 @@ package uy.pepeganga.meli.service.services;
 
 import org.springframework.data.domain.Page;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
+import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.pepeganga.meli.service.models.dto.CountPaidAndCancellerSalesDto;
 import uy.pepeganga.meli.service.models.dto.IBetterSkuDto;
@@ -46,7 +47,7 @@ public interface IOrderService {
 
     List<ISalesAndAmountBySeller> getAnalysisDrop(long dateFrom, long dateTo, Long sellerId);
 
-    List<OrderDto> getRecentOrdersByBatch(int quantity);
+    List<OrderDto> getRecentOrdersByBatch(int quantity) throws PGException;
 
-    OrderDto getRecentOrderById(Long id);
+    OrderDto getRecentOrderById(Long id) throws PGException;
 }
