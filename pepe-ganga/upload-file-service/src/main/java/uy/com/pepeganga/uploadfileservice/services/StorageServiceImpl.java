@@ -137,6 +137,14 @@ public class StorageServiceImpl implements StorageService {
 
     }
 
+    @Override
+    public boolean deleteFileListFromUploadBucket(List<String> filesName) throws PGException {
+        for (String fn: filesName) {
+            deleteFileFromUploadBucket(fn);
+        }
+        return true;
+    }
+
     private Map<String, List<String>> getUrlsBySkuInBatch(List<String> skus, String bucket) {
         Map<String, List<String>> skuUrls = new HashMap<>();
         skus.forEach(s -> {

@@ -46,3 +46,5 @@ meli:
       token: 30
   order:
     attempts: 3
+  hostname:
+    free: http://pepeganga-dropshipping.web.app

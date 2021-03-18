@@ -11,6 +11,7 @@ import uy.com.pepeganga.productsservice.gridmodels.DMDetailsPublicationsMeli;
 import uy.com.pepeganga.productsservice.gridmodels.MarketplaceDetails;
 import uy.com.pepeganga.productsservice.gridmodels.PageDeatilsPublicationMeli;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
+import uy.com.pepeganga.productsservice.models.CommonInfoRequest;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 
@@ -23,8 +24,10 @@ public interface MercadoLibrePublishService {
 	PageItemMeliGrid getItemsMeliByFiltersAndPaginator(String profileEncode, String sku, String nameProduct, Short state, Short familyId,
 			double minPrice, double maxPrice, Pageable pageable);
 
+	//Posible a sustituir por el metodo de abajo (2)
 	ReasonResponse storeCommonData(String profileEncode, String description,  List<String> skuList, List<Image> images);
-	
+	ReasonResponse storeCommonData2(String profileEncode, String description,  List<CommonInfoRequest> commonInfoList);
+
 	EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete )  throws Exception;
 
 	DMDetailsPublicationsMeli editInfoOfPublication(DMDetailsPublicationsMeli product, List<Integer>imagesToDelete ) throws Exception;

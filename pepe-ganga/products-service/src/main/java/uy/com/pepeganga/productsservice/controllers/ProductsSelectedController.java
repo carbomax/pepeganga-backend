@@ -12,6 +12,7 @@ import uy.com.pepeganga.business.common.entities.Image;
 import uy.com.pepeganga.business.common.entities.MercadoLibrePublications;
 import uy.com.pepeganga.business.common.models.ReasonResponse;
 import uy.com.pepeganga.productsservice.gridmodels.PageItemMeliGrid;
+import uy.com.pepeganga.productsservice.models.CommonInfoRequest;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
 import uy.com.pepeganga.productsservice.services.MercadoLibrePublishService;
@@ -35,11 +36,19 @@ public class ProductsSelectedController {
 			@PathVariable int page, @PathVariable int size, @PathVariable String profileEncode) {		
 		return new ResponseEntity<>(mlp_services.getItemsMeliByFiltersAndPaginator(profileEncode.trim(), sku, nameProduct, state, familyId, minPrice, maxPrice, PageRequest.of(page, size)), HttpStatus.OK);
 	}
-	
+
+	/**** OJO *** Posible a sustituir por segundo metodo *****/
 	@PutMapping("/store-common-data/{profileEncode}")
 	public ResponseEntity<ReasonResponse> storeCommonData( @PathVariable String profileEncode, @RequestParam String description, @RequestParam List<String> skuList, @RequestBody List<Image> images){
 		return new ResponseEntity<>(mlp_services.storeCommonData(profileEncode.trim(), description, skuList, images), HttpStatus.OK);
 	}
+
+	@PutMapping("/store-common-data2/{profileEncode}")
+	public ResponseEntity<ReasonResponse> storeCommonData2( @PathVariable String profileEncode, @RequestParam String description, @RequestBody List<CommonInfoRequest> commonInfoList){
+		return new ResponseEntity<>(mlp_services.storeCommonData2(profileEncode.trim(), description, commonInfoList), HttpStatus.OK);
+	}
+
+	/** Se termina aqui **/
 	
 	@PutMapping("/edit-product-info")
 	public ResponseEntity<EditableProductModel> updateInfoOfProduct(@RequestBody EditableProductModel product, @RequestParam List<Integer>imagesToDelete){

@@ -23,4 +23,6 @@ public interface StorageService {
     String uploadFileToLegacy(MultipartFile multipartFile) throws PGException;
 
     boolean deleteFileFromUploadBucket(String fileName) throws PGException;
+
+    boolean deleteFileListFromUploadBucket(List<String> filesName) throws PGException;
 }

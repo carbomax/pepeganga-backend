@@ -46,3 +46,5 @@ meli:
      token: 30
   order:
     attempts: 1
+  hostname:
+    free: http://localhost:9999

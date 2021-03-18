@@ -23,6 +23,7 @@ import uy.com.pepeganga.productsservice.gridmodels.*;
 import uy.com.pepeganga.productsservice.models.EditableProductModel;
 import uy.com.pepeganga.productsservice.models.RiskTime;
 import uy.com.pepeganga.productsservice.models.SelectedProducResponse;
+import uy.com.pepeganga.productsservice.models.CommonInfoRequest;
 import uy.com.pepeganga.productsservice.repository.*;
 
 import javax.persistence.criteria.*;
@@ -327,6 +328,50 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 		}
 		return reason;
 	}
+
+	@Override
+	public ReasonResponse storeCommonData2(String profileEncode, String description,  List<CommonInfoRequest> commonInfoList) {
+		ReasonResponse reason = new ReasonResponse();
+		reason.setSuccess(false);
+
+		if(description.isBlank() && commonInfoList.isEmpty())
+		{
+			reason.setReason("Valores de entrada nulos o vacios");
+			return reason;
+		}
+
+		try {
+			List<MercadoLibrePublications> productsToUpdate = new ArrayList<>();
+			Integer idProfile = ConversionClass.decodeBase64ToInt(profileEncode);
+
+			for (CommonInfoRequest ci : commonInfoList) {
+				MercadoLibrePublications product = mlPublishRepo.findByItemAndProfile(ci.getSku(), idProfile);
+				if(product != null)
+				{
+					if(!ci.getImages().isEmpty()) {
+						List<Image> imagesList = product.getImages();
+						imagesList.addAll(ci.getImages());
+						product.setImages(imagesList);
+					}
+					if(!description.isBlank()) {
+						product.setDescription(product.getDescription() + "\n" + description);
+					}
+
+					productsToUpdate.add(product);
+				}
+			}
+
+			mlPublishRepo.saveAll(productsToUpdate);
+			reason.setSuccess(true);
+		}
+		catch (Exception e) {
+			// TODO: handle exception
+			reason.setSuccess(false);
+			reason.setReason("error al almacenar valores");
+		}
+		return reason;
+	}
+
 
 	@Override
 	public EditableProductModel editInfoOfProduct(EditableProductModel product, List<Integer>imagesToDelete ) throws Exception

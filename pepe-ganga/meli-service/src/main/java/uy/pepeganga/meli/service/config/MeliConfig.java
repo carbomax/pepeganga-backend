@@ -14,6 +14,9 @@ public class MeliConfig {
     @Value("${meli.api.url}")
     private String basePathUrl;
 
+    @Value("${meli.hostname.free}")
+    private String freeServerPath;
+
     @Bean
     OAuth20Api auth20Api() {
         return new OAuth20Api(defaultClient());
@@ -33,4 +36,9 @@ public class MeliConfig {
 
     @Bean
     ObjectMapper objectMapper() { return new ObjectMapper(); }
+
+    @Bean(name = "freeServerPath")
+    public String getFreeServerPath() {
+        return freeServerPath;
+    }
 }

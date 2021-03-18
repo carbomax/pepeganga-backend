@@ -69,12 +69,17 @@ public class BucketController {
     }
 
     @PostMapping("/upload-file-to-legacy")
-    public ResponseEntity<String> uploadFileToLegacy(@RequestParam MultipartFile multipartFile) throws PGException {
+    public ResponseEntity<String> uploadFileToLegacy(@RequestBody MultipartFile multipartFile) throws PGException {
         return new ResponseEntity<>(storageService.uploadFileToLegacy(multipartFile), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete-file-from-upload-bucket")
     public ResponseEntity<Boolean> deleteFileFromUploadBucket(@RequestParam String pathFile) throws PGException {
         return new ResponseEntity<>(storageService.deleteFileFromUploadBucket(pathFile), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-files-list-from-upload-bucket")
+    public ResponseEntity<Boolean> deleteFileListFromUploadBucket(@RequestParam List<String> pathFiles) throws PGException {
+        return new ResponseEntity<>(storageService.deleteFileListFromUploadBucket(pathFiles), HttpStatus.OK);
     }
 }

@@ -16,6 +16,7 @@ import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.business.common.utils.enums.*;
 import uy.com.pepeganga.business.common.utils.methods.BurbbleSort;
+import uy.pepeganga.meli.service.config.MeliConfig;
 import uy.pepeganga.meli.service.exceptions.NotFoundException;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.*;
@@ -68,6 +69,9 @@ public class MeliService  implements IMeliService{
 
     @Autowired
     ObjectMapper mapper;
+
+    @Autowired
+    MeliConfig meliConfig;
 
     @Override
     public SellerAccount createAccountByProfile(Integer profileId, SellerAccount sellerAccount) {
@@ -308,7 +312,15 @@ public class MeliService  implements IMeliService{
 
         if(createOrUpdateDetailPublicationsMeli(items, accountId, idMargin)){
             for (ItemModel item: items) {
-                Map<String, Object> response = createPublication(item.getItem(), accountId);
+                //code to format images
+                Item localItem = item.getItem();
+                localItem.getPictures().forEach(i -> {
+                    if(!i.getSource().trim().startsWith("http://") && !i.getSource().trim().startsWith("https://")) {
+                        String path = (meliConfig.getFreeServerPath() + "/pepeganga/upload/api/bucket/download-file-from-upload-bucket?pathFile=" + i.getSource()).trim();
+                        i.setSource(path);
+                    }
+                });
+                Map<String, Object> response = createPublication(localItem, accountId);
                 if(response.containsKey("response")){
                     Object obj = response.get("response");
                     DetailsModelResponse detailM = mapper.convertValue(obj, DetailsModelResponse.class);
@@ -379,6 +391,10 @@ public class MeliService  implements IMeliService{
                 List<ImagePublicationMeli> newImageList = new ArrayList<>();
                 product.getImages().forEach(i -> {
                     if(i.getId() != null) {
+                        if(!i.getPhotos().trim().startsWith("http://") && !i.getPhotos().trim().startsWith("https://")) {
+                            String path = (meliConfig.getFreeServerPath() + "/pepeganga/upload/api/bucket/download-file-from-upload-bucket?pathFile=" + i.getPhotos()).trim();
+                            i.setPhotos(path);
+                        }
                         newImageList.add(i);
                     }
                 });

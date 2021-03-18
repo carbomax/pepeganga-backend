@@ -40,6 +40,8 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/pepeganga/notification/**", "/pepeganga/user/reset/**").permitAll()
                 .antMatchers(HttpMethod.GET,
                         "/pepeganga/upload/api/file/**",
+                                    "/pepeganga/upload/api/bucket/download-file-from-store-bucket",
+                                    "/pepeganga/upload/api/bucket/download-file-from-upload-bucket",
                                     "/pepeganga/user/reset/**",
                                     "/pepeganga/notification/**").permitAll()
                 .antMatchers(
