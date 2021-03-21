@@ -29,6 +29,8 @@ public class Profile implements Serializable {
 
 	private String businessName;
 
+	private Long ci;
+
 	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
 	private List<SellerAccount> sellerAccounts;
@@ -140,7 +142,15 @@ public class Profile implements Serializable {
         this.sellerAccounts = sellerAccounts;
     }
 
-    @Override
+	public Long getCi() {
+		return ci;
+	}
+
+	public void setCi(Long ci) {
+		this.ci = ci;
+	}
+
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;

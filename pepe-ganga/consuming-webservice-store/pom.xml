@@ -127,7 +127,7 @@
 			</resource>
 		</resources>
 	</build>
-
+ 
 	<!-- end::profile[] -->
 <!-- 
  	<build>
@@ -178,6 +178,39 @@
 </plugins>
 </build>
  -->
+	
+	<!-- 
+ 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.14.0</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+				  <schemaLanguage>WSDL</schemaLanguage>
+				<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.purchaseOrders</generatePackage>
+					<schemas>
+						<schema>
+							<url>http://201.217.140.35/agile/aCargarPedidoWebPpgg.aspx?wsdl</url>
+						</schema>
+					</schemas>					
+				</configuration>
+</plugin>
+</plugins>
+</build>
+  -->
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

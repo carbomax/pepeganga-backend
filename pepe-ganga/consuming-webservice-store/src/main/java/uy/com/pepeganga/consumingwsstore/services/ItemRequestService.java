@@ -1,13 +1,9 @@
 package uy.com.pepeganga.consumingwsstore.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
-
 import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
@@ -18,6 +14,9 @@ import uy.com.pepeganga.consumingwsstore.repositories.IUpdatesSystemRepository;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecute;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecuteResponse;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPagina;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ItemRequestService extends WebServiceGatewaySupport{

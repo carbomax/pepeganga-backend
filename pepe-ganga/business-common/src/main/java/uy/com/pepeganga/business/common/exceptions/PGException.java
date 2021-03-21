@@ -26,6 +26,10 @@ public class PGException  extends Exception{
         timestamp = DateTimeUtilsBss.getDateTimeAtCurrentTime().toString();
     }
 
+    public static <T extends PGException> PGException builder(T e){
+        return new PGException(e.getMessage(), e.getError(), e.getStatus(), e.getCauses());
+    }
+
     public String getError() {
         return error;
     }

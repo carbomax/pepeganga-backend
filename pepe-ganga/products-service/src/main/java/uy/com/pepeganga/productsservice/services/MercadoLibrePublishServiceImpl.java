@@ -481,6 +481,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			detailPublication.setTitle(result.get().getTitle());
 			detailPublication.setWarrantyTime(result.get().getWarrantyTime());
 			detailPublication.setWarrantyType(result.get().getWarrantyType());
+			detailPublication.setFlex(result.get().getFlex());
 		}
 		return detailPublication;
 	}
@@ -564,6 +565,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				publicationsMeliGrid.setSaleStatus(details.getSaleStatus());
 				publicationsMeliGrid.setDeleted(details.getDeleted());
 				publicationsMeliGrid.setSpecialPaused(details.getSpecialPaused());
+				publicationsMeliGrid.setFlex(details.getFlex());
 				publicationsMeliGrids.add(publicationsMeliGrid);
 				}
 				else{

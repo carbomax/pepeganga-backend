@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import uy.com.pepeganga.business.common.entities.SellerAccount;
 import uy.pepeganga.meli.service.exceptions.TokenException;
 import uy.pepeganga.meli.service.models.MeliAutheticationResponse;
+import uy.pepeganga.meli.service.models.meli_account_configuration.QueryRequest;
 import uy.pepeganga.meli.service.models.publications.*;
 
 import java.util.Map;
@@ -49,4 +50,7 @@ public interface IApiService {
     Object isFlexInItem(String idPublicationMeli, String token) throws ApiException;
 
     Object disableFlexInItem(String idPublicationMeli, String token) throws ApiException;
+
+    Object showConfigurationSeller(QueryRequest request, String token) throws ApiException;
+
 }
