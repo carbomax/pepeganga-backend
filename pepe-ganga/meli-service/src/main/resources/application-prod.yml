@@ -34,7 +34,7 @@ scheduler:
 
 # Business properties
 meli:
-  risk: 5
+  risk: 10
   api:
     url: https://api.mercadolibre.com
     invoice:

@@ -7,6 +7,23 @@ server:
     max-swallow-size: 20971520
     max-http-form-post-size: 20971520
 
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAYIPEKVVPDKAPWBMW
+      secret-key: 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
+    region:
+      static: us-east-2
+    stack:
+      auto: false
+
+application:
+  zuul-server:
+    path: http:://localhost:9999/pepeganga/upload/
+  buckets:
+    products: pepeganga-product-image
+    upload: pepeganga-upload-images
+
 logging:
   file:
     name: ./log/upload-file-service.log
