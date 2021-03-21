@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uy.com.pepeganga.business.common.entities.MeliOrders;
+import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.models.OrderDto;
 import uy.pepeganga.meli.service.services.IOrderService;
 
@@ -84,12 +85,12 @@ public class OrderController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<List<OrderDto>> getRecentOrdersByBatch(@RequestParam(defaultValue = "5", required = false) int quantity){
+    public ResponseEntity<List<OrderDto>> getRecentOrdersByBatch(@RequestParam(defaultValue = "5", required = false) int quantity) throws PGException {
         return new ResponseEntity<>(orderService.getRecentOrdersByBatch(quantity), HttpStatus.OK);
     }
 
     @GetMapping("/by-id/{id}")
-    public ResponseEntity<OrderDto> getRecentOrdersById(@PathVariable Long id){
+    public ResponseEntity<OrderDto> getRecentOrdersById(@PathVariable Long id) throws PGException {
         return new ResponseEntity<>(orderService.getRecentOrderById(id), HttpStatus.OK);
     }
 }
