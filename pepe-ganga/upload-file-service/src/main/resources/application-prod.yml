@@ -19,10 +19,13 @@ cloud:
 
 application:
   zuul-server:
-    path: http:://localhost:9999/pepeganga/upload/
+    path: https://dev.pepeganga-api.com/pepeganga/upload/
   buckets:
     products: pepeganga-product-image
     upload: pepeganga-upload-images
+    folders:
+      myproducts: MY_PRODUCTS
+      legacy: LEGACY
 
 logging:
   file:

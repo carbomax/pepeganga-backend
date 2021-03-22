@@ -40,7 +40,25 @@ public class StorageServiceImpl implements StorageService {
     @Value("${application.buckets.upload}")
     private String bucketUpload;
 
-    private static final String MY_PRODUCTS_FOLDER = "MY_PRODUCTS";
+    @Value("${application.buckets.folders.myproducts}")
+    private String myProductsFolder;
+
+    @Value("${application.buckets.folders.legacy}")
+    private String legacyFolder;
+
+    private static String MY_PRODUCTS_FOLDER;
+
+    private static String LEGACY_FOLDER;
+
+    @Value("${application.buckets.folders.myproducts}")
+    public void setMyProductFolderStatic(String myProductsFolder) {
+        StorageServiceImpl.MY_PRODUCTS_FOLDER = myProductsFolder;
+    }
+
+    @Value("${application.buckets.folders.legacy}")
+    public void setLegacyFolder(String legacyFolder){
+        StorageServiceImpl.LEGACY_FOLDER = legacyFolder;
+    }
 
     @Autowired
     AmazonS3 s3Client;
@@ -109,7 +127,7 @@ public class StorageServiceImpl implements StorageService {
         try (FileOutputStream outputStream = new FileOutputStream(fileToBucket)){
             outputStream.write(multipartFile.getBytes());
             String fileName = UUID.randomUUID().toString().concat("-").concat(fileToBucket.getName());
-            target = "LEGACY".concat("/").concat(fileName);
+            target = LEGACY_FOLDER.concat("/").concat(fileName);
             s3Client.putObject(new PutObjectRequest(bucketUpload, target, fileToBucket));
         } catch (Exception e) {
             logger.error(e.getMessage());

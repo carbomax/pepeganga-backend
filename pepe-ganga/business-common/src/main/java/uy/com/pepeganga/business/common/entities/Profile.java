@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "profile")
@@ -30,6 +31,18 @@ public class Profile implements Serializable {
 	private String businessName;
 
 	private Long ci;
+
+	@PrePersist
+	public void prePersist() {
+
+		if(Objects.isNull(this.ci)){
+			this.ci = 0L;
+		}
+		if(Objects.isNull(this.rut) || "".equals(this.rut)){
+			this.rut = "0";
+		}
+
+	}
 
 	@OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	@JsonManagedReference
@@ -149,6 +162,7 @@ public class Profile implements Serializable {
 	public void setCi(Long ci) {
 		this.ci = ci;
 	}
+
 
 	@Override
 	public int hashCode() {

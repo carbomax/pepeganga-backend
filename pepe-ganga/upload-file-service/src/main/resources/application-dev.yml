@@ -23,6 +23,9 @@ application:
   buckets:
     products: pepeganga-product-image
     upload: pepeganga-upload-images
+    folders:
+      myproducts: MY_PRODUCTS_TEST
+      legacy: LEGACY_TEST
 
 spring:
   application:

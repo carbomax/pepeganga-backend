@@ -75,13 +75,17 @@ public class RestClientApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (accessToken != null) {
-            localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
-        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        if (accessToken != null) {
+            // localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
+            localVarHeaderParams.put("Authorization", "Bearer ".concat(accessToken));
+        }
+
+
         final String[] localVarAccepts = {
             "application/json"
         };
@@ -199,13 +203,17 @@ public class RestClientApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
+
+        Map<String, String> localVarHeaderParams = new HashMap<>();
+        Map<String, String> localVarCookieParams = new HashMap<>();
+        Map<String, Object> localVarFormParams = new HashMap<>();
+
         if (accessToken != null) {
-            localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
+            //localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
+            localVarHeaderParams.put("Authorization", "Bearer ".concat(accessToken));
         }
 
-        Map<String, String> localVarHeaderParams = new HashMap<String, String>();
-        Map<String, String> localVarCookieParams = new HashMap<String, String>();
-        Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
         final String[] localVarAccepts = {
             "application/json"
         };
@@ -324,13 +332,16 @@ public class RestClientApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (accessToken != null) {
-            localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
-        }
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        if (accessToken != null) {
+           // localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
+            localVarHeaderParams.put("Authorization", "Bearer ".concat(accessToken));
+        }
+
         final String[] localVarAccepts = {
             "application/json"
         };
@@ -457,13 +468,18 @@ public class RestClientApi {
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
-        if (accessToken != null) {
-            localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
-        }
+
 
         Map<String, String> localVarHeaderParams = new HashMap<String, String>();
         Map<String, String> localVarCookieParams = new HashMap<String, String>();
         Map<String, Object> localVarFormParams = new HashMap<String, Object>();
+
+        if (accessToken != null) {
+            //localVarQueryParams.addAll(localVarApiClient.parameterToPair("access_token", accessToken));
+            localVarHeaderParams.put("Authorization", "Bearer ".concat(accessToken));
+        }
+
+
         final String[] localVarAccepts = {
             "application/json"
         };
