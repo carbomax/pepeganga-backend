@@ -47,4 +47,4 @@ meli:
   order:
     attempts: 3
   hostname:
-    free: http://pepeganga-dropshipping.web.app
+    free: https://dev.pepeganga-api.com
