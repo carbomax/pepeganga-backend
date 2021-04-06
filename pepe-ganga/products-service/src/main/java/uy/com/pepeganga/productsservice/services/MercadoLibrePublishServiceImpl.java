@@ -125,7 +125,7 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 			itemService = new ItemServiceImpl(productsRepository);*/
 
 		SelectedProducResponse select = new SelectedProducResponse();
-		List<String> prodExists = new ArrayList<>();
+		List<String> prodExists = new ArrayList<>();// "prodExists" -- Lista que determina si un producto existe o si no tiene imagenes en AWS
 		List<MercadoLibrePublications> prodToStore = new ArrayList<>();
 
 		for (String sku : products) {
@@ -143,6 +143,25 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 				Optional<Item> product = itemService.findItemById(sku);
 				if (product.isPresent()) {
 					mlp = new MercadoLibrePublications();
+
+					/*Nuevos cambios para las imagenes -- desde aqui */
+					/* ** Si el producto no tiene imagenes en AWS se adiciona el producto a la lista de prodExists para que no pase a MisProductos ** */
+					Map<String, List<String>> urlsMap = null;
+					try {
+						urlsMap = uploadfeign.transferObjectsBucketsProductsToUpload(product.get().getSku(), idProfile, marketplace);
+					}catch (PGException pge) {
+						logger.error("Error obteniendo imagenes del AWS, Method: transferObjectsBucketsProductsToUpload(), Error: {}, Causa: {}", pge.getError(), pge.getCauses());
+						logger.info("Obteniendo imágenes del servicio ERP. Esto es debido a que falló el servicio de imagenes de AWS.");
+					}
+					if(urlsMap != null && !urlsMap.isEmpty() && !urlsMap.get(sku).isEmpty())
+						mlp.setImages(ConversionClass.buildImages(urlsMap.get(product.get().getSku())));
+					else
+					{
+						prodExists.add(sku);
+						continue;
+					}
+					/*Nuevos cambios para las imagenes -- Fin */
+
 					mlp.setSku(product.get().getSku());
 					mlp.setProfile(profile);
 					mlp.setProductName(product.get().getArtDescripCatalogo());
@@ -155,20 +174,6 @@ public class MercadoLibrePublishServiceImpl implements MercadoLibrePublishServic
 					mlp.setFamilyId(product.get().getFamily().getId());
 					mlp.setFamilyDesc(product.get().getFamily().getDescription());
 					mlp.setStates(States.NOPUBLISHED.getId());
-
-					/*Nuevos cambios para las imagenes -- desde aqui */
-					Map<String, List<String>> urlsMap = null;
-					try {
-						urlsMap = uploadfeign.transferObjectsBucketsProductsToUpload(product.get().getSku(), idProfile, marketplace);
-					}catch (PGException pge) {
-						logger.error("Error obteniendo imagenes del AWS, Method: transferObjectsBucketsProductsToUpload(), Error: {}, Causa: {}", pge.getError(), pge.getCauses());
-						logger.info("Obteniendo imágenes del servicio ERP. Esto es debido a que falló el servicio de imagenes de AWS.");
-					}
-					if(urlsMap != null || !urlsMap.isEmpty())
-						mlp.setImages(ConversionClass.buildImages(urlsMap.get(product.get().getSku())));
-					else
-						mlp.setImages(ConversionClass.separateImages(product.get().getImages()));
-					/*Nuevos cambios para las imagenes -- Fin */
 
 					mlp.setSpecialPaused(product.get().getStockActual() <= getStockRisk() ? 1 : 0);
 					prodToStore.add(mlp);

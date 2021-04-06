@@ -1,8 +1,15 @@
 package uy.com.pepeganga.consumingwsstore.conversions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import uy.com.pepeganga.business.common.entities.*;
+import uy.com.pepeganga.business.common.exceptions.PGException;
+import uy.com.pepeganga.business.common.utils.conversions.ConversionClass;
+import uy.com.pepeganga.consumingwsstore.client.UploadfeignClient;
 import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
+import uy.com.pepeganga.consumingwsstore.services.ItemRequestService;
+import uy.com.pepeganga.consumingwsstore.utilmethods.Auxiliary;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtLineasSubFliasSdtLineaSubFlias;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtSubFliasSdtSubFlia;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPaginaArticulo;
@@ -11,7 +18,9 @@ import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtCategoriasSdtCategoria;
 import uy.com.pepeganga.consumingwsstore.wsdl.marcas.SdtMarcasSdtMarca;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Objects.isNull;
 
@@ -34,13 +43,20 @@ public class ConvertModels {
 	
 	@Autowired
 	private static ItemGrid itemGridResp;
-	
-	
+
+	private static UploadfeignClient uploadFeign;
+	private static final Logger logger = LoggerFactory.getLogger(ConvertModels.class);
+
+	public static void setUploadFeign(UploadfeignClient uploadFeign) {
+		ConvertModels.uploadFeign = uploadFeign;
+	}
+
 	public static Item convetToItemEntity(SDTArticulosWebPaginaArticulo artResp) {
 		itemResp = new Item();
 		
 		if (!isNull(artResp))			
-		 {				
+		 {
+
 			itemResp.setSku(artResp.getId());
 			itemResp.setArtDescripCatalogo(artResp.getArtDescripCatalogo());
 			itemResp.setArtMedida(artResp.getArtMedida());
@@ -79,7 +95,27 @@ public class ConvertModels {
 				}		
 				itemResp.setCategories(categoryList);
 			}
-				
+
+			/* ** De AQUI ** */
+
+			 Map<String, List<String>> urlsMap = null;
+
+			 try {
+				 urlsMap = ConvertModels.uploadFeign.getUrlsBySku(artResp.getId());
+			 }catch (PGException pge) {
+				 logger.error("Error obteniendo imagenes del AWS, Method: getUrlsBySku(), Error: {}, Causa: {}", pge.getError(), pge.getCauses());
+			 }
+
+			 if(urlsMap != null && !urlsMap.isEmpty() && !urlsMap.get(artResp.getId()).isEmpty())
+			 {
+				 StringBuilder photo = new StringBuilder();
+				 List<String> photoList = urlsMap.get(artResp.getId());
+				 photoList.forEach(p -> photo.append(p.trim()).append(" "));
+				 itemResp.setImages(photo.toString().getBytes());
+			 }
+
+			 /* ** HASTA AQUI ** */
+/*
 			if(artResp.getSdtArtFotos() != null)
 			{
 				
@@ -92,6 +128,8 @@ public class ConvertModels {
 				}
 				itemResp.setImages(photo.toString().getBytes());
 			}
+			*/
+
 		}
 		return itemResp;
 	}

@@ -8,6 +8,7 @@ import uy.com.pepeganga.business.common.entities.Item;
 import uy.com.pepeganga.business.common.entities.UpdatesOfSystem;
 import uy.com.pepeganga.business.common.utils.date.DateTimeUtilsBss;
 import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
+import uy.com.pepeganga.consumingwsstore.client.UploadfeignClient;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.consumingwsstore.repositories.IItemRepository;
 import uy.com.pepeganga.consumingwsstore.repositories.IUpdatesSystemRepository;
@@ -34,6 +35,9 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 
 	@Autowired
 	IUpdatesSystemRepository updateSysRepo;
+
+	@Autowired
+	UploadfeignClient uploadFeign;
 		
 	public void deleteItem() {
 		Item item = new Item();
@@ -50,6 +54,7 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 		 SDTArticulosWebPagina stdItems = new SDTArticulosWebPagina();		
 		 try {
 			 short part = 1;
+			 ConvertModels.setUploadFeign(uploadFeign);
 			 do {
 
 				 stdItems.setParte(part);
