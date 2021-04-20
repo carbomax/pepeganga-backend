@@ -504,10 +504,7 @@ public class MeliService  implements IMeliService{
             if (!Objects.isNull(result)) {
                 Map<String, Object> map = setProductToNopublishedStatus(details.getIdMLPublication(), States.NOPUBLISHED.getId());
                 if(map.containsKey("response")) {
-                    details.setDeleted(1);
-                    details.setIdMLPublication(-1);
-                    detailsPublicationRepository.save(details);
-                    response.put("response", "deleted");
+                    response.putAll(updatePublicationDeleted(details));
                 }else{
                     response.putAll(map);
                 }
@@ -543,12 +540,8 @@ public class MeliService  implements IMeliService{
              Optional<DetailsPublicationsMeli> details = detailsPublicationRepository.findById(id);
              if(details.isPresent()){
                  Map<String, Object> map = setProductToNopublishedStatus(details.get().getIdMLPublication(), States.NOPUBLISHED.getId());
-                 details.get().setDeleted(1);
-                 details.get().setIdMLPublication(-1);
-                 detailsPublicationRepository.save(details.get());
-
                  if(map.containsKey("response")) {
-                     response.put("response", "deleted");
+                     response.putAll(updatePublicationDeleted(details.get()));
                  }else{
                      response.putAll(map);
                  }
@@ -1227,6 +1220,23 @@ public class MeliService  implements IMeliService{
             data.setMessage(optionalData.get().getMessage());
         }
         return data;
+    }
+
+    private Map<String, String> updatePublicationDeleted(DetailsPublicationsMeli details) {
+        Map<String, String> response = new HashMap<>();
+        details.setDeleted(1);
+        details.setIdMLPublication(-1);
+        detailsPublicationRepository.save(details);
+        try {
+            //Elimino las imagenes de la tabla "ImagePublicationMeli" asociadas a esta publicacion.
+            List<Integer> ids = details.getImages().stream().map(ImagePublicationMeli::getId).collect(Collectors.toList());
+            imageDPRepository.deleteByIds(ids);
+        }catch (Exception e) {
+            logger.error(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
+            response.put(ActionResult.DATABASE_ERROR.getValue(), e.getMessage());
+        }
+        response.put("response", "deleted");
+        return response;
     }
 
 }
