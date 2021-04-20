@@ -22,3 +22,9 @@ pepe-ganga/business-utils/business-utils.iml
 pepe-ganga/java-sdk-master/.classpath
 pepe-ganga/oauth-service/.settings/org.eclipse.jdt.apt.core.prefs
 pepe-ganga/oauth-service/.settings/org.eclipse.jdt.core.prefs
+
+pepe-ganga/eureka-service/log/
+
+pepe-ganga/meli-service/log/
+
+pepe-ganga/user-service/log/

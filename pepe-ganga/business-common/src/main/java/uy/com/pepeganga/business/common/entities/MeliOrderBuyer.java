@@ -1,7 +1,5 @@
 package uy.com.pepeganga.business.common.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -23,21 +21,17 @@ public class MeliOrderBuyer implements Serializable {
 
     private String lastName;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    private MeliOrderBuyerBillingInfo meliOrderBuyerBillingInfo;
 
     public MeliOrderBuyer() {
         // do nothing
     }
 
-    public MeliOrderBuyer(Long buyerId, String nickname, String email, String firstName, String lastName, MeliOrderBuyerBillingInfo meliOrderBuyerBillingInfo) {
+    public MeliOrderBuyer(Long buyerId, String nickname, String email, String firstName, String lastName) {
         this.buyerId = buyerId;
         this.nickname = nickname;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.meliOrderBuyerBillingInfo = meliOrderBuyerBillingInfo;
     }
 
     public Long getBuyerId() {
@@ -88,11 +82,4 @@ public class MeliOrderBuyer implements Serializable {
         this.lastName = lastName;
     }
 
-    public MeliOrderBuyerBillingInfo getMeliOrderBuyerBillingInfo() {
-        return meliOrderBuyerBillingInfo;
-    }
-
-    public void setMeliOrderBuyerBillingInfo(MeliOrderBuyerBillingInfo meliOrderBuyerBillingInfo) {
-        this.meliOrderBuyerBillingInfo = meliOrderBuyerBillingInfo;
-    }
 }

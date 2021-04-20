@@ -16,8 +16,6 @@ public class DMOrderBuyer {
 
     private String lastName;
 
-    private DMOrderBuyerBillingInfo billingInfo;
-
 
     @JsonProperty("id")
     public Long getId() {
@@ -44,9 +42,5 @@ public class DMOrderBuyer {
         return lastName;
     }
 
-    @JsonProperty("billing_info")
-    public DMOrderBuyerBillingInfo getBillingInfo() {
-        return billingInfo;
-    }
 
 }
