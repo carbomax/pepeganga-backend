@@ -326,12 +326,16 @@ public class OrderService implements IOrderService {
                             apiService.getTokenByRefreshToken(sellerAccountRepository.findByUserId(notification.getUserId()));
                         }
                         DMOrder order = processingOrderByNotification(notification);
-                        if (Objects.nonNull(order)) {
-                            DMOrderShipping orderShipping = mapper.convertValue(apiService.getShipmentOfOrder(order.getShipping().getId(),
-                                    sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrderShipping.class);
+                        if (Objects.nonNull(order) ) {
+                            if(Objects.nonNull(order.getShipping()) && Objects.nonNull(order.getShipping().getId())){
+                                DMOrderShipping orderShipping = mapper.convertValue(apiService.getShipmentOfOrder(order.getShipping().getId(),
+                                        sellerAccountRepository.findByUserId(notification.getUserId()).getAccessToken()), DMOrderShipping.class);
 
-                            // Processing shipments
-                            processingShipment(orderShipping);
+                                // Processing shipments
+                                processingShipment(orderShipping);
+                            }else {
+                                logger.info("This order: {} not contain shipping", order.getId());
+                            }
                         }
                         error = false;
                     } else {
@@ -524,7 +528,7 @@ public class OrderService implements IOrderService {
                 // Buyer
                 if (order.getBuyer() != null) {
                     MeliOrderBuyer buyer = new MeliOrderBuyer(order.getBuyer().getId(), order.getBuyer().getNickname(), order.getBuyer().getEmail(), order.getBuyer().getFirstName(),
-                            order.getBuyer().getLastName(), billingInfoRepository.save(new MeliOrderBuyerBillingInfo(order.getBuyer().getBillingInfo().getDocType(), order.getBuyer().getBillingInfo().getDocNumber())));
+                            order.getBuyer().getLastName());
                     orders.setBuyer(orderBuyerRepository.save(buyer));
                 }
 
@@ -588,6 +592,7 @@ public class OrderService implements IOrderService {
                 });
 
             } else
+                logger.info("Order with status different to paid cannot be created. Order id: {}", order.getId() );
                 throw new OrderCreateException(String.format("Order with status different to paid cannot be created. Order id: %d", order.getId()));
         } catch (Exception e) {
             throw new OrderCreateException(e.getMessage(), e);
@@ -709,7 +714,6 @@ public class OrderService implements IOrderService {
                                         .orderId(meliOrders.getId())
                                         .sellerId(sellerAccount.getId())
                                         .observation(meliOrders.getObservationBss())
-                                        // .observation("PEPEGANGA_DROP")
                                         .items(meliOrderItemDtos).build()
                         );
                     }catch (Exception e){
