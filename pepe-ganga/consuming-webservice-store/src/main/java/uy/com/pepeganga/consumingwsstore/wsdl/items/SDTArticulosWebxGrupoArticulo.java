@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.0 
 // Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2020.11.27 a las 05:04:08 PM UYT 
+// Generado el: 2021.05.18 a las 10:12:03 PM UYT 
 //
 
 
@@ -15,16 +15,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Clase Java para SDTArticulosWebPagina.Articulo complex type.
+ * <p>Clase Java para SDTArticulosWebxGrupo.Articulo complex type.
  * 
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="SDTArticulosWebPagina.Articulo"&gt;
+ * &lt;complexType name="SDTArticulosWebxGrupo.Articulo"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="Id" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="ArtId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="GrupoId" type="{http://www.w3.org/2001/XMLSchema}short"/&gt;
+ *         &lt;element name="GrupoNombre" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="ArtDescripCatalogo" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="ArtMedida" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="ArtEspecificaciones" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
@@ -53,6 +55,12 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="MedidaEmpaque" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="Capacidad" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="Talle" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="ColorDisenio" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="Edades" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="Peso" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="ArtCodBar" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="ArtCodDun" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="ArtCajaSeparada" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -62,8 +70,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SDTArticulosWebPagina.Articulo", propOrder = {
-    "id",
+@XmlType(name = "SDTArticulosWebxGrupo.Articulo", propOrder = {
+    "artId",
+    "grupoId",
+    "grupoNombre",
     "artDescripCatalogo",
     "artMedida",
     "artEspecificaciones",
@@ -91,12 +101,22 @@ import javax.xml.bind.annotation.XmlType;
     "artDescripML",
     "medidaEmpaque",
     "capacidad",
-    "talle"
+    "talle",
+    "colorDisenio",
+    "edades",
+    "peso",
+    "artCodBar",
+    "artCodDun",
+    "artCajaSeparada"
 })
-public class SDTArticulosWebPaginaArticulo {
+public class SDTArticulosWebxGrupoArticulo {
 
-    @XmlElement(name = "Id", required = true)
-    protected String id;
+    @XmlElement(name = "ArtId", required = true)
+    protected String artId;
+    @XmlElement(name = "GrupoId")
+    protected short grupoId;
+    @XmlElement(name = "GrupoNombre", required = true)
+    protected String grupoNombre;
     @XmlElement(name = "ArtDescripCatalogo", required = true)
     protected String artDescripCatalogo;
     @XmlElement(name = "ArtMedida", required = true)
@@ -153,29 +173,81 @@ public class SDTArticulosWebPaginaArticulo {
     protected String capacidad;
     @XmlElement(name = "Talle", required = true)
     protected String talle;
+    @XmlElement(name = "ColorDisenio", required = true)
+    protected String colorDisenio;
+    @XmlElement(name = "Edades", required = true)
+    protected String edades;
+    @XmlElement(name = "Peso")
+    protected int peso;
+    @XmlElement(name = "ArtCodBar", required = true)
+    protected String artCodBar;
+    @XmlElement(name = "ArtCodDun", required = true)
+    protected String artCodDun;
+    @XmlElement(name = "ArtCajaSeparada", required = true)
+    protected String artCajaSeparada;
 
     /**
-     * Obtiene el valor de la propiedad id.
+     * Obtiene el valor de la propiedad artId.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getId() {
-        return id;
+    public String getArtId() {
+        return artId;
     }
 
     /**
-     * Define el valor de la propiedad id.
+     * Define el valor de la propiedad artId.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setArtId(String value) {
+        this.artId = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad grupoId.
+     * 
+     */
+    public short getGrupoId() {
+        return grupoId;
+    }
+
+    /**
+     * Define el valor de la propiedad grupoId.
+     * 
+     */
+    public void setGrupoId(short value) {
+        this.grupoId = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad grupoNombre.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getGrupoNombre() {
+        return grupoNombre;
+    }
+
+    /**
+     * Define el valor de la propiedad grupoNombre.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setGrupoNombre(String value) {
+        this.grupoNombre = value;
     }
 
     /**
@@ -776,6 +848,142 @@ public class SDTArticulosWebPaginaArticulo {
      */
     public void setTalle(String value) {
         this.talle = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad colorDisenio.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getColorDisenio() {
+        return colorDisenio;
+    }
+
+    /**
+     * Define el valor de la propiedad colorDisenio.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setColorDisenio(String value) {
+        this.colorDisenio = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad edades.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEdades() {
+        return edades;
+    }
+
+    /**
+     * Define el valor de la propiedad edades.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEdades(String value) {
+        this.edades = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad peso.
+     * 
+     */
+    public int getPeso() {
+        return peso;
+    }
+
+    /**
+     * Define el valor de la propiedad peso.
+     * 
+     */
+    public void setPeso(int value) {
+        this.peso = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad artCodBar.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getArtCodBar() {
+        return artCodBar;
+    }
+
+    /**
+     * Define el valor de la propiedad artCodBar.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setArtCodBar(String value) {
+        this.artCodBar = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad artCodDun.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getArtCodDun() {
+        return artCodDun;
+    }
+
+    /**
+     * Define el valor de la propiedad artCodDun.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setArtCodDun(String value) {
+        this.artCodDun = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad artCajaSeparada.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getArtCajaSeparada() {
+        return artCajaSeparada;
+    }
+
+    /**
+     * Define el valor de la propiedad artCajaSeparada.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setArtCajaSeparada(String value) {
+        this.artCajaSeparada = value;
     }
 
 }

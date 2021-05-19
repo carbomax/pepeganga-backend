@@ -112,72 +112,72 @@
 			</properties>
 		</profile>
 	</profiles>
-  
+
+      <build>
+          <plugins>
+              <plugin>
+                  <groupId>org.springframework.boot</groupId>
+                  <artifactId>spring-boot-maven-plugin</artifactId>
+              </plugin>
+          </plugins>
+          <resources>
+              <resource>
+                  <directory>src/main/resources</directory>
+                  <filtering>true</filtering>
+              </resource>
+          </resources>
+      </build>
+
+      <!-- end::profile[] -->
+	<!--
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
-	</build>
- 
-	<!-- end::profile[] -->
-<!-- 
- 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.14.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-				  <schemaLanguage>WSDL</schemaLanguage>
-				<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.categories</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>
-						</schema>
-					</schemas>  
-					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
-						</schema>
-					</schemas>
-					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.marcas</generatePackage>
-					<schemas>
-						<schema>
-							<url>http://201.217.140.35/agile/acargamarcas.aspx?wsdl</url>
-						</schema>
-					</schemas>
+       <plugins>
+           <plugin>
+               <groupId>org.springframework.boot</groupId>
+               <artifactId>spring-boot-maven-plugin</artifactId>
+           </plugin>
+           <plugin>
+               <groupId>org.jvnet.jaxb2.maven2</groupId>
+               <artifactId>maven-jaxb2-plugin</artifactId>
+               <version>0.14.0</version>
+               <executions>
+                   <execution>
+                       <goals>
+                           <goal>generate</goal>
+                       </goals>
+                   </execution>
+               </executions>
+               <configuration>
+                 <schemaLanguage>WSDL</schemaLanguage>
+                   	<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.categories</generatePackage>
+                           <schemas>
+                               <schema>
+                                   <url>http://201.217.140.35/agile/acargazafras.aspx?wsdl</url>
+                               </schema>
+                           </schemas>
+                           <generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.families</generatePackage>
+                           <schemas>
+                               <schema>
+                                   <url>http://201.217.140.35/agile/acargafamilias.aspx?wsdl</url>
+                               </schema>
+                           </schemas>
+                           <generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.marcas</generatePackage>
+                           <schemas>
+                               <schema>
+                                   <url>http://201.217.140.35/agile/acargamarcas.aspx?wsdl</url>
+                               </schema>
+                           </schemas>
 					<generatePackage>uy.com.pepeganga.consumingwsstore.wsdl.items</generatePackage>
 					<schemas>
 						<schema>
-							<url>http://201.217.140.35/agile/aCargaArticulosPaginado.aspx?wsdl</url>
+							<url>http://201.217.140.35/WSPPGGFE/aCargaArticulosPPyK.aspx?wsdl</url>
 						</schema>
 					</schemas> 
 				</configuration>
 </plugin>
 </plugins>
 </build>
- -->
+		-->
 	
 	<!-- 
  	<build>

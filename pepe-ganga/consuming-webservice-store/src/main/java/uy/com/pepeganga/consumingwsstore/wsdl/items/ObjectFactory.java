@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.0 
 // Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2020.11.27 a las 05:04:08 PM UYT 
+// Generado el: 2021.05.18 a las 10:12:03 PM UYT 
 //
 
 
@@ -37,51 +37,51 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link CargaArticulosPaginadoExecute }
+     * Create an instance of {@link CargaArticulosPPyKExecute }
      * 
      */
-    public CargaArticulosPaginadoExecute createCargaArticulosPaginadoExecute() {
-        return new CargaArticulosPaginadoExecute();
+    public CargaArticulosPPyKExecute createCargaArticulosPPyKExecute() {
+        return new CargaArticulosPPyKExecute();
     }
 
     /**
-     * Create an instance of {@link SDTArticulosWebPagina }
+     * Create an instance of {@link SDTArticulosWebxGrupo }
      * 
      */
-    public SDTArticulosWebPagina createSDTArticulosWebPagina() {
-        return new SDTArticulosWebPagina();
+    public SDTArticulosWebxGrupo createSDTArticulosWebxGrupo() {
+        return new SDTArticulosWebxGrupo();
     }
 
     /**
-     * Create an instance of {@link CargaArticulosPaginadoExecuteResponse }
+     * Create an instance of {@link CargaArticulosPPyKExecuteResponse }
      * 
      */
-    public CargaArticulosPaginadoExecuteResponse createCargaArticulosPaginadoExecuteResponse() {
-        return new CargaArticulosPaginadoExecuteResponse();
+    public CargaArticulosPPyKExecuteResponse createCargaArticulosPPyKExecuteResponse() {
+        return new CargaArticulosPPyKExecuteResponse();
     }
 
     /**
-     * Create an instance of {@link ConsPagSDTArticulosWebPaginaArticulos }
+     * Create an instance of {@link Cons3SDTArticulosWebxGrupoArticulos }
      * 
      */
-    public ConsPagSDTArticulosWebPaginaArticulos createConsPagSDTArticulosWebPaginaArticulos() {
-        return new ConsPagSDTArticulosWebPaginaArticulos();
+    public Cons3SDTArticulosWebxGrupoArticulos createCons3SDTArticulosWebxGrupoArticulos() {
+        return new Cons3SDTArticulosWebxGrupoArticulos();
     }
 
     /**
-     * Create an instance of {@link ArrayOfSDTArticulosWebPaginaArticulo }
+     * Create an instance of {@link ArrayOfSDTArticulosWebxGrupoArticulo }
      * 
      */
-    public ArrayOfSDTArticulosWebPaginaArticulo createArrayOfSDTArticulosWebPaginaArticulo() {
-        return new ArrayOfSDTArticulosWebPaginaArticulo();
+    public ArrayOfSDTArticulosWebxGrupoArticulo createArrayOfSDTArticulosWebxGrupoArticulo() {
+        return new ArrayOfSDTArticulosWebxGrupoArticulo();
     }
 
     /**
-     * Create an instance of {@link SDTArticulosWebPaginaArticulo }
+     * Create an instance of {@link SDTArticulosWebxGrupoArticulo }
      * 
      */
-    public SDTArticulosWebPaginaArticulo createSDTArticulosWebPaginaArticulo() {
-        return new SDTArticulosWebPaginaArticulo();
+    public SDTArticulosWebxGrupoArticulo createSDTArticulosWebxGrupoArticulo() {
+        return new SDTArticulosWebxGrupoArticulo();
     }
 
     /**

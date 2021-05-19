@@ -11,9 +11,10 @@ import uy.com.pepeganga.consumingwsstore.ConsumingWebserviceStoreApplication;
 import uy.com.pepeganga.consumingwsstore.conversions.ConvertModels;
 import uy.com.pepeganga.consumingwsstore.repositories.IItemRepository;
 import uy.com.pepeganga.consumingwsstore.repositories.IUpdatesSystemRepository;
-import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecute;
-import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPaginadoExecuteResponse;
-import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPagina;
+import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPPyKExecute;
+import uy.com.pepeganga.consumingwsstore.wsdl.items.CargaArticulosPPyKExecuteResponse;
+import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebxGrupo;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,26 +46,28 @@ public class ItemRequestService extends WebServiceGatewaySupport{
 		
 		boolean finish = false;
 		List<Item> responseList = new ArrayList<>();
-		 
-		 CargaArticulosPaginadoExecute request = new CargaArticulosPaginadoExecute();
-		 SDTArticulosWebPagina stdItems = new SDTArticulosWebPagina();		
+
+		CargaArticulosPPyKExecute request = new CargaArticulosPPyKExecute();
+		SDTArticulosWebxGrupo stdItems = new SDTArticulosWebxGrupo();
 		 try {
 			 short part = 1;
 			 do {
 
 				 stdItems.setParte(part);
 				 stdItems.setCantidad(100);
-				 request.setSdtarticuloswebpagina(stdItems);
+				 stdItems.setConsumidor("DropShipping");
+				 stdItems.setEmpresa("P");
+				 request.setSdtarticuloswebxgrupo(stdItems);
 
-				 CargaArticulosPaginadoExecuteResponse response = (CargaArticulosPaginadoExecuteResponse) getWebServiceTemplate()
-						 .marshalSendAndReceive("http://201.217.140.35/agile/aCargaArticulosPaginado.aspx", request);
+				 CargaArticulosPPyKExecuteResponse response = (CargaArticulosPPyKExecuteResponse) getWebServiceTemplate()
+						 .marshalSendAndReceive("http://201.217.140.35/WSPPGGFE/aCargaArticulosPPyK.aspx", request);
 
 				 logger.info("Obteniendo grupos de 100 items del almacen");
-				 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebpagina().getArticulos().getArticulo());
+				 List<Item> partialList = ConvertModels.convetToItemEntityList(response.getSdtarticuloswebxgrupo().getArticulos().getArticulo());
 				 responseList.addAll(partialList);
 				 part++;
 
-				 if (response.getSdtarticuloswebpagina().getArticulos().getArticulo().size() < 100)
+				 if (response.getSdtarticuloswebxgrupo().getArticulos().getArticulo().size() < 100)
 					 finish = true;
 
 			 } while (!finish);

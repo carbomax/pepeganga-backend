@@ -5,7 +5,7 @@ import uy.com.pepeganga.business.common.entities.*;
 import uy.com.pepeganga.consumingwsstore.gridmodels.ItemGrid;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtLineasSubFliasSdtLineaSubFlias;
 import uy.com.pepeganga.consumingwsstore.wsdl.families.SdtSubFliasSdtSubFlia;
-import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebPaginaArticulo;
+import uy.com.pepeganga.consumingwsstore.wsdl.items.SDTArticulosWebxGrupoArticulo;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtArtFotosSdtArtFoto;
 import uy.com.pepeganga.consumingwsstore.wsdl.items.SdtCategoriasSdtCategoria;
 import uy.com.pepeganga.consumingwsstore.wsdl.marcas.SdtMarcasSdtMarca;
@@ -36,12 +36,12 @@ public class ConvertModels {
 	private static ItemGrid itemGridResp;
 	
 	
-	public static Item convetToItemEntity(SDTArticulosWebPaginaArticulo artResp) {
+	public static Item convetToItemEntity(SDTArticulosWebxGrupoArticulo artResp) {
 		itemResp = new Item();
 		
 		if (!isNull(artResp))			
 		 {				
-			itemResp.setSku(artResp.getId());
+			itemResp.setSku(artResp.getArtId());
 			itemResp.setArtDescripCatalogo(artResp.getArtDescripCatalogo());
 			itemResp.setArtMedida(artResp.getArtMedida());
 			itemResp.setArtEspecificaciones(artResp.getArtEspecificaciones());			
@@ -96,13 +96,13 @@ public class ConvertModels {
 		return itemResp;
 	}
 
-	public static List<Item> convetToItemEntityList(List<SDTArticulosWebPaginaArticulo> artList)
+	public static List<Item> convetToItemEntityList(List<SDTArticulosWebxGrupoArticulo> artList)
 	{
 		List<Item> itemList = new ArrayList<>();
 		
 		if(!artList.isEmpty())
 		{
-			for (SDTArticulosWebPaginaArticulo variable : artList) {
+			for (SDTArticulosWebxGrupoArticulo variable : artList) {
 				if(variable != null) {
 					if("S".equals(variable.getArtVendibleMercadoLibre().trim().toUpperCase()))
 						itemList.add(convetToItemEntity(variable));
@@ -112,12 +112,12 @@ public class ConvertModels {
 		return itemList;
 	}
 	
-	public static ItemGrid convetToItemGrid(SDTArticulosWebPaginaArticulo artResp) {
+	public static ItemGrid convetToItemGrid(SDTArticulosWebxGrupoArticulo artResp) {
 		itemGridResp = new ItemGrid();		
 		
 		if (!isNull(artResp))			
 		 {			
-			itemGridResp.setSku(artResp.getId());
+			itemGridResp.setSku(artResp.getArtId());
 			itemGridResp.setPriceUYU(artResp.getPrecioPesos());
 			itemGridResp.setPriceUSD(artResp.getPrecioDolares());			
 			itemGridResp.setName(artResp.getArtDescripCatalogo());
@@ -130,13 +130,13 @@ public class ConvertModels {
 		return itemGridResp;
 	}
 	
-	public static List<ItemGrid> convetToItemGridList(List<SDTArticulosWebPaginaArticulo> artList)
+	public static List<ItemGrid> convetToItemGridList(List<SDTArticulosWebxGrupoArticulo> artList)
 	{
 		List<ItemGrid> itemGridList = new ArrayList<>();
 		
 		if(!artList.isEmpty())
 		{
-			for (SDTArticulosWebPaginaArticulo variable : artList)
+			for (SDTArticulosWebxGrupoArticulo variable : artList)
 				itemGridList.add(convetToItemGrid(variable));
 		}
 		return itemGridList;
