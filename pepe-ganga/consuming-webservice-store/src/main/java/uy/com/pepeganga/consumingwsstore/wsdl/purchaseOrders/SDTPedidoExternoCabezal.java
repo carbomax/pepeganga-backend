@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.3.0 
 // Visite <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2021.02.25 a las 09:12:46 PM UYT 
+// Generado el: 2021.05.18 a las 11:14:25 PM UYT 
 //
 
 
@@ -17,17 +17,19 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Clase Java para SDTPedidoPpggCabezal complex type.
+ * <p>Clase Java para SDTPedidoExternoCabezal complex type.
  * 
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * 
  * <pre>
- * &lt;complexType name="SDTPedidoPpggCabezal"&gt;
+ * &lt;complexType name="SDTPedidoExternoCabezal"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
+ *         &lt;element name="Empresa" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
  *         &lt;element name="Usuario" type="{http://www.w3.org/2001/XMLSchema}short"/&gt;
- *         &lt;element name="IdPedido" type="{http://www.w3.org/2001/XMLSchema}int"/&gt;
+ *         &lt;element name="FormaIngreso" type="{http://www.w3.org/2001/XMLSchema}short"/&gt;
+ *         &lt;element name="IdPedido" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="Fecha" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
  *         &lt;element name="ClienteId" type="{http://www.w3.org/2001/XMLSchema}short"/&gt;
  *         &lt;element name="ClienteNombre" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
@@ -39,6 +41,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="Cedula" type="{http://www.w3.org/2001/XMLSchema}long"/&gt;
  *         &lt;element name="Moneda" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
  *         &lt;element name="Observaciones" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="Envio" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *         &lt;element name="ImporteDescuento" type="{http://www.w3.org/2001/XMLSchema}double"/&gt;
  *       &lt;/sequence&gt;
  *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
@@ -48,8 +52,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SDTPedidoPpggCabezal", propOrder = {
+@XmlType(name = "SDTPedidoExternoCabezal", propOrder = {
+    "empresa",
     "usuario",
+    "formaIngreso",
     "idPedido",
     "fecha",
     "clienteId",
@@ -61,14 +67,20 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "rut",
     "cedula",
     "moneda",
-    "observaciones"
+    "observaciones",
+    "envio",
+    "importeDescuento"
 })
-public class SDTPedidoPpggCabezal {
+public class SDTPedidoExternoCabezal {
 
+    @XmlElement(name = "Empresa", required = true)
+    protected String empresa;
     @XmlElement(name = "Usuario")
     protected short usuario;
+    @XmlElement(name = "FormaIngreso")
+    protected short formaIngreso;
     @XmlElement(name = "IdPedido")
-    protected int idPedido;
+    protected long idPedido;
     @XmlElement(name = "Fecha", required = true, nillable = true)
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar fecha;
@@ -92,6 +104,34 @@ public class SDTPedidoPpggCabezal {
     protected byte moneda;
     @XmlElement(name = "Observaciones", required = true)
     protected String observaciones;
+    @XmlElement(name = "Envio", required = true)
+    protected String envio;
+    @XmlElement(name = "ImporteDescuento")
+    protected double importeDescuento;
+
+    /**
+     * Obtiene el valor de la propiedad empresa.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEmpresa() {
+        return empresa;
+    }
+
+    /**
+     * Define el valor de la propiedad empresa.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEmpresa(String value) {
+        this.empresa = value;
+    }
 
     /**
      * Obtiene el valor de la propiedad usuario.
@@ -110,10 +150,26 @@ public class SDTPedidoPpggCabezal {
     }
 
     /**
+     * Obtiene el valor de la propiedad formaIngreso.
+     * 
+     */
+    public short getFormaIngreso() {
+        return formaIngreso;
+    }
+
+    /**
+     * Define el valor de la propiedad formaIngreso.
+     * 
+     */
+    public void setFormaIngreso(short value) {
+        this.formaIngreso = value;
+    }
+
+    /**
      * Obtiene el valor de la propiedad idPedido.
      * 
      */
-    public int getIdPedido() {
+    public long getIdPedido() {
         return idPedido;
     }
 
@@ -121,7 +177,7 @@ public class SDTPedidoPpggCabezal {
      * Define el valor de la propiedad idPedido.
      * 
      */
-    public void setIdPedido(int value) {
+    public void setIdPedido(long value) {
         this.idPedido = value;
     }
 
@@ -355,6 +411,46 @@ public class SDTPedidoPpggCabezal {
      */
     public void setObservaciones(String value) {
         this.observaciones = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad envio.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getEnvio() {
+        return envio;
+    }
+
+    /**
+     * Define el valor de la propiedad envio.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setEnvio(String value) {
+        this.envio = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad importeDescuento.
+     * 
+     */
+    public double getImporteDescuento() {
+        return importeDescuento;
+    }
+
+    /**
+     * Define el valor de la propiedad importeDescuento.
+     * 
+     */
+    public void setImporteDescuento(double value) {
+        this.importeDescuento = value;
     }
 
 }

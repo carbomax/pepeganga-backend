@@ -27,34 +27,34 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
     public List<ReasonResponse> registerPurchaseOrders(List<OrderDto> ordersDto){
 
         List<ReasonResponse> result = new ArrayList<>();
-        CargarPedidoWebPpggExecute request = new CargarPedidoWebPpggExecute();
+        CargarPedidoWebExecute request = new CargarPedidoWebExecute();
         List<Long> ordersToUpdate = new ArrayList<>();
         List<Long> ordersFails = new ArrayList<>();
 
         ordersDto.forEach(orderDto -> {
 
-            SDTPedidoPpggCabezal order = null;
+            SDTPedidoExternoCabezal order = null;
             try {
                 order = initHead(orderDto);
-                ArrayOfSdtPedidoPpggRenglonesSdtPedPpggRenglon orderList = initDetailsOrders(orderDto.getItems());
-                SdtPedidoPpggRespuesta answer = new SdtPedidoPpggRespuesta();
+                ArrayOfSdtPedidoExternoRenglonesSdtPedExternoRenglon orderList = initDetailsOrders(orderDto.getItems());
+                SDTPedidoExternoRespuesta answer = new SDTPedidoExternoRespuesta();
 
-                request.setSdtpedidoppggcabezal(order);
-                request.setSdtpedidoppggrenglones(orderList);
-                request.setSdtpedidoppggrespuesta(answer);
+                request.setSdtpedidoexternocabezal(order);
+                request.setSdtpedidoexternorenglones(orderList);
+                request.setSdtpedidoexternorespuesta(answer);
 
                 try{
-                    CargarPedidoWebPpggExecuteResponse response = (CargarPedidoWebPpggExecuteResponse) getWebServiceTemplate()
-                            .marshalSendAndReceive("http://201.217.140.35/agile/aCargarPedidoWebPpgg.aspx", request);
+                    CargarPedidoWebExecuteResponse response = (CargarPedidoWebExecuteResponse) getWebServiceTemplate()
+                            .marshalSendAndReceive("http://201.217.140.35/WSPPGGFE/aCargarPedidoWeb.aspx", request);
 
-                    if(response.getSdtpedidoppggrespuesta().getOk().toUpperCase().trim().equals("S") ){
+                    if(response.getSdtpedidoexternorespuesta().getOk().toUpperCase().trim().equals("S") ){
                         ordersToUpdate.add(orderDto.getOrderId() );
                         result.add(new ReasonResponse(true, " {\"orderId\": " + orderDto.getOrderId() + ", \"message\":\"Enviado\"} "));
                         logger.info("Orden con Id: {} procesado correctamente", orderDto.getOrderId());
                     }else{
                         ordersFails.add(orderDto.getOrderId());
-                        result.add(new ReasonResponse(false, " { \"orderId\":" + orderDto.getOrderId() + ", \"message\":\"" + response.getSdtpedidoppggrespuesta().getMensajeError() + " \"}"));
-                        logger.warn(String.format("Orden con ID: %d devolvió respuesta incorrecta, MSG: %s ", orderDto.getOrderId(), response.getSdtpedidoppggrespuesta().getMensajeError()));
+                        result.add(new ReasonResponse(false, " { \"orderId\":" + orderDto.getOrderId() + ", \"message\":\"" + response.getSdtpedidoexternorespuesta().getMensajeError() + " \"}"));
+                        logger.warn(String.format("Orden con ID: %d devolvió respuesta incorrecta, MSG: %s ", orderDto.getOrderId(), response.getSdtpedidoexternorespuesta().getMensajeError()));
                     }
                 }catch (Exception e){
                     logger.error(String.format("Error Enviando Peticion de orden al servicio, Método: registerPurchaseOrders(), Msg: %s, Error:  ", e.getMessage()), e);
@@ -96,12 +96,12 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
         return result;
     }
 
-    private SDTPedidoPpggCabezal initHead(OrderDto orderDto) throws DatatypeConfigurationException {
-        SDTPedidoPpggCabezal order = new SDTPedidoPpggCabezal();
+    private SDTPedidoExternoCabezal initHead(OrderDto orderDto) throws DatatypeConfigurationException {
+        SDTPedidoExternoCabezal order = new SDTPedidoExternoCabezal();
         order.setCedula(orderDto.getCi());
         order.setClienteId(Short.parseShort(String.valueOf(orderDto.getSellerId()) ) );
         order.setClienteNombre(orderDto.getSellerName());
-        order.setIdPedido(Math.toIntExact(orderDto.getOrderId()));
+        order.setIdPedido(orderDto.getOrderId());
         order.setDepartamento(orderDto.getDepartment());
         order.setDireccion(orderDto.getAddress());
         order.setEMail(orderDto.getEmail());
@@ -111,20 +111,24 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
         order.setObservaciones(orderDto.getObservation());
         order.setRUT(orderDto.getRut());
         order.setUsuario((short) 117);
+        order.setEmpresa("P");
+        order.setFormaIngreso((short)9);
+        order.setEnvio("");
+        order.setImporteDescuento(0);
         return order;
     }
 
-    private ArrayOfSdtPedidoPpggRenglonesSdtPedPpggRenglon initDetailsOrders(List<MeliOrderItemDto> detailOrderList){
+    private ArrayOfSdtPedidoExternoRenglonesSdtPedExternoRenglon initDetailsOrders(List<MeliOrderItemDto> detailOrderList){
 
-        ArrayOfSdtPedidoPpggRenglonesSdtPedPpggRenglon orderList = new ArrayOfSdtPedidoPpggRenglonesSdtPedPpggRenglon();
+        ArrayOfSdtPedidoExternoRenglonesSdtPedExternoRenglon orderList = new ArrayOfSdtPedidoExternoRenglonesSdtPedExternoRenglon();
         detailOrderList.forEach(order -> {
-            SdtPedidoPpggRenglonesSdtPedPpggRenglon detailsOrder = new SdtPedidoPpggRenglonesSdtPedPpggRenglon();
+            SdtPedidoExternoRenglonesSdtPedExternoRenglon detailsOrder = new SdtPedidoExternoRenglonesSdtPedExternoRenglon();
             detailsOrder.setArtId(order.getSellerSKU());
             detailsOrder.setCantidad(order.getQuantity());
             detailsOrder.setDescripcion(order.getDescription());
             detailsOrder.setObservaciones(order.getObservations());
             detailsOrder.setPrecio(order.getPrice());
-            orderList.getSdtPedidoPpggRenglonesSdtPedPpggRenglon().add(detailsOrder);
+            orderList.getSdtPedidoExternoRenglonesSdtPedExternoRenglon().add(detailsOrder);
         });
         return orderList;
     }

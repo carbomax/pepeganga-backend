@@ -19,7 +19,7 @@ public class PurchaseOrdersConfiguration {
     @Bean
     public PurchaseOrdersService purchaseOrdersClient() {
         PurchaseOrdersService client = new PurchaseOrdersService();
-        client.setDefaultUri("http://201.217.140.35/agile");
+        client.setDefaultUri("http://201.217.140.35/WSPPGGFE");
         client.setMarshaller(this.marshaller());
         client.setUnmarshaller(this.marshaller());
         return client;
