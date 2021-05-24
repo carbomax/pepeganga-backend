@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MercadoLibrePublishRepository extends JpaRepository<MercadoLibrePublications, Integer> {
-
-	List<MercadoLibrePublications> findAllBySku(String sku);
-		
+    List<MercadoLibrePublications> findAllBySku(String sku);
 }

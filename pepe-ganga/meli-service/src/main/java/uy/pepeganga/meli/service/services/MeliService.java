@@ -139,51 +139,6 @@ public class MeliService  implements IMeliService{
                 accountFounded = Optional.ofNullable(apiService.getTokenByRefreshToken(accountFounded.get()));
                 accountMeli = accountFounded;
             }
-/*
-            // Example to post an item in Argentina
-            List<ItemPictures> pictures = new ArrayList<>();
-            String source =	"https://http2.mlstatic.com/storage/developers-site-cms-admin/openapi/319968615067-mp3.jpg";
-            pictures.add(new ItemPictures().source(source));
-
-            List<AttributesValues> attrValues = new ArrayList<>();
-            attrValues.add(new AttributesValues().name("8 GB"));
-            List<Attributes> attributes = new ArrayList<>();
-            attributes.add(new Attributes()
-                    .id("DATA_STORAGE_CAPACITY")
-                    .name("Capacidad de almacenamiento de datos")
-                    .valueName("8 GB")
-                    .values(attrValues)
-                    .attributeGroupName("Otros")
-                    .attributeGroupId("OTHERS"));
-
-            Shipping shipping = new Shipping("me2");
-            shipping.localPickUp(false);
-            shipping.freeShipping(false);
-            shipping.methods(new ArrayList<>());
-            shipping.tags(new ArrayList<>());
-
-            List<SaleTerms> saleTerms = new ArrayList<>();
-            saleTerms.add(new SaleTerms("WARRANTY_TYPE")
-                    .name("Tipo de garantía")
-                    .valueName("Garantia del vendedor")
-                    .valueId("2230280"));
-
-            Item item = new Item();
-            item.title("Item de test2 - No Changes java");
-            item.categoryId("MLU1915");
-            item.price(350);
-            item.currencyId("UYU");
-            item.availableQuantity("12");
-            item.buyingMode("buy_it_now");
-            item.listingTypeId("bronze");
-            item.condition("new");
-            item.description("Item de Teste. Mercado Libre con cambios en la SDK");
-            item.videoId("RXWn6kftTHY");
-            item.pictures(pictures);
-            item.attributes(attributes);
-            item.shipping(shipping);
-            item.saleTerms(saleTerms);*/
-
                 response.put("response", apiService.createPublication(publicationRequest, accountFounded.get().getAccessToken()));
                 return response;
 

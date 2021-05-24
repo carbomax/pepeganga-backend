@@ -7,14 +7,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.pepeganga.meli.service.exceptions.NotFoundException;
 import uy.pepeganga.meli.service.exceptions.OrderException;
+import uy.pepeganga.meli.service.exceptions.ReportError;
 
 
 @ControllerAdvice
 public class ApplicationExceptionHandler {
 
 
-    @ExceptionHandler({PGException.class, NotFoundException.class, OrderException.class})
-    protected ResponseEntity<PGException> bucketException(PGException exception) {
+    @ExceptionHandler({PGException.class, NotFoundException.class, OrderException.class, ReportError.class})
+    protected ResponseEntity<PGException> businessException(PGException exception) {
         return buildPGException(exception);
     }
 
@@ -35,6 +36,9 @@ public class ApplicationExceptionHandler {
         } else if (exception instanceof OrderException) {
             OrderException orderException = (OrderException) exception;
             return new ResponseEntity<>(PGException.builder(orderException), orderException.getHttpStatus());
+        } else if (exception instanceof ReportError) {
+            ReportError reportError = (ReportError) exception;
+            return new ResponseEntity<>(PGException.builder(reportError), reportError.getHttpStatus());
         } else
             return new ResponseEntity<>(new PGException(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.name(), HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
