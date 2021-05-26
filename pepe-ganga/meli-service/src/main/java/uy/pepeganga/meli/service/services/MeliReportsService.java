@@ -12,6 +12,7 @@ import uy.pepeganga.meli.service.exceptions.ReportError;
 import uy.pepeganga.meli.service.models.dto.reports.PublicationsMeliDto;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
+import uy.pepeganga.meli.service.utils.Flex;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class MeliReportsService implements IMeliReportsService {
 
     private static final String PUBLICATION_REPORT_NAME = "meli_publications.jrxml";
-    private static final String PUBLICATION_REPORT_SHEET_NAME = "publications_report";
+    private static final String PUBLICATION_REPORT_SHEET_NAME = "productos publicados";
 
     @Autowired
     DetailsPublicationMeliRepository detailsPublicationRepository;
@@ -58,7 +59,7 @@ public class MeliReportsService implements IMeliReportsService {
                         .idMLPublication(p.getIdMLPublication())
                         .accountBusinessName(p.getAccountBusinessName())
                         .currentStock(p.getCurrentStock())
-                        .flex(p.getFlex() == 1 ? "SI" : "NO")
+                        .flex(Flex.of(Objects.isNull(p.getFlex()) ? -1 : p.getFlex()).getReportValue())
                         .lastUpgrade(p.getLastUpgrade())
                         .pricePublication(p.getPricePublication())
                         .permalink(p.getPermalink())
@@ -70,5 +71,4 @@ public class MeliReportsService implements IMeliReportsService {
 
                 ).collect(Collectors.toList());
     }
-
 }
