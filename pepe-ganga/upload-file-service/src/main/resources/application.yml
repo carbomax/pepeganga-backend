@@ -1,3 +1,9 @@
 spring:
   profiles:
     active: @spring.profiles.active@
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 30000
+        readTimeout: 33000
