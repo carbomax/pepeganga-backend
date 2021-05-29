@@ -9,7 +9,7 @@ import uy.com.pepeganga.business.common.exceptions.PGException;
 import uy.com.pepeganga.business.common.utils.enums.MeliStatusPublications;
 import uy.pepeganga.meli.service.exceptions.NotFoundException;
 import uy.pepeganga.meli.service.exceptions.ReportError;
-import uy.pepeganga.meli.service.models.dto.reports.PublicationsMeliDto;
+import uy.com.pepeganga.business.common.models.PublicationsMeliDto;
 import uy.pepeganga.meli.service.repository.DetailsPublicationMeliRepository;
 import uy.pepeganga.meli.service.repository.ProfileRepository;
 import uy.pepeganga.meli.service.utils.Flex;
@@ -41,25 +41,38 @@ public class MeliReportsService implements IMeliReportsService {
                 Optional<Profile> profileFounded = profileRepository.findById(profileId);
                 if (profileFounded.isPresent()) {
                     List<Integer> idsFounded = detailsPublicationRepository.findIdsByMeliAccountsOfProfileId(profileFounded.get().getId());
-                    return reportService.exportReport(ReportService.ExportType.valueOf(exportType), PUBLICATION_REPORT_NAME, PUBLICATION_REPORT_SHEET_NAME, getPublicationsReports(idsFounded));
+                    return reportService.exportReport(ReportService.ExportType.valueOf(exportType), PUBLICATION_REPORT_NAME, PUBLICATION_REPORT_SHEET_NAME, getPublicationsReportsDto(idsFounded));
                 } else {
                     throw new NotFoundException(String.format("Profile id: %d", profileId), HttpStatus.NOT_FOUND);
                 }
             }
-            return reportService.exportReport(ReportService.ExportType.valueOf(exportType), PUBLICATION_REPORT_NAME, PUBLICATION_REPORT_SHEET_NAME, getPublicationsReports(ids));
+            return reportService.exportReport(ReportService.ExportType.valueOf(exportType), PUBLICATION_REPORT_NAME, PUBLICATION_REPORT_SHEET_NAME, getPublicationsReportsDto(ids));
         } catch (Exception e) {
             log.error(String.format("Error exporting file: %s", PUBLICATION_REPORT_NAME), e);
             throw new ReportError(String.format("Error exporting file: %s", PUBLICATION_REPORT_NAME), HttpStatus.CONFLICT, e.getMessage());
         }
     }
 
-    private List<PublicationsMeliDto> getPublicationsReports(List<Integer> ids) {
+    public List<PublicationsMeliDto> reportPublications(List<Integer> ids, Integer profileId) throws PGException{
+        if (Objects.isNull(ids) || ids.size() <= 0) {
+            Optional<Profile> profileFounded = profileRepository.findById(profileId);
+            if (profileFounded.isPresent()) {
+                List<Integer> idsFounded = detailsPublicationRepository.findIdsByMeliAccountsOfProfileId(profileFounded.get().getId());
+                return getPublicationsReportsDto(idsFounded);
+            } else {
+                throw new NotFoundException(String.format("Profile id: %d", profileId), HttpStatus.NOT_FOUND);
+            }
+        }
+        return getPublicationsReportsDto(ids);
+    }
+
+    private List<PublicationsMeliDto> getPublicationsReportsDto(List<Integer> ids) {
         return detailsPublicationRepository.publicationReport(ids).stream()
                 .map(p -> PublicationsMeliDto.builder()
                         .idMLPublication(p.getIdMLPublication())
                         .accountBusinessName(p.getAccountBusinessName())
                         .currentStock(p.getCurrentStock())
-                        .flex(Flex.of(Objects.isNull(p.getFlex()) ? -1 : p.getFlex()).getReportValue())
+                        .flex(Flex.of(Objects.isNull(p.getFlex()) ? Flex.UNDEFINED.getCode() : p.getFlex()).getReportValue())
                         .lastUpgrade(p.getLastUpgrade())
                         .pricePublication(p.getPricePublication())
                         .permalink(p.getPermalink())

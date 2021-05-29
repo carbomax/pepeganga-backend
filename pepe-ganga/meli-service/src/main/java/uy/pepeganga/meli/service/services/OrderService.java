@@ -721,7 +721,7 @@ public class OrderService implements IOrderService {
                     }
                 } else {
                     logger.error("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
-                            meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount.getProfile()));
+                            meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount) || Objects.isNull(sellerAccount.getProfile()));
                 }
 
             });

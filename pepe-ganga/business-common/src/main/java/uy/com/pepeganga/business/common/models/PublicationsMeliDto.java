@@ -1,4 +1,4 @@
-package uy.pepeganga.meli.service.models.dto.reports;
+package uy.com.pepeganga.business.common.models;
 
 import lombok.Builder;
 import lombok.Data;

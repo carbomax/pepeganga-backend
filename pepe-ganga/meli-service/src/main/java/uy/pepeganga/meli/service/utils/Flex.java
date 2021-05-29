@@ -4,7 +4,7 @@ import java.util.stream.Stream;
 
 public enum Flex {
 
-    UNDEFINED(-1, "Sin Confirmar"),
+    UNDEFINED(2, "Sin Confirmar"),
     YES(1, "SI"),
     NO(0, "NO");
 
@@ -21,6 +21,10 @@ public enum Flex {
                 .filter(flex -> flex.code.equals(code))
                 .findFirst()
                 .orElseThrow(IllegalAccessError::new);
+    }
+
+    public Integer getCode() {
+        return code;
     }
 
     public String getReportValue() {
