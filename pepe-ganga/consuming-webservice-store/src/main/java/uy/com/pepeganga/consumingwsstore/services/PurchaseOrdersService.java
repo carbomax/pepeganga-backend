@@ -99,7 +99,7 @@ public class PurchaseOrdersService extends WebServiceGatewaySupport implements I
     private SDTPedidoExternoCabezal initHead(OrderDto orderDto) throws DatatypeConfigurationException {
         SDTPedidoExternoCabezal order = new SDTPedidoExternoCabezal();
         order.setCedula(orderDto.getCi());
-        order.setClienteId(Short.parseShort(String.valueOf(orderDto.getSellerId()) ) );
+        order.setClienteId((short) 0);// siempre es cero para que el servicio ERP descarte este dato.
         order.setClienteNombre(orderDto.getSellerName());
         order.setIdPedido(orderDto.getOrderId());
         order.setDepartamento(orderDto.getDepartment());
