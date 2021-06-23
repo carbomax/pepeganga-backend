@@ -7,8 +7,9 @@ spring:
 
   datasource:
     username: admin
-    password: 123456789.*dhl  
-    url: jdbc:mysql://db-pepeganga-prod.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
+    password: 123456789.*dhl
+    url: jdbc:mysql://database-develop.c9ir9n4tc2qb.us-east-2.rds.amazonaws.com:3306/pepegangadb
+    #url: jdbc:mysql://db-pepeganga-prod.cdwhe7xma3dx.us-east-2.rds.amazonaws.com:3306/pepegangadb
     hikari:
       connection-timeout: 30000
       idle-timeout: 60000
