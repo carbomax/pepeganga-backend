@@ -663,13 +663,17 @@ public class OrderService implements IOrderService {
 
     @Override
     public List<OrderDto> getRecentOrdersByBatch(int quantity) throws PGException {
-        List<MeliOrders> orders = ordersRepository.findAllBySentToErp(quantity);
-        if(orders.isEmpty()){
+        try {
+            List<MeliOrders> orders = ordersRepository.findAllBySentToErp(quantity);
+            if (orders.isEmpty()) {
+                return Collections.emptyList();
+            } else {
+                return createOrdersDtos(orders);
+            }
+        }catch (Exception e){
+            logger.error("Error: {}", e.getMessage());
             return Collections.emptyList();
-        } else {
-            return createOrdersDtos(orders);
         }
-
     }
 
     @Override
@@ -691,15 +695,15 @@ public class OrderService implements IOrderService {
         try {
             ordersList.forEach(meliOrders -> {
                 List<MeliOrderItemDto> meliOrderItemDtos = new ArrayList<>();
-                meliOrders.getItems().forEach(item -> meliOrderItemDtos.add(MeliOrderItemDto.builder()
-                        .sellerSKU(item.getSellerSku().trim())
-                        .price(item.getUnitPrice())
-                        .quantity(item.getQuantity())
-                        .description(item.getTitle())
-                        .observations(item.getTitle()).build()));
-                SellerAccount sellerAccount = sellerAccountRepository.findByUserIdBss(meliOrders.getSeller().getSellerId());
-                if(!meliOrderItemDtos.isEmpty() && !Objects.isNull(sellerAccount) && !Objects.isNull(sellerAccount.getProfile())){
-                    try{
+                try {
+                    meliOrders.getItems().forEach(item -> meliOrderItemDtos.add(MeliOrderItemDto.builder()
+                            .sellerSKU(item.getSellerSku().trim())
+                            .price(item.getUnitPrice())
+                            .quantity(item.getQuantity())
+                            .description(item.getTitle())
+                            .observations(item.getTitle()).build()));
+                    SellerAccount sellerAccount = sellerAccountRepository.findByUserIdBss(meliOrders.getSeller().getSellerId());
+                    if (!meliOrderItemDtos.isEmpty() && !Objects.isNull(sellerAccount) && !Objects.isNull(sellerAccount.getProfile())) {
                         ordersDto.add(
                                 OrderDto.builder()
                                         .address(sellerAccount.getProfile().getAddress())
@@ -716,14 +720,13 @@ public class OrderService implements IOrderService {
                                         .observation(meliOrders.getObservationBss())
                                         .items(meliOrderItemDtos).build()
                         );
-                    }catch (Exception e){
-                        logger.error("Order {} cannot be informed because occurred a exception: {}", meliOrders.getOrderId(), e.getMessage());
+                    } else {
+                        logger.error("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
+                                meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount) || Objects.isNull(sellerAccount.getProfile()));
                     }
-                } else {
-                    logger.error("Order {} cannot be informed because it contain empty values: meliOrderItemDtos = {}, sellerAccount = {}, profile = {}",
-                            meliOrders.getOrderId(), meliOrderItemDtos.isEmpty(), Objects.isNull(sellerAccount), Objects.isNull(sellerAccount) || Objects.isNull(sellerAccount.getProfile()));
+                }catch (Exception e){
+                    logger.error("Order {} cannot be informed because occurred a exception: {}", meliOrders.getOrderId(), e.getMessage());
                 }
-
             });
         } catch (Exception e){
             throw new OrderException(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
